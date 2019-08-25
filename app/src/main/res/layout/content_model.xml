@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_gravity="center"
+    android:layout_marginTop="4dp"
+    android:layout_marginBottom="4dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:padding="8dp">
+
+        <ImageView
+            android:id="@+id/iv_thumbnail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:background="@drawable/shadow"
+            android:contentDescription="@string/posterPath"
+            android:elevation="6dp"
+            android:scaleType="fitXY"
+            tools:src="@drawable/poster_gotham" />
+
+        <TextView
+            android:id="@+id/tv_title"
+            style="@style/Title"
+            android:layout_toEndOf="@id/iv_thumbnail"
+            tools:text="@string/title_content" />
+
+        <TextView
+            android:id="@+id/tv_release"
+            style="@style/SubTitle"
+            android:layout_below="@id/tv_title"
+            android:layout_toEndOf="@id/iv_thumbnail"
+            tools:text="release" />
+
+        <TextView
+            android:id="@+id/tv_overview"
+            style="@style/SubTitle"
+            android:layout_below="@id/tv_release"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:layout_marginBottom="8dp"
+            android:layout_toEndOf="@id/iv_thumbnail"
+            android:ellipsize="end"
+            android:lineSpacingMultiplier="1"
+            android:maxLines="6"
+            tools:text="@tools:sample/lorem/random" />
+
+        <TextView
+            android:id="@+id/tv_rating"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="#6D000000"
+            android:drawableStart="@drawable/ic_star_15dp"
+            android:elevation="8dp"
+            android:gravity="center"
+            android:paddingStart="4dp"
+            android:paddingTop="2dp"
+            android:paddingEnd="6dp"
+            android:paddingBottom="3dp"
+            android:text="@string/rating"
+            android:textColor="@android:color/white"
+            android:textStyle="bold" />
+    </RelativeLayout>
+
+</android.support.design.card.MaterialCardView>

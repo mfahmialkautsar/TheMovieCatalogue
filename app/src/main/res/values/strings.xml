@@ -1,0 +1,22 @@
+<resources>
+    <string name="app_name">The Movie Catalogue</string>
+    <string name="title_movies">Movies</string>
+    <string name="title_tv">TV</string>
+    <string name="backdropPath">backdropPath</string>
+    <string name="posterPath">posterPath</string>
+    <string name="release">Release: </string>
+    <string name="overview">Overview</string>
+    <string name="rating"> Rating</string>
+    <string name="title_content">Title</string>
+    <string name="change_language_setting">Change Language</string>
+    <string name="date">MMMM d, yyyy</string>
+    <string name="no_internet">NO INTERNET!</string>
+    <string name="lang">en-US</string>
+    <string name="add_fav_success">\ favorited</string>
+    <string name="add_fav_failed">\ favorited FAILED</string>
+    <string name="del_fav_success">\ deleted from Favorite</string>
+    <string name="del_fav_failed">\ deleted from Favorite FAILED</string>
+    <string name="favorite">Favorite</string>
+    <string name="overview_not_found">Overview not found</string>
+    <string name="no_rating">No Rating</string>
+</resources>
