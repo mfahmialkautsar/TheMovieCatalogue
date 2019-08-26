@@ -16,7 +16,7 @@ public class FavTvDatabaseHelper extends SQLiteOpenHelper {
             + FavDatabaseContract.TableColumns.RATING + " TEXT NOT NULL, "
             + FavDatabaseContract.TableColumns.POSTER_PATH + " TEXT NOT NULL, "
             + FavDatabaseContract.TableColumns.BACKDROP_PATH + " TEXT NOT NULL, "
-            + FavDatabaseContract.TYPE_TV + " TEXT NOT NULL"
+            + FavDatabaseContract.TableColumns.TYPE_TV + " TEXT NOT NULL"
             + ");";
     private static String DATABASE_NAME = "dbTvCatalogue";
 

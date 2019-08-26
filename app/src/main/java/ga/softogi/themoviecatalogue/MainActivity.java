@@ -101,6 +101,7 @@ public class MainActivity extends AppCompatActivity {
             case R.id.favorite:
                 Intent favoriteIntent = new Intent(MainActivity.this, FavActivity.class);
                 startActivity(favoriteIntent);
+                break;
         }
         return super.onOptionsItemSelected(item);
     }

@@ -2,6 +2,7 @@ package ga.softogi.themoviecatalogue.adapter;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -26,6 +27,8 @@ import ga.softogi.themoviecatalogue.activity.DetailContentActivity;
 import ga.softogi.themoviecatalogue.R;
 
 import static ga.softogi.themoviecatalogue.activity.DetailContentActivity.EXTRA_CONTENT;
+import static ga.softogi.themoviecatalogue.db.FavDatabaseContract.TableColumns.CONTENT_URI_MOVIE;
+import static ga.softogi.themoviecatalogue.db.FavDatabaseContract.TableColumns.CONTENT_URI_TV;
 
 public class ContentAdapter extends RecyclerView.Adapter<ContentAdapter.ContentViewHolder> {
     private ArrayList<ContentItem> mData = new ArrayList<>();
@@ -49,12 +52,23 @@ public class ContentAdapter extends RecyclerView.Adapter<ContentAdapter.ContentV
 
     @Override
     public void onBindViewHolder(@NonNull final ContentViewHolder holder, int position) {
-        holder.bind(mData.get(position));
+        holder.bind(getData().get(position));
 
         holder.itemView.setOnClickListener(new CustomOnItemClickListener(position, new CustomOnItemClickListener.OnItemClickCallback() {
             @Override
             public void onItemClicked(View view, int position) {
                 Intent intent = new Intent(holder.itemView.getContext(), DetailContentActivity.class);
+
+                Uri uri = null;
+                Uri uriMovie = Uri.parse(CONTENT_URI_MOVIE + "/" + getData().get(position).getId());
+                Uri uriTv = Uri.parse(CONTENT_URI_TV + "/" + getData().get(position).getId());
+                if (Objects.equals(mData.get(position).getType(), "Movie")) {
+                    uri = uriMovie;
+                } else if (Objects.equals(mData.get(position).getType(), "TV")) {
+                    uri = uriTv;
+                }
+                intent.setData(uri);
+                intent.putExtra("extra_position", position);
                 intent.putExtra(EXTRA_CONTENT, mData.get(holder.getAdapterPosition()));
                 holder.itemView.getContext().startActivity(intent);
             }

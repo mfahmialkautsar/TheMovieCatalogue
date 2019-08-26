@@ -9,14 +9,14 @@ import static android.provider.BaseColumns._ID;
 public class FavMovieDatabaseHelper extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION = 1;
     private static final String SQL_MOVIE_CATALOGUE = "CREATE TABLE " + FavDatabaseContract.TABLE_MOVIE
-            + " (" + _ID + " INTEGER PRIMARY KEY, "
+            + " (" + _ID + " INTEGER NOT NULL, "
             + FavDatabaseContract.TableColumns.TITLE + " TEXT NOT NULL, "
             + FavDatabaseContract.TableColumns.OVERVIEW + " TEXT NOT NULL, "
             + FavDatabaseContract.TableColumns.RELEASE + " TEXT NOT NULL, "
             + FavDatabaseContract.TableColumns.RATING + " TEXT NOT NULL, "
             + FavDatabaseContract.TableColumns.POSTER_PATH + " TEXT NOT NULL, "
             + FavDatabaseContract.TableColumns.BACKDROP_PATH + " TEXT NOT NULL, "
-            + FavDatabaseContract.TYPE_MOVIE + " TEXT NOT NULL"
+            + FavDatabaseContract.TableColumns.TYPE_MOVIE + " TEXT NOT NULL"
             + ");";
     private static String DATABASE_NAME = "dbMovieCatalogue";
 

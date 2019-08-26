@@ -1,7 +1,18 @@
 package ga.softogi.themoviecatalogue.entity;
 
+import android.database.Cursor;
 import android.os.Parcel;
 import android.os.Parcelable;
+
+import static android.provider.BaseColumns._ID;
+import static ga.softogi.themoviecatalogue.db.FavDatabaseContract.TableColumns.BACKDROP_PATH;
+import static ga.softogi.themoviecatalogue.db.FavDatabaseContract.TableColumns.OVERVIEW;
+import static ga.softogi.themoviecatalogue.db.FavDatabaseContract.TableColumns.POSTER_PATH;
+import static ga.softogi.themoviecatalogue.db.FavDatabaseContract.TableColumns.RATING;
+import static ga.softogi.themoviecatalogue.db.FavDatabaseContract.TableColumns.RELEASE;
+import static ga.softogi.themoviecatalogue.db.FavDatabaseContract.TableColumns.TITLE;
+import static ga.softogi.themoviecatalogue.db.FavDatabaseContract.getColumnInt;
+import static ga.softogi.themoviecatalogue.db.FavDatabaseContract.getColumnString;
 
 public class ContentItem implements Parcelable {
     public static final String STATE_CONTENT = "state_content";
@@ -110,6 +121,21 @@ public class ContentItem implements Parcelable {
         this.posterPath = posterPath;
         this.backdropPath = backdropPath;
         this.type = type;
+    }
+
+    public ContentItem(Cursor cursor) {
+        this.id = getColumnInt(cursor, _ID);
+        this.title = getColumnString(cursor, TITLE);
+        this.overview = getColumnString(cursor, OVERVIEW);
+        this.release = getColumnString(cursor, RELEASE);
+        this.rating = getColumnString(cursor, RATING);
+        this.posterPath = getColumnString(cursor, POSTER_PATH);
+        this.backdropPath = getColumnString(cursor, BACKDROP_PATH);
+        if (getColumnString(cursor, TYPE_MOVIE) != null) {
+            this.type = getColumnString(cursor, TYPE_MOVIE);
+        } else if (getColumnString(cursor, TYPE_TV) != null) {
+            this.type = getColumnString(cursor, TYPE_TV);
+        }
     }
 
     protected ContentItem(Parcel in) {

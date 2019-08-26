@@ -1,9 +1,15 @@
 package ga.softogi.themoviecatalogue.fragment;
 
+import android.content.Context;
+import android.database.ContentObserver;
+import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.HandlerThread;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -25,11 +31,17 @@ import ga.softogi.themoviecatalogue.adapter.ContentAdapter;
 import ga.softogi.themoviecatalogue.db.FavTvHelper;
 import ga.softogi.themoviecatalogue.entity.ContentItem;
 
+import static ga.softogi.themoviecatalogue.MappingHelper.mapTvCursorToArrayList;
+import static ga.softogi.themoviecatalogue.db.FavDatabaseContract.TableColumns.CONTENT_URI_TV;
+
 public class FavTvFragment extends Fragment implements LoadFavoriteCallback {
     private static final String EXTRA_TV_STATE = "EXTRA_TV_STATE";
     private ProgressBar progressBar;
     private FavTvHelper favTvHelper;
     private ContentAdapter adapter;
+    private RecyclerView rvFavorite;
+    private HandlerThread handlerThread;
+//    private DataObserver myObserver;
 
 
     public FavTvFragment() {
@@ -45,8 +57,8 @@ public class FavTvFragment extends Fragment implements LoadFavoriteCallback {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         progressBar = view.findViewById(R.id.progress_bar);
-        favTvHelper = FavTvHelper.getInstance(getContext());
-        favTvHelper.openTv();
+//        favTvHelper = FavTvHelper.getInstance(getContext());
+//        favTvHelper.openTv();
 
         init(view, savedInstanceState);
 
@@ -85,15 +97,21 @@ public class FavTvFragment extends Fragment implements LoadFavoriteCallback {
         } else {
             searchTv = tvTitle;
         }
+
+//        handlerThread = new HandlerThread("DataObserver");
+//        handlerThread.start();
+//        Handler handler = new Handler(handlerThread.getLooper());
+//        myObserver = new DataObserver(handler, view.getContext(), searchTv);
+//        view.getContext().getContentResolver().registerContentObserver(CONTENT_URI_TV, true, myObserver);
         adapter = new ContentAdapter();
 
-        RecyclerView rvFavorite = view.findViewById(R.id.rv_content);
+        rvFavorite = view.findViewById(R.id.rv_content);
         rvFavorite.setHasFixedSize(true);
         rvFavorite.setLayoutManager(new LinearLayoutManager(getActivity()));
         rvFavorite.setAdapter(adapter);
 
         if (savedInstanceState == null) {
-            new FavTvFragment.LoadFavoriteAsync(favTvHelper, this, searchTv).execute();
+            new FavTvFragment.LoadFavoriteAsync(getContext(), this, searchTv).execute();
         }
         /*
         else {
@@ -116,8 +134,14 @@ public class FavTvFragment extends Fragment implements LoadFavoriteCallback {
     }
 
     @Override
-    public void postExecute(ArrayList<ContentItem> items) {
-        adapter.setData(items);
+    public void postExecute(Cursor items) {
+        ArrayList<ContentItem> listTv = mapTvCursorToArrayList(items);
+        if (listTv.size() > 0) {
+            adapter.setData(listTv);
+        } else {
+            adapter.setData(new ArrayList<ContentItem>());
+            showSnackbarMessage(getString(R.string.empty_fav));
+        }
         progressBar.setVisibility(View.GONE);
     }
 
@@ -130,7 +154,7 @@ public class FavTvFragment extends Fragment implements LoadFavoriteCallback {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        favTvHelper.closeTv();
+//        favTvHelper.closeTv();
     }
 
     @Override
@@ -139,13 +163,15 @@ public class FavTvFragment extends Fragment implements LoadFavoriteCallback {
         super.onSaveInstanceState(outState);
     }
 
-    private static class LoadFavoriteAsync extends AsyncTask<Void, Void, ArrayList<ContentItem>> {
-        private final WeakReference<FavTvHelper> weakTvHelper;
+    private static class LoadFavoriteAsync extends AsyncTask<Void, Void, Cursor> {
+//        private final WeakReference<FavTvHelper> weakTvHelper;
+        private final WeakReference<Context> weakContext;
         private final WeakReference<LoadFavoriteCallback> weakCallback;
         private final String title;
 
-        private LoadFavoriteAsync(FavTvHelper favTvHelper, LoadFavoriteCallback callback, String searchTv) {
-            weakTvHelper = new WeakReference<>(favTvHelper);
+        private LoadFavoriteAsync(Context context, LoadFavoriteCallback callback, String searchTv) {
+//            weakTvHelper = new WeakReference<>(favTvHelper);
+            weakContext = new WeakReference<>(context);
             weakCallback = new WeakReference<>(callback);
             title = searchTv;
         }
@@ -157,14 +183,44 @@ public class FavTvFragment extends Fragment implements LoadFavoriteCallback {
         }
 
         @Override
-        protected ArrayList<ContentItem> doInBackground(Void... voids) {
-            return weakTvHelper.get().getAllTv(title);
+        protected Cursor doInBackground(Void... voids) {
+            Context context = weakContext.get();
+            if (TextUtils.isEmpty(title)) {
+                return context.getContentResolver().query(CONTENT_URI_TV, null, null, null, null);
+            } else {
+                return context.getContentResolver().query(CONTENT_URI_TV, null, "title LIKE ?", new String[]{"%" + title + "%"}, null);
+            }
         }
 
         @Override
-        protected void onPostExecute(ArrayList<ContentItem> items) {
-            super.onPreExecute();
+        protected void onPostExecute(Cursor items) {
+            super.onPostExecute(items);
             weakCallback.get().postExecute(items);
         }
+    }
+
+//    public static class DataObserver extends ContentObserver {
+//        /**
+//         * Creates a content observer.
+//         *
+//         * @param handler The handler to run {@link #onChange} on, or null if none.
+//         */
+//        final Context context;
+//        final String searchTv;
+//        public DataObserver(Handler handler, Context context, String searchTv) {
+//            super(handler);
+//            this.context = context;
+//            this.searchTv = searchTv;
+//        }
+//
+//        @Override
+//        public void onChange(boolean selfChange) {
+//            super.onChange(selfChange);
+//            new LoadFavoriteAsync(context, (LoadFavoriteCallback) context, searchTv).execute();
+//        }
+//    }
+
+    private void showSnackbarMessage(String message) {
+        Snackbar.make(rvFavorite, message, Snackbar.LENGTH_SHORT).show();
     }
 }

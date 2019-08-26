@@ -4,6 +4,14 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <permission
+        android:name="ga.softogi.themoviecatalogue.READ_DATABASE"
+        android:protectionLevel="normal" />
+    <permission
+        android:name="ga.softogi.themoviecatalogue.WRITE_DATABASE"
+        android:protectionLevel="normal" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -22,6 +30,20 @@
             </intent-filter>
         </activity>
         <activity android:name=".activity.FavActivity" />
+
+        <provider
+            android:authorities="ga.softogi.themoviecatalogue.provider.FavTvProvider"
+            android:name=".provider.FavTvProvider"
+            android:exported="true"
+            android:readPermission="ga.softogi.themoviecatalogue.READ_DATABASE"
+            android:writePermission="ga.softogi.themoviecatalogue.WRITE_DATABASE" />
+
+        <provider
+            android:authorities="ga.softogi.themoviecatalogue.provider.FavMovieProvider"
+            android:name=".provider.FavMovieProvider"
+            android:exported="true"
+            android:readPermission="ga.softogi.themoviecatalogue.READ_DATABASE"
+            android:writePermission="ga.softogi.themoviecatalogue.WRITE_DATABASE" />
     </application>
 
 </manifest>

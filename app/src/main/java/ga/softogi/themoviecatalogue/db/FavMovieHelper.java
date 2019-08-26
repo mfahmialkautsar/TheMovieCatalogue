@@ -1,5 +1,6 @@
 package ga.softogi.themoviecatalogue.db;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
@@ -13,6 +14,13 @@ import java.util.ArrayList;
 import ga.softogi.themoviecatalogue.entity.ContentItem;
 
 import static android.provider.BaseColumns._ID;
+import static ga.softogi.themoviecatalogue.db.FavDatabaseContract.TableColumns.BACKDROP_PATH;
+import static ga.softogi.themoviecatalogue.db.FavDatabaseContract.TableColumns.OVERVIEW;
+import static ga.softogi.themoviecatalogue.db.FavDatabaseContract.TableColumns.POSTER_PATH;
+import static ga.softogi.themoviecatalogue.db.FavDatabaseContract.TableColumns.RATING;
+import static ga.softogi.themoviecatalogue.db.FavDatabaseContract.TableColumns.RELEASE;
+import static ga.softogi.themoviecatalogue.db.FavDatabaseContract.TableColumns.TITLE;
+import static ga.softogi.themoviecatalogue.db.FavDatabaseContract.TableColumns.TYPE_MOVIE;
 
 public class FavMovieHelper {
     private static final String DATABASE_MOVIE = FavDatabaseContract.TABLE_MOVIE;
@@ -79,13 +87,13 @@ public class FavMovieHelper {
             do {
                 contentItem = new ContentItem();
                 contentItem.setId(cursor.getInt(cursor.getColumnIndexOrThrow(_ID)));
-                contentItem.setTitle(cursor.getString(cursor.getColumnIndexOrThrow(FavDatabaseContract.TableColumns.TITLE)));
-                contentItem.setOverview(cursor.getString(cursor.getColumnIndexOrThrow(FavDatabaseContract.TableColumns.OVERVIEW)));
-                contentItem.setRelease(cursor.getString(cursor.getColumnIndexOrThrow(FavDatabaseContract.TableColumns.RELEASE)));
-                contentItem.setRating(cursor.getString(cursor.getColumnIndexOrThrow(FavDatabaseContract.TableColumns.RATING)));
-                contentItem.setPosterPath(cursor.getString(cursor.getColumnIndexOrThrow(FavDatabaseContract.TableColumns.POSTER_PATH)));
-                contentItem.setBackdropPath(cursor.getString(cursor.getColumnIndexOrThrow(FavDatabaseContract.TableColumns.BACKDROP_PATH)));
-                contentItem.setType(cursor.getString(cursor.getColumnIndexOrThrow(FavDatabaseContract.TYPE_MOVIE)));
+                contentItem.setTitle(cursor.getString(cursor.getColumnIndexOrThrow(TITLE)));
+                contentItem.setOverview(cursor.getString(cursor.getColumnIndexOrThrow(OVERVIEW)));
+                contentItem.setRelease(cursor.getString(cursor.getColumnIndexOrThrow(RELEASE)));
+                contentItem.setRating(cursor.getString(cursor.getColumnIndexOrThrow(RATING)));
+                contentItem.setPosterPath(cursor.getString(cursor.getColumnIndexOrThrow(POSTER_PATH)));
+                contentItem.setBackdropPath(cursor.getString(cursor.getColumnIndexOrThrow(BACKDROP_PATH)));
+                contentItem.setType(cursor.getString(cursor.getColumnIndexOrThrow(TYPE_MOVIE)));
 
                 arrayList.add(contentItem);
                 cursor.moveToNext();
@@ -113,8 +121,8 @@ public class FavMovieHelper {
 
     public void insertTransaction(ContentItem item) {
         String sql = "INSERT INTO " + DATABASE_MOVIE
-                + " (" + _ID + ", " + FavDatabaseContract.TableColumns.TITLE + ", " + FavDatabaseContract.TableColumns.OVERVIEW + ", " + FavDatabaseContract.TableColumns.RELEASE + ", "
-                + FavDatabaseContract.TableColumns.RATING + ", " + FavDatabaseContract.TableColumns.POSTER_PATH + ", " + FavDatabaseContract.TableColumns.BACKDROP_PATH + ", " + FavDatabaseContract.TYPE_MOVIE
+                + " (" + _ID + ", " + TITLE + ", " + OVERVIEW + ", " + RELEASE + ", "
+                + RATING + ", " + POSTER_PATH + ", " + BACKDROP_PATH + ", " + TYPE_MOVIE
                 + ") VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         SQLiteStatement statement = database.compileStatement(sql);
         statement.bindLong(1, (long) item.getId());
@@ -131,9 +139,9 @@ public class FavMovieHelper {
 
     public boolean isMovieExists(String searchItem) {
         String[] projection = {
-                _ID, FavDatabaseContract.TableColumns.TITLE, FavDatabaseContract.TableColumns.OVERVIEW, FavDatabaseContract.TableColumns.RELEASE, FavDatabaseContract.TableColumns.RATING, FavDatabaseContract.TableColumns.POSTER_PATH, FavDatabaseContract.TableColumns.BACKDROP_PATH, FavDatabaseContract.TYPE_MOVIE
+                _ID, TITLE, OVERVIEW, RELEASE, RATING, POSTER_PATH, BACKDROP_PATH, TYPE_MOVIE
         };
-        String selection = FavDatabaseContract.TableColumns.TITLE + " =?";
+        String selection = TITLE + " =?";
         String[] selectionArgs = {searchItem};
         String limit = "1";
 
@@ -141,5 +149,43 @@ public class FavMovieHelper {
         boolean exists = (cursor.getCount() > 0);
         cursor.close();
         return exists;
+    }
+
+    public Cursor queryByIdProvider(String id) {
+        return database.query(DATABASE_MOVIE, null
+                , _ID + " = ?"
+                , new String[]{id}
+                , null
+                , null
+                , null
+                , null);
+    }
+
+    public Cursor queryProvider() {
+        return database.query(DATABASE_MOVIE
+                , null
+                , null
+                , null
+                , null
+                , null
+                , _ID + " ASC");
+    }
+
+    public Cursor queryByTitleProvider(String selection, String[] searchTitle) {
+        return database.query(DATABASE_MOVIE
+                , null
+                , selection
+                , searchTitle
+                , null
+                , null
+                , _ID + " ASC");
+    }
+
+    public long insertProvider(ContentValues values) {
+        return database.insert(DATABASE_MOVIE, null, values);
+    }
+
+    public int deleteProvider(String id) {
+        return database.delete(DATABASE_MOVIE, _ID + " = ?", new String[]{id});
     }
 }

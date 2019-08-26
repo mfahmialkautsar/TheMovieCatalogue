@@ -1,7 +1,13 @@
 package ga.softogi.themoviecatalogue.fragment;
 
+import android.content.Context;
+import android.database.ContentObserver;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.HandlerThread;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
@@ -26,11 +32,17 @@ import ga.softogi.themoviecatalogue.adapter.ContentAdapter;
 import ga.softogi.themoviecatalogue.db.FavMovieHelper;
 import ga.softogi.themoviecatalogue.entity.ContentItem;
 
+import static ga.softogi.themoviecatalogue.MappingHelper.mapMovieCursorToArrayList;
+import static ga.softogi.themoviecatalogue.db.FavDatabaseContract.TableColumns.CONTENT_URI_MOVIE;
+
 public class FavMovieFragment extends Fragment implements LoadFavoriteCallback {
     private static final String EXTRA_MOVIE_STATE = "EXTRA_MOVIE_STATE";
     private ProgressBar progressBar;
     private FavMovieHelper favMovieHelper;
     private ContentAdapter adapter;
+    private RecyclerView rvFavorite;
+    private HandlerThread handlerThread;
+//    private DataObserver myObserver;
     private ArrayList<ContentItem> listFavMovie = new ArrayList<>();
 
 //    private View.OnClickListener btnSearchListener = new View.OnClickListener() {
@@ -58,8 +70,8 @@ public class FavMovieFragment extends Fragment implements LoadFavoriteCallback {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         progressBar = view.findViewById(R.id.progress_bar);
-        favMovieHelper = FavMovieHelper.getInstance(getContext());
-        favMovieHelper.openMovie();
+//        favMovieHelper = FavMovieHelper.getInstance(getContext());
+//        favMovieHelper.openMovie();
 
 //        Button btnSearch = view.findViewById(R.id.btn_search);
 //        btnSearch.setOnClickListener(btnSearchListener);
@@ -102,15 +114,21 @@ public class FavMovieFragment extends Fragment implements LoadFavoriteCallback {
         } else {
             searchMovie = movieTitle;
         }
+
+//        handlerThread = new HandlerThread("DataObserver");
+//        handlerThread.start();
+//        Handler handler = new Handler(handlerThread.getLooper());
+//        myObserver = new FavMovieFragment.DataObserver(handler, getContext(), searchMovie);
+//        getContext().getContentResolver().registerContentObserver(CONTENT_URI_MOVIE, true, myObserver);
         adapter = new ContentAdapter();
 
-        RecyclerView rvFavorite = view.findViewById(R.id.rv_content);
+        rvFavorite = view.findViewById(R.id.rv_content);
         rvFavorite.setHasFixedSize(true);
         rvFavorite.setLayoutManager(new LinearLayoutManager(getActivity()));
         rvFavorite.setAdapter(adapter);
 
         if (savedInstanceState == null) {
-            new FavMovieFragment.LoadFavoriteAsync(favMovieHelper, this, searchMovie).execute();
+            new FavMovieFragment.LoadFavoriteAsync(getContext(), this, searchMovie).execute();
         }
         /* Ini dipake kalo gak mao pake onResume. Bisa sih dipake berbarengan, tapi jadi useless
         else {
@@ -133,9 +151,14 @@ public class FavMovieFragment extends Fragment implements LoadFavoriteCallback {
     }
 
     @Override
-    public void postExecute(ArrayList<ContentItem> items) {
-        adapter.setData(items);
-        listFavMovie = items;
+    public void postExecute(Cursor items) {
+        ArrayList<ContentItem> listMovie = mapMovieCursorToArrayList(items);
+        if (listMovie.size() > 0) {
+            adapter.setData(listMovie);
+        } else {
+            adapter.setData(new ArrayList<ContentItem>());
+            showSnackbarMessage(getString(R.string.empty_fav));
+        }
         progressBar.setVisibility(View.GONE);
     }
 
@@ -148,7 +171,7 @@ public class FavMovieFragment extends Fragment implements LoadFavoriteCallback {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        favMovieHelper.closeMovie();
+//        favMovieHelper.closeMovie();
     }
     /* Ini dipake kalo gak mao pake onResume. Bisa sih dipake berbarengan, tapi jadi useless
         @Override
@@ -157,13 +180,15 @@ public class FavMovieFragment extends Fragment implements LoadFavoriteCallback {
             outState.putParcelableArrayList(EXTRA_MOVIE_STATE, adapter.getData());
         }
     */
-    private static class LoadFavoriteAsync extends AsyncTask<Void, Void, ArrayList<ContentItem>> {
-        private final WeakReference<FavMovieHelper> weakContentHelper;
+    private static class LoadFavoriteAsync extends AsyncTask<Void, Void, Cursor> {
+//        private final WeakReference<FavMovieHelper> weakContentHelper;
+        private final WeakReference<Context> weakContext;
         private final WeakReference<LoadFavoriteCallback> weakCallback;
         private final String title;
 
-        private LoadFavoriteAsync(FavMovieHelper favMovieHelper, LoadFavoriteCallback callback, String searchMovie) {
-            weakContentHelper = new WeakReference<>(favMovieHelper);
+        private LoadFavoriteAsync(Context context, LoadFavoriteCallback callback, String searchMovie) {
+//            weakContentHelper = new WeakReference<>(favMovieHelper);
+            weakContext = new WeakReference<>(context);
             weakCallback = new WeakReference<>(callback);
             title = searchMovie;
         }
@@ -175,14 +200,44 @@ public class FavMovieFragment extends Fragment implements LoadFavoriteCallback {
         }
 
         @Override
-        protected ArrayList<ContentItem> doInBackground(Void... voids) {
-            return weakContentHelper.get().getAllMovies(title);
+        protected Cursor doInBackground(Void... voids) {
+            Context context = weakContext.get();
+            if (TextUtils.isEmpty(title)) {
+                return context.getContentResolver().query(CONTENT_URI_MOVIE, null, null, null, null);
+            } else {
+                return context.getContentResolver().query(CONTENT_URI_MOVIE, null, "title LIKE ?", new String[]{"%" + title + "%"}, null);
+            }
         }
 
         @Override
-        protected void onPostExecute(ArrayList<ContentItem> items) {
+        protected void onPostExecute(Cursor items) {
             super.onPostExecute(items);
             weakCallback.get().postExecute(items);
         }
+    }
+
+//    public static class DataObserver extends ContentObserver {
+//        /**
+//         * Creates a content observer.
+//         *
+//         * @param handler The handler to run {@link #onChange} on, or null if none.
+//         */
+//        final Context context;
+//        String searchMovie;
+//        public DataObserver(Handler handler, Context context, String searchMovie) {
+//            super(handler);
+//            this.context = context;
+//            this.searchMovie = searchMovie;
+//        }
+//
+//        @Override
+//        public void onChange(boolean selfChange) {
+//            super.onChange(selfChange);
+//            new LoadFavoriteAsync(context, (LoadFavoriteCallback) context, searchMovie).execute();
+//        }
+//    }
+
+    private void showSnackbarMessage(String message) {
+        Snackbar.make(rvFavorite, message, Snackbar.LENGTH_SHORT).show();
     }
 }

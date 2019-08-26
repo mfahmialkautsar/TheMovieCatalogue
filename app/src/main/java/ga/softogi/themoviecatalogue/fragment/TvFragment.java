@@ -23,11 +23,11 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.Objects;
 
+import ga.softogi.themoviecatalogue.adapter.ContentAdapter;
 import ga.softogi.themoviecatalogue.entity.ContentItem;
 import ga.softogi.themoviecatalogue.activity.DetailContentActivity;
 import ga.softogi.themoviecatalogue.network.MainViewModel;
 import ga.softogi.themoviecatalogue.R;
-import ga.softogi.themoviecatalogue.adapter.ContentAdapter;
 
 public class TvFragment extends Fragment {
 
