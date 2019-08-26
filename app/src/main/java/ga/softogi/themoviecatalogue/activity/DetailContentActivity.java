@@ -6,10 +6,9 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.net.Uri;
+import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
@@ -26,8 +25,6 @@ import java.util.Date;
 import java.util.Objects;
 
 import ga.softogi.themoviecatalogue.R;
-import ga.softogi.themoviecatalogue.db.FavMovieHelper;
-import ga.softogi.themoviecatalogue.db.FavTvHelper;
 import ga.softogi.themoviecatalogue.entity.ContentItem;
 
 import static android.provider.BaseColumns._ID;
@@ -39,18 +36,23 @@ import static ga.softogi.themoviecatalogue.db.FavDatabaseContract.TableColumns.P
 import static ga.softogi.themoviecatalogue.db.FavDatabaseContract.TableColumns.RATING;
 import static ga.softogi.themoviecatalogue.db.FavDatabaseContract.TableColumns.RELEASE;
 import static ga.softogi.themoviecatalogue.db.FavDatabaseContract.TableColumns.TITLE;
-import static ga.softogi.themoviecatalogue.db.FavDatabaseContract.TableColumns.TYPE_MOVIE;
-import static ga.softogi.themoviecatalogue.db.FavDatabaseContract.TableColumns.TYPE_TV;
+import static ga.softogi.themoviecatalogue.db.FavDatabaseContract.TableColumns.TYPE;
+import static ga.softogi.themoviecatalogue.entity.ContentItem.TYPE_MOVIE;
+import static ga.softogi.themoviecatalogue.entity.ContentItem.TYPE_TV;
 
 public class DetailContentActivity extends AppCompatActivity {
-    public static final String EXTRA_CONTENT = "extra_movie";
-    public static final String EXTRA_TV = "extra_tv";
+    public static final String EXTRA_CONTENT = "extra_content";
     public static final int NO_INTERNET = R.string.no_internet;
+    int position;
     private MaterialFavoriteButton favoriteButton;
     private ProgressBar progressBar;
-
     private ContentItem content;
-    int position;
+    private MaterialFavoriteButton.OnFavoriteChangeListener favoritedFailed = new MaterialFavoriteButton.OnFavoriteChangeListener() {
+        @Override
+        public void onFavoriteChanged(MaterialFavoriteButton buttonView, boolean favorite) {
+            showSnackbarMessage(getString(R.string.favorite_failed));
+        }
+    };
 //    private FavMovieHelper favMovieHelper;
 //    private FavTvHelper favTvHelper;
 
@@ -89,12 +91,18 @@ public class DetailContentActivity extends AppCompatActivity {
         String title = content.getTitle();
         String overview = content.getOverview();
         String rating = content.getRating();
-        String type = content.getType();
         String poster_path = content.getPosterPath();
         String backdrop_path = content.getBackdropPath();
+        String type = content.getType();
 
+        String topType = (String) Objects.requireNonNull(getSupportActionBar()).getTitle();
         if (getSupportActionBar() != null) {
-            getSupportActionBar().setTitle(type);
+            if (Objects.equals(type, TYPE_MOVIE)) {
+                topType = "Movie";
+            } else if (Objects.equals(type, TYPE_TV)) {
+                topType = "TV Show";
+            }
+            getSupportActionBar().setTitle(topType);
         }
 
         tvTitle.setText(title);
@@ -147,34 +155,30 @@ public class DetailContentActivity extends AppCompatActivity {
         showLoading(true);
 
         ContentValues values = new ContentValues();
+        values.put(_ID, id);
+        values.put(TITLE, title);
+        values.put(OVERVIEW, overview);
+        values.put(RELEASE, release);
+        values.put(RATING, rating);
+        values.put(POSTER_PATH, poster_path);
+        values.put(BACKDROP_PATH, backdrop_path);
+        values.put(TYPE, type);
 
         favoriteButton = findViewById(R.id.favorite);
         if (type != null) {
-            if (type.equals(ContentItem.TYPE_MOVIE)) {
-                values.put(_ID, id);
-                values.put(TITLE, title);
-                values.put(OVERVIEW, overview);
-                values.put(RELEASE, release);
-                values.put(RATING, rating);
-                values.put(POSTER_PATH, poster_path);
-                values.put(BACKDROP_PATH, backdrop_path);
-                values.put(TYPE_MOVIE, type);
+//            if (type.equals(TYPE_MOVIE)) {
 //                favMovieHelper = FavMovieHelper.getInstance(getApplicationContext());
 //                favMovieHelper.openMovie();
-                favMovie(id, title, values);
-            } else if (type.equals(ContentItem.TYPE_TV)) {
-                values.put(_ID, id);
-                values.put(TITLE, title);
-                values.put(OVERVIEW, overview);
-                values.put(RELEASE, release);
-                values.put(RATING, rating);
-                values.put(POSTER_PATH, poster_path);
-                values.put(BACKDROP_PATH, backdrop_path);
-                values.put(TYPE_TV, type);
+                doFav(id, title, type, values);
+//            } else if (type.equals(TYPE_TV)) {
 //                favTvHelper = FavTvHelper.getInstance(getApplicationContext());
 //                favTvHelper.openTv();
-                favTv(id, title, values);
-            }
+//                favTv(id, title, values);
+//            } else {
+//                favoriteButton.setOnFavoriteChangeListener(favoritedFailed);
+//            }
+        } else {
+            favoriteButton.setOnFavoriteChangeListener(favoritedFailed);
         }
 
         if (ivPoster != null && ivBackdrop != null && tvRelease != null) {
@@ -184,34 +188,37 @@ public class DetailContentActivity extends AppCompatActivity {
         isNetworkAvailable();
     }
 
-    private void favMovie(final int id, final String title, final ContentValues values) {
+    private void doFav(final int id, final String title, final String type, final ContentValues values) {
         String[] projection = {
-                _ID, TITLE, OVERVIEW, RELEASE, RATING, POSTER_PATH, BACKDROP_PATH, TYPE_MOVIE
+                _ID, TITLE, OVERVIEW, RELEASE, RATING, POSTER_PATH, BACKDROP_PATH, TYPE
         };
-        String selection = TITLE + " =?";
+        String selection = _ID + " =?";
         String[] selectionArgs = {String.valueOf(id)};
-        Cursor cursor = getContentResolver().query(getIntent().getData(), projection, selection, selectionArgs, null);
-        if (cursor != null) {
-            if (cursor.getCount() > 0) {
+        Cursor cursor = getContentResolver().query(Objects.requireNonNull(getIntent().getData()), projection, selection, selectionArgs, null);
+            if (Objects.requireNonNull(cursor).getCount() > 0) {
                 favoriteButton.setFavorite(true);
                 favoriteButton.setOnFavoriteChangeListener(new MaterialFavoriteButton.OnFavoriteChangeListener() {
                     @Override
                     public void onFavoriteChanged(MaterialFavoriteButton buttonView, boolean favorite) {
                         if (favorite) {
-                            getContentResolver().insert(CONTENT_URI_MOVIE, values);
-    //                        favMovieHelper.beginTransaction();
-    //                        favMovieHelper.insertTransaction(content);
-    //                        favMovieHelper.setTransactionSuccess();
+                            if (type.equals(TYPE_MOVIE)) {
+                                getContentResolver().insert(CONTENT_URI_MOVIE, values);
+                            } else if (type.equals(TYPE_TV)) {
+                                getContentResolver().insert(CONTENT_URI_TV, values);
+                            }
+                            //                        favMovieHelper.beginTransaction();
+                            //                        favMovieHelper.insertTransaction(content);
+                            //                        favMovieHelper.setTransactionSuccess();
                             showSnackbarMessage(title + getString(R.string.add_fav_success));
-    //                        favMovieHelper.endTransaction();
+                            //                        favMovieHelper.endTransaction();
                         } else {
-                            getContentResolver().delete(getIntent().getData(), String.valueOf(id), null);
-    //                        long result = favMovieHelper.deleteFromMovieFav(content.getId());
-    //                        if (result > 0) {
-                                showSnackbarMessage(title + getString(R.string.del_fav_success));
-    //                        } else {
-    //                            showSnackbarMessage(title + getString(R.string.del_fav_failed));
-    //                        }
+                            getContentResolver().delete(Objects.requireNonNull(getIntent().getData()), String.valueOf(id), null);
+                            //                        long result = favMovieHelper.deleteFromMovieFav(content.getId());
+                            //                        if (result > 0) {
+                            showSnackbarMessage(title + getString(R.string.del_fav_success));
+                            //                        } else {
+                            //                            showSnackbarMessage(title + getString(R.string.del_fav_failed));
+                            //                        }
                         }
                     }
                 });
@@ -220,88 +227,90 @@ public class DetailContentActivity extends AppCompatActivity {
                     @Override
                     public void onFavoriteChanged(MaterialFavoriteButton buttonView, boolean favorite) {
                         if (favorite) {
-                            getContentResolver().insert(CONTENT_URI_MOVIE, values);
-    //                        favMovieHelper.beginTransaction();
-    //                        favMovieHelper.insertTransaction(content);
-    //                        favMovieHelper.setTransactionSuccess();
+                            if (type.equals(TYPE_MOVIE)) {
+                                getContentResolver().insert(CONTENT_URI_MOVIE, values);
+                            } else if (type.equals(TYPE_TV)) {
+                                getContentResolver().insert(CONTENT_URI_TV, values);
+                            }
+                            //                        favMovieHelper.beginTransaction();
+                            //                        favMovieHelper.insertTransaction(content);
+                            //                        favMovieHelper.setTransactionSuccess();
                             showSnackbarMessage(title + getString(R.string.add_fav_success));
-    //                        favMovieHelper.endTransaction();
+                            //                        favMovieHelper.endTransaction();
                         } else {
-                            getContentResolver().delete(getIntent().getData(), String.valueOf(id), null);
-    //                        long result = favMovieHelper.deleteFromMovieFav(content.getId());
-    //                        if (result > 0) {
-                                showSnackbarMessage(title + getString(R.string.del_fav_success));
-    //                        } else {
-    //                            showSnackbarMessage(title + getString(R.string.del_fav_failed));
-    //                        }
+                            getContentResolver().delete(Objects.requireNonNull(getIntent().getData()), String.valueOf(id), null);
+                            //                        long result = favMovieHelper.deleteFromMovieFav(content.getId());
+                            //                        if (result > 0) {
+                            showSnackbarMessage(title + getString(R.string.del_fav_success));
+                            //                        } else {
+                            //                            showSnackbarMessage(title + getString(R.string.del_fav_failed));
+                            //                        }
                         }
                     }
                 });
             }
             cursor.close();
         }
-    }
 
-    private void favTv(int id, final String title, final ContentValues values) {
-        String[] projection = {
-                _ID, TITLE, OVERVIEW, RELEASE, RATING, POSTER_PATH, BACKDROP_PATH, TYPE_MOVIE
-        };
-        String selection = TITLE + " =?";
-        String[] selectionArgs = {String.valueOf(id)};
-        Cursor cursor = getContentResolver().query(getIntent().getData(), projection, selection, selectionArgs, null);
-        if (cursor != null) {
-            if (cursor.getCount() > 0) {
-                favoriteButton.setFavorite(true);
-                favoriteButton.setOnFavoriteChangeListener(new MaterialFavoriteButton.OnFavoriteChangeListener() {
-                    @Override
-                    public void onFavoriteChanged(MaterialFavoriteButton buttonView, boolean favorite) {
-                        if (favorite) {
-                            getContentResolver().insert(CONTENT_URI_TV, values);
-    //                        long result = favTvHelper.addToTvFav(content);
-    //                        if (result > 0) {
-    //                            content.setId((int) result);
-                                showSnackbarMessage(title + getString(R.string.add_fav_success));
-    //                        } else {
-    //                            showSnackbarMessage(title + getString(R.string.add_fav_failed));
-    //                        }
-                        } else {
-                            getContentResolver().delete(getIntent().getData(), null, null);
-    //                        long result = favTvHelper.deleteFromTvFav(content.getId());
-    //                        if (result > 0) {
-                                showSnackbarMessage(title + getString(R.string.del_fav_success));
-    //                        } else {
-    //                            showSnackbarMessage(title + getString(R.string.del_fav_failed));
-    //                        }
-                        }
-                    }
-                });
-            } else {
-                favoriteButton.setOnFavoriteChangeListener(new MaterialFavoriteButton.OnFavoriteChangeListener() {
-                    @Override
-                    public void onFavoriteChanged(MaterialFavoriteButton buttonView, boolean favorite) {
-                        if (favorite) {
-                            getContentResolver().insert(CONTENT_URI_TV, values);
-    //                        long result = favTvHelper.addToTvFav(content);
-    //                        if (result > 0) {
-    //                            content.setId((int) result);
-                                showSnackbarMessage(title + getString(R.string.add_fav_success));
-    //                        } else {
-    //                            showSnackbarMessage(title + getString(R.string.add_fav_failed));
-    //                        }
-                        } else {
-                            getContentResolver().delete(getIntent().getData(), null, null);
-    //                        long result = favTvHelper.deleteFromTvFav(content.getId());
-    //                        if (result > 0) {
-                                showSnackbarMessage(title + getString(R.string.del_fav_success));
-    //                        } else {
-    //                            showSnackbarMessage(title + getString(R.string.del_fav_failed));
-    //                        }
-                        }
-                    }
-                });
-            }
-        }
-    }
+//    private void favTv(int id, final String title, final ContentValues values) {
+//        String[] projection = {
+//                _ID, TITLE, OVERVIEW, RELEASE, RATING, POSTER_PATH, BACKDROP_PATH, TYPE
+//        };
+//        String selection = _ID + " =?";
+//        String[] selectionArgs = {String.valueOf(id)};
+//        Cursor cursor = getContentResolver().query(Objects.requireNonNull(getIntent().getData()), projection, selection, selectionArgs, null);
+//            if (Objects.requireNonNull(cursor).getCount() > 0) {
+//                favoriteButton.setFavorite(true);
+//                favoriteButton.setOnFavoriteChangeListener(new MaterialFavoriteButton.OnFavoriteChangeListener() {
+//                    @Override
+//                    public void onFavoriteChanged(MaterialFavoriteButton buttonView, boolean favorite) {
+//                        if (favorite) {
+//                            getContentResolver().insert(CONTENT_URI_TV, values);
+//                            //                        long result = favTvHelper.addToTvFav(content);
+//                            //                        if (result > 0) {
+//                            //                            content.setId((int) result);
+//                            showSnackbarMessage(title + getString(R.string.add_fav_success));
+//                            //                        } else {
+//                            //                            showSnackbarMessage(title + getString(R.string.add_fav_failed));
+//                            //                        }
+//                        } else {
+//                            getContentResolver().delete(Objects.requireNonNull(getIntent().getData()), null, null);
+//                            //                        long result = favTvHelper.deleteFromTvFav(content.getId());
+//                            //                        if (result > 0) {
+//                            showSnackbarMessage(title + getString(R.string.del_fav_success));
+//                            //                        } else {
+//                            //                            showSnackbarMessage(title + getString(R.string.del_fav_failed));
+//                            //                        }
+//                        }
+//                    }
+//                });
+//            } else {
+//                favoriteButton.setOnFavoriteChangeListener(new MaterialFavoriteButton.OnFavoriteChangeListener() {
+//                    @Override
+//                    public void onFavoriteChanged(MaterialFavoriteButton buttonView, boolean favorite) {
+//                        if (favorite) {
+//                            getContentResolver().insert(CONTENT_URI_TV, values);
+//                            //                        long result = favTvHelper.addToTvFav(content);
+//                            //                        if (result > 0) {
+//                            //                            content.setId((int) result);
+//                            showSnackbarMessage(title + getString(R.string.add_fav_success));
+//                            //                        } else {
+//                            //                            showSnackbarMessage(title + getString(R.string.add_fav_failed));
+//                            //                        }
+//                        } else {
+//                            getContentResolver().delete(Objects.requireNonNull(getIntent().getData()), null, null);
+//                            //                        long result = favTvHelper.deleteFromTvFav(content.getId());
+//                            //                        if (result > 0) {
+//                            showSnackbarMessage(title + getString(R.string.del_fav_success));
+//                            //                        } else {
+//                            //                            showSnackbarMessage(title + getString(R.string.del_fav_failed));
+//                            //                        }
+//                        }
+//                    }
+//                });
+//            }
+//            cursor.close();
+//        }
 
     private void showSnackbarMessage(String message) {
         Snackbar.make(findViewById(R.id.detail_layout), message, Snackbar.LENGTH_SHORT).show();

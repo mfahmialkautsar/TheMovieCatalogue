@@ -9,14 +9,14 @@ import static android.provider.BaseColumns._ID;
 public class FavTvDatabaseHelper extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION = 1;
     private static final String SQL_TV_CATALOGUE = "CREATE TABLE " + FavDatabaseContract.TABLE_TV
-            + " (" + _ID + " INTEGER PRIMARY KEY, "
+            + " (" + _ID + " INTEGER NOT NULL, "
             + FavDatabaseContract.TableColumns.TITLE + " TEXT NOT NULL, "
             + FavDatabaseContract.TableColumns.OVERVIEW + " TEXT NOT NULL, "
             + FavDatabaseContract.TableColumns.RELEASE + " TEXT NOT NULL, "
             + FavDatabaseContract.TableColumns.RATING + " TEXT NOT NULL, "
             + FavDatabaseContract.TableColumns.POSTER_PATH + " TEXT NOT NULL, "
             + FavDatabaseContract.TableColumns.BACKDROP_PATH + " TEXT NOT NULL, "
-            + FavDatabaseContract.TableColumns.TYPE_TV + " TEXT NOT NULL"
+            + FavDatabaseContract.TableColumns.TYPE + " TEXT NOT NULL"
             + ");";
     private static String DATABASE_NAME = "dbTvCatalogue";
 

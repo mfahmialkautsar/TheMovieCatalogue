@@ -16,7 +16,7 @@ public class FavMovieDatabaseHelper extends SQLiteOpenHelper {
             + FavDatabaseContract.TableColumns.RATING + " TEXT NOT NULL, "
             + FavDatabaseContract.TableColumns.POSTER_PATH + " TEXT NOT NULL, "
             + FavDatabaseContract.TableColumns.BACKDROP_PATH + " TEXT NOT NULL, "
-            + FavDatabaseContract.TableColumns.TYPE_MOVIE + " TEXT NOT NULL"
+            + FavDatabaseContract.TableColumns.TYPE + " TEXT NOT NULL"
             + ");";
     private static String DATABASE_NAME = "dbMovieCatalogue";
 

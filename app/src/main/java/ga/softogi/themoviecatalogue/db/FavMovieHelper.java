@@ -20,7 +20,7 @@ import static ga.softogi.themoviecatalogue.db.FavDatabaseContract.TableColumns.P
 import static ga.softogi.themoviecatalogue.db.FavDatabaseContract.TableColumns.RATING;
 import static ga.softogi.themoviecatalogue.db.FavDatabaseContract.TableColumns.RELEASE;
 import static ga.softogi.themoviecatalogue.db.FavDatabaseContract.TableColumns.TITLE;
-import static ga.softogi.themoviecatalogue.db.FavDatabaseContract.TableColumns.TYPE_MOVIE;
+import static ga.softogi.themoviecatalogue.db.FavDatabaseContract.TableColumns.TYPE;;
 
 public class FavMovieHelper {
     private static final String DATABASE_MOVIE = FavDatabaseContract.TABLE_MOVIE;
@@ -93,7 +93,7 @@ public class FavMovieHelper {
                 contentItem.setRating(cursor.getString(cursor.getColumnIndexOrThrow(RATING)));
                 contentItem.setPosterPath(cursor.getString(cursor.getColumnIndexOrThrow(POSTER_PATH)));
                 contentItem.setBackdropPath(cursor.getString(cursor.getColumnIndexOrThrow(BACKDROP_PATH)));
-                contentItem.setType(cursor.getString(cursor.getColumnIndexOrThrow(TYPE_MOVIE)));
+                contentItem.setType(cursor.getString(cursor.getColumnIndexOrThrow(TYPE)));
 
                 arrayList.add(contentItem);
                 cursor.moveToNext();
@@ -122,7 +122,7 @@ public class FavMovieHelper {
     public void insertTransaction(ContentItem item) {
         String sql = "INSERT INTO " + DATABASE_MOVIE
                 + " (" + _ID + ", " + TITLE + ", " + OVERVIEW + ", " + RELEASE + ", "
-                + RATING + ", " + POSTER_PATH + ", " + BACKDROP_PATH + ", " + TYPE_MOVIE
+                + RATING + ", " + POSTER_PATH + ", " + BACKDROP_PATH + ", " + TYPE
                 + ") VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         SQLiteStatement statement = database.compileStatement(sql);
         statement.bindLong(1, (long) item.getId());
@@ -139,7 +139,7 @@ public class FavMovieHelper {
 
     public boolean isMovieExists(String searchItem) {
         String[] projection = {
-                _ID, TITLE, OVERVIEW, RELEASE, RATING, POSTER_PATH, BACKDROP_PATH, TYPE_MOVIE
+                _ID, TITLE, OVERVIEW, RELEASE, RATING, POSTER_PATH, BACKDROP_PATH, TYPE
         };
         String selection = TITLE + " =?";
         String[] selectionArgs = {searchItem};

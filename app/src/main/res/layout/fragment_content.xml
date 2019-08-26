@@ -9,7 +9,7 @@
         android:id="@+id/search_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:queryHint="Search Movie..."
+        app:queryHint="@string/Search"
         android:maxLines="1"
         app:actionViewClass="android.support.v7.widget.SearchView"/>
 
@@ -17,7 +17,9 @@
         android:id="@+id/rl"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/search_view">
+        android:layout_below="@id/search_view"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp">
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/rv_content"

@@ -1,15 +1,12 @@
 package ga.softogi.themoviecatalogue.fragment;
 
 import android.content.Context;
-import android.database.ContentObserver;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.HandlerThread;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -20,6 +17,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -31,7 +29,7 @@ import ga.softogi.themoviecatalogue.adapter.ContentAdapter;
 import ga.softogi.themoviecatalogue.db.FavTvHelper;
 import ga.softogi.themoviecatalogue.entity.ContentItem;
 
-import static ga.softogi.themoviecatalogue.MappingHelper.mapTvCursorToArrayList;
+import static ga.softogi.themoviecatalogue.MappingHelper.mapCursorToArrayList;
 import static ga.softogi.themoviecatalogue.db.FavDatabaseContract.TableColumns.CONTENT_URI_TV;
 
 public class FavTvFragment extends Fragment implements LoadFavoriteCallback {
@@ -135,12 +133,12 @@ public class FavTvFragment extends Fragment implements LoadFavoriteCallback {
 
     @Override
     public void postExecute(Cursor items) {
-        ArrayList<ContentItem> listTv = mapTvCursorToArrayList(items);
+        ArrayList<ContentItem> listTv = mapCursorToArrayList(items);
         if (listTv.size() > 0) {
             adapter.setData(listTv);
         } else {
             adapter.setData(new ArrayList<ContentItem>());
-            showSnackbarMessage(getString(R.string.empty_fav));
+            showToast(getString(R.string.empty_fav));
         }
         progressBar.setVisibility(View.GONE);
     }
@@ -220,7 +218,7 @@ public class FavTvFragment extends Fragment implements LoadFavoriteCallback {
 //        }
 //    }
 
-    private void showSnackbarMessage(String message) {
-        Snackbar.make(rvFavorite, message, Snackbar.LENGTH_SHORT).show();
+    private void showToast(String message) {
+        Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
     }
 }

@@ -19,7 +19,7 @@ import static ga.softogi.themoviecatalogue.db.FavDatabaseContract.TableColumns.P
 import static ga.softogi.themoviecatalogue.db.FavDatabaseContract.TableColumns.RATING;
 import static ga.softogi.themoviecatalogue.db.FavDatabaseContract.TableColumns.RELEASE;
 import static ga.softogi.themoviecatalogue.db.FavDatabaseContract.TableColumns.TITLE;
-import static ga.softogi.themoviecatalogue.db.FavDatabaseContract.TableColumns.TYPE_TV;
+import static ga.softogi.themoviecatalogue.db.FavDatabaseContract.TableColumns.TYPE;
 
 public class FavTvHelper {
     private static final String DATABASE_TV = FavDatabaseContract.TABLE_TV;
@@ -93,7 +93,7 @@ public class FavTvHelper {
                 contentItem.setRating(cursor.getString(cursor.getColumnIndexOrThrow(RATING)));
                 contentItem.setPosterPath(cursor.getString(cursor.getColumnIndexOrThrow(POSTER_PATH)));
                 contentItem.setBackdropPath(cursor.getString(cursor.getColumnIndexOrThrow(BACKDROP_PATH)));
-                contentItem.setType(cursor.getString(cursor.getColumnIndexOrThrow(TYPE_TV)));
+                contentItem.setType(cursor.getString(cursor.getColumnIndexOrThrow(TYPE)));
 
                 arrayList.add(contentItem);
                 cursor.moveToNext();
@@ -112,7 +112,7 @@ public class FavTvHelper {
         values.put(RATING, contentItem.getRating());
         values.put(POSTER_PATH, contentItem.getPosterPath());
         values.put(BACKDROP_PATH, contentItem.getBackdropPath());
-        values.put(TYPE_TV, contentItem.getType());
+        values.put(TYPE, contentItem.getType());
         return database.insert(DATABASE_TV, null, values);
     }
 
@@ -122,7 +122,7 @@ public class FavTvHelper {
 
     public boolean isTvExists(String searchItem) {
         String[] projection = {
-                _ID, TITLE, OVERVIEW, RELEASE, RATING, POSTER_PATH, BACKDROP_PATH, TYPE_TV
+                _ID, TITLE, OVERVIEW, RELEASE, RATING, POSTER_PATH, BACKDROP_PATH, TYPE
         };
         String selection = TITLE + " =?";
         String[] selectionArgs = {searchItem};

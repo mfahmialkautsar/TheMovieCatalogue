@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Objects;
 
+import ga.softogi.themoviecatalogue.db.FavDatabaseContract;
 import ga.softogi.themoviecatalogue.entity.ContentItem;
 import ga.softogi.themoviecatalogue.CustomOnItemClickListener;
 import ga.softogi.themoviecatalogue.activity.DetailContentActivity;
@@ -62,9 +63,9 @@ public class ContentAdapter extends RecyclerView.Adapter<ContentAdapter.ContentV
                 Uri uri = null;
                 Uri uriMovie = Uri.parse(CONTENT_URI_MOVIE + "/" + getData().get(position).getId());
                 Uri uriTv = Uri.parse(CONTENT_URI_TV + "/" + getData().get(position).getId());
-                if (Objects.equals(mData.get(position).getType(), "Movie")) {
+                if (Objects.equals(mData.get(position).getType(), ContentItem.TYPE_MOVIE)) {
                     uri = uriMovie;
-                } else if (Objects.equals(mData.get(position).getType(), "TV")) {
+                } else if (Objects.equals(mData.get(position).getType(), ContentItem.TYPE_TV)) {
                     uri = uriTv;
                 }
                 intent.setData(uri);

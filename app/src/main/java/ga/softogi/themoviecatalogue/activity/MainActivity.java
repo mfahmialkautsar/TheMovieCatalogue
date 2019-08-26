@@ -1,4 +1,4 @@
-package ga.softogi.themoviecatalogue;
+package ga.softogi.themoviecatalogue.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,12 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.navigation.ui.AppBarConfiguration;
-import androidx.navigation.ui.NavigationUI;
-
-import ga.softogi.themoviecatalogue.activity.FavActivity;
+import ga.softogi.themoviecatalogue.R;
 import ga.softogi.themoviecatalogue.fragment.MovieFragment;
 import ga.softogi.themoviecatalogue.fragment.TvFragment;
 

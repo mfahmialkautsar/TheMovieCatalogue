@@ -20,4 +20,7 @@
     <string name="favorite">Favorit</string>
     <string name="overview_not_found">Sinopsis tidak ditemukan</string>
     <string name="no_rating">Tidak Ada Rating</string>
+    <string name="empty_fav">Belum ada favorit</string>
+    <string name="favorite_failed">Gagal</string>
+    <string name="Search">Cari…</string>
 </resources>

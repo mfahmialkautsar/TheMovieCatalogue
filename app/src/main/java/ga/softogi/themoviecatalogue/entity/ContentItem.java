@@ -16,8 +16,8 @@ import static ga.softogi.themoviecatalogue.db.FavDatabaseContract.getColumnStrin
 
 public class ContentItem implements Parcelable {
     public static final String STATE_CONTENT = "state_content";
-    public static final String TYPE_MOVIE = "Movie";
-    public static final String TYPE_TV = "TV";
+    public static final String TYPE_MOVIE = "type_movie";
+    public static final String TYPE_TV = "type_tv";
 
     private int id;
     private String title;
@@ -131,11 +131,11 @@ public class ContentItem implements Parcelable {
         this.rating = getColumnString(cursor, RATING);
         this.posterPath = getColumnString(cursor, POSTER_PATH);
         this.backdropPath = getColumnString(cursor, BACKDROP_PATH);
-        if (getColumnString(cursor, TYPE_MOVIE) != null) {
-            this.type = getColumnString(cursor, TYPE_MOVIE);
-        } else if (getColumnString(cursor, TYPE_TV) != null) {
-            this.type = getColumnString(cursor, TYPE_TV);
-        }
+//        if (getColumnString(cursor, TYPE_MOVIE) != null) {
+//            this.type = getColumnString(cursor, TYPE_MOVIE);
+//        } else if (getColumnString(cursor, TYPE_TV) != null) {
+//            this.type = getColumnString(cursor, TYPE_TV);
+//        }
     }
 
     protected ContentItem(Parcel in) {

@@ -20,4 +20,6 @@
     <string name="overview_not_found">Overview not found</string>
     <string name="no_rating">No Rating</string>
     <string name="empty_fav">Nothing in Favorite</string>
+    <string name="favorite_failed">Failed</string>
+    <string name="Search">Search…</string>
 </resources>

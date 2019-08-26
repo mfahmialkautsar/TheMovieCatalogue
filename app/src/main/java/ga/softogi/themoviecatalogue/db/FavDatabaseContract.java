@@ -4,8 +4,6 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.provider.BaseColumns;
 
-import ga.softogi.themoviecatalogue.entity.ContentItem;
-
 public class FavDatabaseContract {
 
     public static final String TABLE_MOVIE = "MovieCatalogue";
@@ -21,9 +19,7 @@ public class FavDatabaseContract {
         public static String RATING = "rating";
         public static String POSTER_PATH = "poster_path";
         public static String BACKDROP_PATH = "backdrop_path";
-
-        public static String TYPE_MOVIE = ContentItem.TYPE_MOVIE;
-        public static String TYPE_TV = ContentItem.TYPE_TV;
+        public static String TYPE = "type";
 
         public static final Uri CONTENT_URI_MOVIE = new Uri.Builder().scheme(SCHEME)
                 .authority(AUTHORITY_MOVIE)
