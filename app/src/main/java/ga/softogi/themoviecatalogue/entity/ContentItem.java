@@ -11,6 +11,7 @@ import static ga.softogi.themoviecatalogue.db.FavDatabaseContract.TableColumns.P
 import static ga.softogi.themoviecatalogue.db.FavDatabaseContract.TableColumns.RATING;
 import static ga.softogi.themoviecatalogue.db.FavDatabaseContract.TableColumns.RELEASE;
 import static ga.softogi.themoviecatalogue.db.FavDatabaseContract.TableColumns.TITLE;
+import static ga.softogi.themoviecatalogue.db.FavDatabaseContract.TableColumns.TYPE;
 import static ga.softogi.themoviecatalogue.db.FavDatabaseContract.getColumnInt;
 import static ga.softogi.themoviecatalogue.db.FavDatabaseContract.getColumnString;
 
@@ -131,6 +132,7 @@ public class ContentItem implements Parcelable {
         this.rating = getColumnString(cursor, RATING);
         this.posterPath = getColumnString(cursor, POSTER_PATH);
         this.backdropPath = getColumnString(cursor, BACKDROP_PATH);
+        this.type = getColumnString(cursor, TYPE);
 //        if (getColumnString(cursor, TYPE_MOVIE) != null) {
 //            this.type = getColumnString(cursor, TYPE_MOVIE);
 //        } else if (getColumnString(cursor, TYPE_TV) != null) {

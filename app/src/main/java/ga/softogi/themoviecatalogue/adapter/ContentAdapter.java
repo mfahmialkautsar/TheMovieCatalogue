@@ -69,7 +69,7 @@ public class ContentAdapter extends RecyclerView.Adapter<ContentAdapter.ContentV
                     uri = uriTv;
                 }
                 intent.setData(uri);
-                intent.putExtra("extra_position", position);
+//                intent.putExtra("extra_position", position);
                 intent.putExtra(EXTRA_CONTENT, mData.get(holder.getAdapterPosition()));
                 holder.itemView.getContext().startActivity(intent);
             }

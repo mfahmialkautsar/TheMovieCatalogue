@@ -20,7 +20,7 @@ import static ga.softogi.themoviecatalogue.db.FavDatabaseContract.TableColumns.P
 import static ga.softogi.themoviecatalogue.db.FavDatabaseContract.TableColumns.RATING;
 import static ga.softogi.themoviecatalogue.db.FavDatabaseContract.TableColumns.RELEASE;
 import static ga.softogi.themoviecatalogue.db.FavDatabaseContract.TableColumns.TITLE;
-import static ga.softogi.themoviecatalogue.db.FavDatabaseContract.TableColumns.TYPE;;
+import static ga.softogi.themoviecatalogue.db.FavDatabaseContract.TableColumns.TYPE;
 
 public class FavMovieHelper {
     private static final String DATABASE_MOVIE = FavDatabaseContract.TABLE_MOVIE;
@@ -31,6 +31,9 @@ public class FavMovieHelper {
 
     private FavMovieHelper(Context context) {
         favMovieDatabaseHelper = new FavMovieDatabaseHelper(context);
+    }
+
+    public FavMovieHelper() {
     }
 
     public static FavMovieHelper getInstance(Context context) {

@@ -22,4 +22,8 @@
     <string name="empty_fav">Nothing in Favorite</string>
     <string name="favorite_failed">Failed</string>
     <string name="Search">Search…</string>
+    <string name="appwidget_text">EXAMPLE</string>
+    <string name="add_widget">Add widget</string>
+    <string name="favorite_films">Favorite Films</string>
+    <string name="widget_image">Widget Image</string>
 </resources>

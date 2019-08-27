@@ -9,7 +9,7 @@ import static android.provider.BaseColumns._ID;
 public class FavTvDatabaseHelper extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION = 1;
     private static final String SQL_TV_CATALOGUE = "CREATE TABLE " + FavDatabaseContract.TABLE_TV
-            + " (" + _ID + " INTEGER NOT NULL, "
+            + " (" + _ID + " INTEGER PRIMARY KEY NOT NULL, "
             + FavDatabaseContract.TableColumns.TITLE + " TEXT NOT NULL, "
             + FavDatabaseContract.TableColumns.OVERVIEW + " TEXT NOT NULL, "
             + FavDatabaseContract.TableColumns.RELEASE + " TEXT NOT NULL, "

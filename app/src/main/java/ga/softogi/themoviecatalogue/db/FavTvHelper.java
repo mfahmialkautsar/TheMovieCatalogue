@@ -33,6 +33,9 @@ public class FavTvHelper {
         favTvDatabaseHelper = new FavTvDatabaseHelper(context);
     }
 
+    public FavTvHelper() {
+    }
+
     public static FavTvHelper getInstance(Context context) {
         if (INSTANCE == null) {
             synchronized (SQLiteOpenHelper.class) {

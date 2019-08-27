@@ -23,4 +23,8 @@
     <string name="empty_fav">Belum ada favorit</string>
     <string name="favorite_failed">Gagal</string>
     <string name="Search">Cari…</string>
+    <string name="appwidget_text">CONTOH</string>
+    <string name="add_widget">Tambah Widget</string>
+    <string name="favorite_films">Film Favorit</string>
+    <string name="widget_image">Gambar Widget</string>
 </resources>
