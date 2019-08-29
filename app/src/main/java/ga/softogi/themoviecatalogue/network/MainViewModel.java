@@ -16,7 +16,6 @@ import java.util.ArrayList;
 
 import cz.msebera.android.httpclient.Header;
 import ga.softogi.themoviecatalogue.BuildConfig;
-import ga.softogi.themoviecatalogue.db.FavDatabaseContract;
 import ga.softogi.themoviecatalogue.entity.ContentItem;
 
 public class MainViewModel extends ViewModel {

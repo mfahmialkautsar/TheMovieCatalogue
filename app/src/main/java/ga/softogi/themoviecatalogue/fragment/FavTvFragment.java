@@ -74,6 +74,7 @@ public class FavTvFragment extends Fragment implements LoadFavoriteCallback {
     private void init(View view, Bundle savedInstanceState) {
 
         SearchView searchView = view.findViewById(R.id.search_view);
+        searchView.setQueryHint(getString(R.string.search_tv));
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
@@ -161,8 +162,33 @@ public class FavTvFragment extends Fragment implements LoadFavoriteCallback {
         super.onSaveInstanceState(outState);
     }
 
+    private void showToast(String message) {
+        Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+    }
+
+//    public static class DataObserver extends ContentObserver {
+//        /**
+//         * Creates a content observer.
+//         *
+//         * @param handler The handler to run {@link #onChange} on, or null if none.
+//         */
+//        final Context context;
+//        final String searchTv;
+//        public DataObserver(Handler handler, Context context, String searchTv) {
+//            super(handler);
+//            this.context = context;
+//            this.searchTv = searchTv;
+//        }
+//
+//        @Override
+//        public void onChange(boolean selfChange) {
+//            super.onChange(selfChange);
+//            new LoadFavoriteAsync(context, (LoadFavoriteCallback) context, searchTv).execute();
+//        }
+//    }
+
     private static class LoadFavoriteAsync extends AsyncTask<Void, Void, Cursor> {
-//        private final WeakReference<FavTvHelper> weakTvHelper;
+        //        private final WeakReference<FavTvHelper> weakTvHelper;
         private final WeakReference<Context> weakContext;
         private final WeakReference<LoadFavoriteCallback> weakCallback;
         private final String title;
@@ -195,30 +221,5 @@ public class FavTvFragment extends Fragment implements LoadFavoriteCallback {
             super.onPostExecute(items);
             weakCallback.get().postExecute(items);
         }
-    }
-
-//    public static class DataObserver extends ContentObserver {
-//        /**
-//         * Creates a content observer.
-//         *
-//         * @param handler The handler to run {@link #onChange} on, or null if none.
-//         */
-//        final Context context;
-//        final String searchTv;
-//        public DataObserver(Handler handler, Context context, String searchTv) {
-//            super(handler);
-//            this.context = context;
-//            this.searchTv = searchTv;
-//        }
-//
-//        @Override
-//        public void onChange(boolean selfChange) {
-//            super.onChange(selfChange);
-//            new LoadFavoriteAsync(context, (LoadFavoriteCallback) context, searchTv).execute();
-//        }
-//    }
-
-    private void showToast(String message) {
-        Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
     }
 }

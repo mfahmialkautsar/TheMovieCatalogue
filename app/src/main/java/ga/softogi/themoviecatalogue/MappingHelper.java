@@ -14,8 +14,6 @@ import static ga.softogi.themoviecatalogue.db.FavDatabaseContract.TableColumns.R
 import static ga.softogi.themoviecatalogue.db.FavDatabaseContract.TableColumns.RELEASE;
 import static ga.softogi.themoviecatalogue.db.FavDatabaseContract.TableColumns.TITLE;
 import static ga.softogi.themoviecatalogue.db.FavDatabaseContract.TableColumns.TYPE;
-//import static ga.softogi.themoviecatalogue.db.FavDatabaseContract.TableColumns.TYPE_MOVIE;
-//import static ga.softogi.themoviecatalogue.db.FavDatabaseContract.TableColumns.TYPE_TV;
 
 public class MappingHelper {
 

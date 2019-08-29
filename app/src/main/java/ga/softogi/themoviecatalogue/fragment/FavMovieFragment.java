@@ -39,7 +39,7 @@ public class FavMovieFragment extends Fragment implements LoadFavoriteCallback {
     private ContentAdapter adapter;
     private RecyclerView rvFavorite;
     private HandlerThread handlerThread;
-//    private DataObserver myObserver;
+    //    private DataObserver myObserver;
     private ArrayList<ContentItem> listFavMovie = new ArrayList<>();
 
 //    private View.OnClickListener btnSearchListener = new View.OnClickListener() {
@@ -90,6 +90,7 @@ public class FavMovieFragment extends Fragment implements LoadFavoriteCallback {
 //        editSearch = view.findViewById(R.id.search_view);
 
         SearchView searchView = view.findViewById(R.id.search_view);
+        searchView.setQueryHint(getString(R.string.search_movie));
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
@@ -170,6 +171,32 @@ public class FavMovieFragment extends Fragment implements LoadFavoriteCallback {
         super.onDestroy();
 //        favMovieHelper.closeMovie();
     }
+
+    private void showToast(String message) {
+        Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+    }
+
+//    public static class DataObserver extends ContentObserver {
+//        /**
+//         * Creates a content observer.
+//         *
+//         * @param handler The handler to run {@link #onChange} on, or null if none.
+//         */
+//        final Context context;
+//        String searchMovie;
+//        public DataObserver(Handler handler, Context context, String searchMovie) {
+//            super(handler);
+//            this.context = context;
+//            this.searchMovie = searchMovie;
+//        }
+//
+//        @Override
+//        public void onChange(boolean selfChange) {
+//            super.onChange(selfChange);
+//            new LoadFavoriteAsync(context, (LoadFavoriteCallback) context, searchMovie).execute();
+//        }
+//    }
+
     /* Ini dipake kalo gak mao pake onResume. Bisa sih dipake berbarengan, tapi jadi useless
         @Override
         public void onSaveInstanceState(@NonNull Bundle outState) {
@@ -178,7 +205,7 @@ public class FavMovieFragment extends Fragment implements LoadFavoriteCallback {
         }
     */
     private static class LoadFavoriteAsync extends AsyncTask<Void, Void, Cursor> {
-//        private final WeakReference<FavMovieHelper> weakContentHelper;
+        //        private final WeakReference<FavMovieHelper> weakContentHelper;
         private final WeakReference<Context> weakContext;
         private final WeakReference<LoadFavoriteCallback> weakCallback;
         private final String title;
@@ -211,30 +238,5 @@ public class FavMovieFragment extends Fragment implements LoadFavoriteCallback {
             super.onPostExecute(items);
             weakCallback.get().postExecute(items);
         }
-    }
-
-//    public static class DataObserver extends ContentObserver {
-//        /**
-//         * Creates a content observer.
-//         *
-//         * @param handler The handler to run {@link #onChange} on, or null if none.
-//         */
-//        final Context context;
-//        String searchMovie;
-//        public DataObserver(Handler handler, Context context, String searchMovie) {
-//            super(handler);
-//            this.context = context;
-//            this.searchMovie = searchMovie;
-//        }
-//
-//        @Override
-//        public void onChange(boolean selfChange) {
-//            super.onChange(selfChange);
-//            new LoadFavoriteAsync(context, (LoadFavoriteCallback) context, searchMovie).execute();
-//        }
-//    }
-
-    private void showToast(String message) {
-        Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
     }
 }

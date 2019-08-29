@@ -21,11 +21,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Objects;
 
-import ga.softogi.themoviecatalogue.db.FavDatabaseContract;
-import ga.softogi.themoviecatalogue.entity.ContentItem;
 import ga.softogi.themoviecatalogue.CustomOnItemClickListener;
-import ga.softogi.themoviecatalogue.activity.DetailContentActivity;
 import ga.softogi.themoviecatalogue.R;
+import ga.softogi.themoviecatalogue.activity.DetailContentActivity;
+import ga.softogi.themoviecatalogue.entity.ContentItem;
 
 import static ga.softogi.themoviecatalogue.activity.DetailContentActivity.EXTRA_CONTENT;
 import static ga.softogi.themoviecatalogue.db.FavDatabaseContract.TableColumns.CONTENT_URI_MOVIE;
@@ -96,7 +95,7 @@ public class ContentAdapter extends RecyclerView.Adapter<ContentAdapter.ContentV
             tvRelease = itemView.findViewById(R.id.tv_release);
             tvRating = itemView.findViewById(R.id.tv_rating);
             ivThumbnail = itemView.findViewById(R.id.iv_thumbnail);
-            favorite = itemView.findViewById(R.id.favorite);
+            favorite = itemView.findViewById(R.id.action_favorite);
         }
 
         void bind(ContentItem content) {

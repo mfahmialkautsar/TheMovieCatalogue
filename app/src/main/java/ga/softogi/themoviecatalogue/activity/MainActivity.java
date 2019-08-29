@@ -89,11 +89,11 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.change_language_setting:
-                Intent mIntent = new Intent(Settings.ACTION_LOCALE_SETTINGS);
+            case R.id.action_settings:
+                Intent mIntent = new Intent(this, SettingsActivity.class);
                 startActivity(mIntent);
                 break;
-            case R.id.favorite:
+            case R.id.action_favorite:
                 Intent favoriteIntent = new Intent(MainActivity.this, FavActivity.class);
                 startActivity(favoriteIntent);
                 break;

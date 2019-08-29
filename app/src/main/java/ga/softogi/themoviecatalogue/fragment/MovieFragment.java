@@ -1,9 +1,14 @@
 package ga.softogi.themoviecatalogue.fragment;
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -13,21 +18,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
-import android.support.annotation.Nullable;
-import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
-import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModelProviders;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Objects;
 
-import ga.softogi.themoviecatalogue.entity.ContentItem;
-import ga.softogi.themoviecatalogue.activity.DetailContentActivity;
-import ga.softogi.themoviecatalogue.network.MainViewModel;
 import ga.softogi.themoviecatalogue.R;
+import ga.softogi.themoviecatalogue.activity.DetailContentActivity;
 import ga.softogi.themoviecatalogue.adapter.ContentAdapter;
+import ga.softogi.themoviecatalogue.entity.ContentItem;
+import ga.softogi.themoviecatalogue.network.MainViewModel;
 
 public class MovieFragment extends Fragment {
 
@@ -85,6 +85,7 @@ public class MovieFragment extends Fragment {
         progressBar = view.findViewById(R.id.progress_bar);
 
         SearchView searchView = view.findViewById(R.id.search_view);
+        searchView.setQueryHint(getString(R.string.search_movie));
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {

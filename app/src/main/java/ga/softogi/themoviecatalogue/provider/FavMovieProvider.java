@@ -25,7 +25,6 @@ public class FavMovieProvider extends ContentProvider {
     private static final int MOVIE_ID = 2;
     private static final int MOVIE_TITLE = 3;
     private static final UriMatcher sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
-    private FavMovieHelper favMovieHelper;
 
     static {
         sUriMatcher.addURI(AUTHORITY_MOVIE, TABLE_MOVIE, MOVIE);
@@ -34,6 +33,8 @@ public class FavMovieProvider extends ContentProvider {
 
         sUriMatcher.addURI(AUTHORITY_MOVIE, TABLE_MOVIE, MOVIE_TITLE);
     }
+
+    private FavMovieHelper favMovieHelper;
 
     @Override
     public boolean onCreate() {

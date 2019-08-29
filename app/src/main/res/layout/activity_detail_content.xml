@@ -133,7 +133,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@id/tv_rating"
             app:mfb_animate_favorite="true"
-            app:mfb_animate_unfavorite="true"
             app:mfb_type="heart" />
 
         <ProgressBar

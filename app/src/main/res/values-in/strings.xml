@@ -27,4 +27,30 @@
     <string name="add_widget">Tambah Widget</string>
     <string name="favorite_films">Film Favorit</string>
     <string name="widget_image">Gambar Widget</string>
+    <string name="settings">Pengaturan</string>
+    <string name="search_movie">Cari Film…</string>
+    <string name="search_tv">Cari Acara TV…</string>
+    <string name="your_favorite_films_will_show_here">Favorit film anda akan tampil di sini</string>
+
+    <string name="daily_reminder_label">Pengingat harian</string>
+    <string name="activated">diaktifkan</string>
+    <string name="deactivated">dinonaktifkan</string>
+
+    <string name="daily_reminder_message">Selamat pagi! Jangan lupa buat cek film hari ini ya!</string>
+    <string name="daily_release_reminder">Pengingat rilis film harian</string>
+    <string name="release_plural">\ film telah</string>
+    <string name="release_singular">\ film telah</string>
+    <string name="one_released">\ rilis hari ini, salah satunya adalah \</string>
+    <string name="no_movie_released">Gak ada film yang rilis hari ini :(</string>
+    <string name="released">Telah rilis!</string>
+    <string name="hey_you">Hey kamu! Iya kamu!</string>
+
+    <string name="notification">Notifikasi</string>
+    <string name="language">Bahasa</string>
+    <string name="release_reminder">Pengingat rilis</string>
+    <string name="release_reminder_summary">Dapatkan info film yang rilis setiap hari</string>
+    <string name="daily_reminder">Pengingat harian</string>
+    <string name="daily_reminder_summary">Ngingetin kamu buat balik ke sini setiap jam 7 pagi</string>
+    <string name="locale">Lokal</string>
+    <string name="locale_summary">Ganti bahasa hp kamu</string>
 </resources>

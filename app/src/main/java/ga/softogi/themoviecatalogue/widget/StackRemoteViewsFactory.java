@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.os.Binder;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.RemoteViews;
@@ -24,6 +25,8 @@ public class StackRemoteViewsFactory implements RemoteViewsService.RemoteViewsFa
     private final Context mContext;
     private Cursor cursor;
     private ArrayList<ContentItem> list;
+    private FavMovieHelper favMovieHelper;
+    private FavTvHelper favTvHelper;
 
     public StackRemoteViewsFactory(Context context) {
         this.mContext = context;
@@ -31,6 +34,10 @@ public class StackRemoteViewsFactory implements RemoteViewsService.RemoteViewsFa
 
     @Override
     public void onCreate() {
+        favMovieHelper = FavMovieHelper.getInstance(mContext);
+        favMovieHelper.openMovie();
+        favTvHelper = FavTvHelper.getInstance(mContext);
+        favTvHelper.openTv();
     }
 
     @Override
@@ -38,24 +45,21 @@ public class StackRemoteViewsFactory implements RemoteViewsService.RemoteViewsFa
 //        if (cursor != null) {
 //            cursor.close();
 //        }
-//        final long identityToken = Binder.clearCallingIdentity();
+        final long identityToken = Binder.clearCallingIdentity();
 //        cursor = mContext.getContentResolver().query(CONTENT_URI_MOVIE, null, null, null, null);
-        FavMovieHelper favMovieHelper = new FavMovieHelper();
-        FavTvHelper favTvHelper = new FavTvHelper();
-        favMovieHelper.openMovie();
-        favTvHelper.openTv();
         list = new ArrayList<>();
-        list.addAll(favMovieHelper.getAllMovies(null));
-        list.addAll(favTvHelper.getAllTv(null));
-        favMovieHelper.closeMovie();
-        favTvHelper.closeTv();
 
-//        Binder.restoreCallingIdentity(identityToken);
+        list.addAll(favMovieHelper.getAllMovies(null));
+
+        list.addAll(favTvHelper.getAllTv(null));
+
+        Binder.restoreCallingIdentity(identityToken);
     }
 
     @Override
     public void onDestroy() {
-
+        favMovieHelper.closeMovie();
+        favTvHelper.closeTv();
     }
 
     @Override
@@ -66,20 +70,22 @@ public class StackRemoteViewsFactory implements RemoteViewsService.RemoteViewsFa
     @Override
     public RemoteViews getViewAt(int position) {
         RemoteViews rv = new RemoteViews(mContext.getPackageName(), R.layout.widget_item);
-        String title;
+        String title = null;
 //        if (cursor.moveToPosition(position)) {
 //            ContentItem contentItem = new ContentItem(cursor);
         Bitmap backdrop = null;
-        title = list.get(position).getTitle();
-        try {
-            backdrop = Picasso.get()
-                    .load("https://image.tmdb.org/t/p/w500/" + list.get(position).getBackdropPath())
-                    .get();
-        } catch (Exception e) {
-            Log.d("Widget load ERROR", e.getMessage());
-        }
-        rv.setImageViewBitmap(R.id.image_view, backdrop);
+        if (list.size() > 0) {
+            title = list.get(position).getTitle();
+            try {
+                backdrop = Picasso.get()
+                        .load("https://image.tmdb.org/t/p/w500/" + list.get(position).getBackdropPath())
+                        .get();
+            } catch (Exception e) {
+                Log.d("Widget load ERROR", e.getMessage());
+            }
+            rv.setImageViewBitmap(R.id.image_view, backdrop);
 //        }
+        }
 
         Bundle extras = new Bundle();
         extras.putString(FavoriteWidget.EXTRA_ITEM, title);

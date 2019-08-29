@@ -25,7 +25,6 @@ public class FavTvProvider extends ContentProvider {
     private static final int TV_ID = 2;
     private static final int TV_TITLE = 3;
     private static final UriMatcher sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
-    private FavTvHelper favTvHelper;
 
     static {
         sUriMatcher.addURI(AUTHORITY_TV, TABLE_TV, TV);
@@ -34,6 +33,8 @@ public class FavTvProvider extends ContentProvider {
 
         sUriMatcher.addURI(AUTHORITY_TV, TABLE_TV, TV_TITLE);
     }
+
+    private FavTvHelper favTvHelper;
 
     @Override
     public boolean onCreate() {
