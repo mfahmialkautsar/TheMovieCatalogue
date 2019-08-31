@@ -1,4 +1,4 @@
-package ga.softogi.themoviecatalogue.fragment;
+package ga.softogi.themoviecatalogue.preference;
 
 import android.content.Intent;
 import android.os.Bundle;

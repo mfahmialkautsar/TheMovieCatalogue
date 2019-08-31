@@ -37,4 +37,14 @@
         android:foregroundGravity="center"
         android:visibility="gone" />
 
+    <TextView
+        android:id="@+id/tv_if_empty"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:gravity="center"
+        android:textStyle="bold"
+        android:visibility="gone"
+        tools:text="Nothing in Favorite" />
+
 </RelativeLayout>

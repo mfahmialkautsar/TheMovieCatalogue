@@ -10,6 +10,8 @@ import static ga.softogi.thefavoritemovie.db.DatabaseContract.TableColumns.RATIN
 import static ga.softogi.thefavoritemovie.db.DatabaseContract.TableColumns.RELEASE;
 import static ga.softogi.thefavoritemovie.db.DatabaseContract.TableColumns.TITLE;
 import static ga.softogi.thefavoritemovie.db.DatabaseContract.TableColumns.TYPE;
+import static ga.softogi.thefavoritemovie.db.DatabaseContract.TableColumns.VOTE_COUNT;
+import static ga.softogi.thefavoritemovie.db.DatabaseContract.getColumnDouble;
 import static ga.softogi.thefavoritemovie.db.DatabaseContract.getColumnInt;
 import static ga.softogi.thefavoritemovie.db.DatabaseContract.getColumnString;
 
@@ -21,17 +23,19 @@ public class ContentItem {
     private String title;
     private String overview;
     private String release;
-    private String rating;
+    private double rating;
+    private int voteCount;
     private String posterPath;
     private String backdropPath;
     private String type;
 
-    public ContentItem(int id, String title, String overview, String release, String rating, String posterPath, String backdropPath, String type) {
+    public ContentItem(int id, String title, String overview, String release, double rating, int voteCount, String posterPath, String backdropPath, String type) {
         this.id = id;
         this.title = title;
         this.overview = overview;
         this.release = release;
         this.rating = rating;
+        this.voteCount = voteCount;
         this.posterPath = posterPath;
         this.backdropPath = backdropPath;
         this.type = type;
@@ -42,7 +46,8 @@ public class ContentItem {
         this.title = getColumnString(cursor, TITLE);
         this.overview = getColumnString(cursor, OVERVIEW);
         this.release = getColumnString(cursor, RELEASE);
-        this.rating = getColumnString(cursor, RATING);
+        this.rating = getColumnDouble(cursor, RATING);
+        this.voteCount = getColumnInt(cursor, VOTE_COUNT);
         this.posterPath = getColumnString(cursor, POSTER_PATH);
         this.backdropPath = getColumnString(cursor, BACKDROP_PATH);
         this.type = getColumnString(cursor, TYPE);
@@ -80,12 +85,20 @@ public class ContentItem {
         this.release = release;
     }
 
-    public String getRating() {
+    public double getRating() {
         return rating;
     }
 
-    public void setRating(String rating) {
+    public void setRating(double rating) {
         this.rating = rating;
+    }
+
+    public int getVoteCount() {
+        return voteCount;
+    }
+
+    public void setVoteCount(int voteCount) {
+        this.voteCount = voteCount;
     }
 
     public String getPosterPath() {

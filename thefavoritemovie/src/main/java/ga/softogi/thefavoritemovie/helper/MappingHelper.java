@@ -14,6 +14,7 @@ import static ga.softogi.thefavoritemovie.db.DatabaseContract.TableColumns.RATIN
 import static ga.softogi.thefavoritemovie.db.DatabaseContract.TableColumns.RELEASE;
 import static ga.softogi.thefavoritemovie.db.DatabaseContract.TableColumns.TITLE;
 import static ga.softogi.thefavoritemovie.db.DatabaseContract.TableColumns.TYPE;
+import static ga.softogi.thefavoritemovie.db.DatabaseContract.TableColumns.VOTE_COUNT;
 
 public class MappingHelper {
 
@@ -25,11 +26,12 @@ public class MappingHelper {
             String title = movieCursor.getString(movieCursor.getColumnIndexOrThrow(TITLE));
             String overview = movieCursor.getString(movieCursor.getColumnIndexOrThrow(OVERVIEW));
             String release = movieCursor.getString(movieCursor.getColumnIndexOrThrow(RELEASE));
-            String rating = movieCursor.getString(movieCursor.getColumnIndexOrThrow(RATING));
+            double rating = movieCursor.getDouble(movieCursor.getColumnIndexOrThrow(RATING));
+            int voteCount = movieCursor.getInt(movieCursor.getColumnIndexOrThrow(VOTE_COUNT));
             String poster = movieCursor.getString(movieCursor.getColumnIndexOrThrow(POSTER_PATH));
             String backdrop = movieCursor.getString(movieCursor.getColumnIndexOrThrow(BACKDROP_PATH));
             String type = movieCursor.getString(movieCursor.getColumnIndexOrThrow(TYPE));
-            movieList.add(new ContentItem(id, title, overview, release, rating, poster, backdrop, type));
+            movieList.add(new ContentItem(id, title, overview, release, rating, voteCount, poster, backdrop, type));
         }
         return movieList;
     }

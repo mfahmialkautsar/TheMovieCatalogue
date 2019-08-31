@@ -22,4 +22,6 @@
     <string name="empty_fav">Nothing in Favorite</string>
     <string name="favorite_failed">Failed</string>
     <string name="Search">Search…</string>
+    <string name="no_fav_movie">You haven\'t added any Movie to Favorite</string>
+    <string name="no_fav_tv">You haven\'t added any TV Show to Favorite</string>
 </resources>

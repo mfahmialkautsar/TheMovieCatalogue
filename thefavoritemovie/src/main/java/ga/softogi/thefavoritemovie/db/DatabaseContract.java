@@ -20,6 +20,10 @@ public class DatabaseContract {
         return cursor.getInt(cursor.getColumnIndex(columnName));
     }
 
+    public static double getColumnDouble(Cursor cursor, String columnName) {
+        return cursor.getDouble(cursor.getColumnIndex(columnName));
+    }
+
     public static final class TableColumns implements BaseColumns {
         public static final Uri CONTENT_URI_MOVIE = new Uri.Builder().scheme(SCHEME)
                 .authority(AUTHORITY_MOVIE)
@@ -33,6 +37,7 @@ public class DatabaseContract {
         public static String OVERVIEW = "overview";
         public static String RELEASE = "released";
         public static String RATING = "rating";
+        public static String VOTE_COUNT = "vote_count";
         public static String POSTER_PATH = "poster_path";
         public static String BACKDROP_PATH = "backdrop_path";
         public static String TYPE = "type";

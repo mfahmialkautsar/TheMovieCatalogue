@@ -1,59 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.circularreveal.cardview.CircularRevealCardView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_gravity="center"
-    android:layout_marginTop="4dp"
-    android:layout_marginBottom="4dp">
+    android:layout_margin="2dp">
 
-    <RelativeLayout
+
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:padding="8dp">
+        android:layout_height="wrap_content"
+        android:layout_margin="6dp"
+        android:background="@drawable/shadow"
+        android:elevation="4dp">
 
         <ImageView
             android:id="@+id/iv_thumbnail"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:adjustViewBounds="true"
-            android:background="@drawable/shadow"
             android:contentDescription="@string/posterPath"
-            android:elevation="6dp"
             android:scaleType="fitXY"
-            tools:src="@drawable/poster_gotham" />
-
-        <TextView
-            android:id="@+id/tv_title"
-            style="@style/Title"
-            android:layout_toEndOf="@id/iv_thumbnail"
-            tools:text="@string/title_content" />
-
-        <TextView
-            android:id="@+id/tv_release"
-            style="@style/SubTitle"
-            android:layout_below="@id/tv_title"
-            android:layout_toEndOf="@id/iv_thumbnail"
-            tools:text="release" />
-
-        <TextView
-            android:id="@+id/tv_overview"
-            style="@style/SubTitle"
-            android:layout_below="@id/tv_release"
-            android:layout_marginTop="@dimen/activity_vertical_margin"
-            android:layout_marginBottom="8dp"
-            android:layout_toEndOf="@id/iv_thumbnail"
-            android:ellipsize="end"
-            android:lineSpacingMultiplier="1"
-            android:maxLines="6"
-            tools:text="@tools:sample/lorem/random" />
+            tools:src="@color/colorAccent" />
 
         <TextView
             android:id="@+id/tv_rating"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="#6D000000"
-            android:drawableStart="@drawable/ic_star_15dp"
+            android:drawableStart="@drawable/ic_star_16dp"
             android:elevation="8dp"
             android:gravity="center"
             android:paddingStart="4dp"
@@ -63,6 +38,19 @@
             android:text="@string/rating"
             android:textColor="@android:color/white"
             android:textStyle="bold" />
-    </RelativeLayout>
 
-</android.support.design.circularreveal.cardview.CircularRevealCardView>
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:background="#4D000000"
+            android:maxLines="2"
+            android:padding="4dp"
+            android:textColor="@android:color/white"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            tools:text="@string/title_content" />
+    </FrameLayout>
+
+</LinearLayout>

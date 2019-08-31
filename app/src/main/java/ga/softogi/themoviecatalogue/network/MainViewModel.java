@@ -13,6 +13,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import cz.msebera.android.httpclient.Header;
 import ga.softogi.themoviecatalogue.BuildConfig;
@@ -56,13 +57,22 @@ public class MainViewModel extends ViewModel {
                         }
                         String overview = movieItem.getString("overview");
                         String release = movieItem.getString("release_date");
-                        String rating = movieItem.getString("vote_average");
+                        double rating = movieItem.getDouble("vote_average");
+                        int voteCount = movieItem.getInt("vote_count");
                         String poster = movieItem.getString("poster_path");
                         String backdrop = movieItem.getString("backdrop_path");
+                        JSONArray genreArray = movieItem.getJSONArray("genre_ids");
+                        List<Integer> genreList = new ArrayList<>();
+                        int idItem;
+                        for (int j = 0; j < genreArray.length(); j++) {
+                            idItem = genreArray.getInt(j);
+                            genreList.add(idItem);
+                        }
                         String type = ContentItem.TYPE_MOVIE;
 
-                        ContentItem contentData = new ContentItem(id, title, overview, release, rating, poster, backdrop, type);
+                        ContentItem contentData = new ContentItem(id, title, overview, release, rating, voteCount, poster, backdrop, type);
                         listContent.add(contentData);
+                        Log.d("LIST FILMMM", String.valueOf(genreList));
                     }
                     listData.postValue(listContent);
                 } catch (Exception e) {
@@ -120,12 +130,14 @@ public class MainViewModel extends ViewModel {
                         }
                         String overview = tvItem.getString("overview");
                         String firstAir = tvItem.getString("first_air_date");
-                        String rating = tvItem.getString("vote_average");
+                        double rating = tvItem.getDouble("vote_average");
+                        int voteCount = tvItem.getInt("vote_count");
                         String poster = tvItem.getString("poster_path");
                         String backdrop = tvItem.getString("backdrop_path");
+                        String genre = tvItem.getString("genre_ids");
                         String type = ContentItem.TYPE_TV;
 
-                        ContentItem contentData = new ContentItem(id, title, overview, firstAir, rating, poster, backdrop, type);
+                        ContentItem contentData = new ContentItem(id, title, overview, firstAir, rating, voteCount, poster, backdrop, type);
                         listContent.add(contentData);
                     }
                     listData.postValue(listContent);

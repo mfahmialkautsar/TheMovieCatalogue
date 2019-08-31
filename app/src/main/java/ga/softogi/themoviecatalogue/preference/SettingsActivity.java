@@ -1,10 +1,9 @@
-package ga.softogi.themoviecatalogue.activity;
+package ga.softogi.themoviecatalogue.preference;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
 import ga.softogi.themoviecatalogue.R;
-import ga.softogi.themoviecatalogue.fragment.ThePreferenceFragment;
 
 public class SettingsActivity extends AppCompatActivity {
 

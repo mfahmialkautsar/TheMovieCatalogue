@@ -3,6 +3,8 @@ package ga.softogi.themoviecatalogue.fragment;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
+import android.content.Intent;
+import android.content.res.Configuration;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -10,11 +12,15 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
@@ -25,12 +31,16 @@ import java.util.Objects;
 
 import ga.softogi.themoviecatalogue.R;
 import ga.softogi.themoviecatalogue.activity.DetailContentActivity;
+import ga.softogi.themoviecatalogue.activity.MainActivity;
 import ga.softogi.themoviecatalogue.adapter.ContentAdapter;
 import ga.softogi.themoviecatalogue.entity.ContentItem;
 import ga.softogi.themoviecatalogue.network.MainViewModel;
 
 public class MovieFragment extends Fragment {
 
+    private String search;
+    private Bundle mBundle;
+    MovieFragment movieFragment;
     private ContentAdapter adapter;
     private ProgressBar progressBar;
     private ArrayList<ContentItem> movies = new ArrayList<>();
@@ -43,6 +53,14 @@ public class MovieFragment extends Fragment {
             }
         }
     };
+
+    public String getSearch() {
+        return search;
+    }
+
+    public void setSearch(String search) {
+        this.search = search;
+    }
 
 //    private View.OnClickListener btnSearchListener = new View.OnClickListener() {
 //        @Override
@@ -79,7 +97,12 @@ public class MovieFragment extends Fragment {
         adapter = new ContentAdapter();
         adapter.notifyDataSetChanged();
 
-        rvMovie.setLayoutManager(new LinearLayoutManager(getActivity()));
+        if (Objects.requireNonNull(getActivity()).getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+            rvMovie.setLayoutManager(new GridLayoutManager(getActivity(), 2));
+        } else {
+            rvMovie.setLayoutManager(new GridLayoutManager(getActivity(), 4));
+        }
+//        rvMovie.setLayoutManager(new GridLayoutManager(getActivity(), 2));
         rvMovie.setAdapter(adapter);
 
         progressBar = view.findViewById(R.id.progress_bar);

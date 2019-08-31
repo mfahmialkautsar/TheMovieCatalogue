@@ -17,6 +17,7 @@ import static ga.softogi.themoviecatalogue.db.FavDatabaseContract.TableColumns.B
 import static ga.softogi.themoviecatalogue.db.FavDatabaseContract.TableColumns.OVERVIEW;
 import static ga.softogi.themoviecatalogue.db.FavDatabaseContract.TableColumns.POSTER_PATH;
 import static ga.softogi.themoviecatalogue.db.FavDatabaseContract.TableColumns.RATING;
+import static ga.softogi.themoviecatalogue.db.FavDatabaseContract.TableColumns.VOTE_COUNT;
 import static ga.softogi.themoviecatalogue.db.FavDatabaseContract.TableColumns.RELEASE;
 import static ga.softogi.themoviecatalogue.db.FavDatabaseContract.TableColumns.TITLE;
 import static ga.softogi.themoviecatalogue.db.FavDatabaseContract.TableColumns.TYPE;
@@ -93,7 +94,8 @@ public class FavTvHelper {
                 contentItem.setTitle(cursor.getString(cursor.getColumnIndexOrThrow(TITLE)));
                 contentItem.setOverview(cursor.getString(cursor.getColumnIndexOrThrow(OVERVIEW)));
                 contentItem.setRelease(cursor.getString(cursor.getColumnIndexOrThrow(RELEASE)));
-                contentItem.setRating(cursor.getString(cursor.getColumnIndexOrThrow(RATING)));
+                contentItem.setRating(cursor.getDouble(cursor.getColumnIndexOrThrow(RATING)));
+                contentItem.setVoteCount(cursor.getInt(cursor.getColumnIndexOrThrow(VOTE_COUNT)));
                 contentItem.setPosterPath(cursor.getString(cursor.getColumnIndexOrThrow(POSTER_PATH)));
                 contentItem.setBackdropPath(cursor.getString(cursor.getColumnIndexOrThrow(BACKDROP_PATH)));
                 contentItem.setType(cursor.getString(cursor.getColumnIndexOrThrow(TYPE)));
@@ -113,6 +115,7 @@ public class FavTvHelper {
         values.put(OVERVIEW, contentItem.getOverview());
         values.put(RELEASE, contentItem.getRelease());
         values.put(RATING, contentItem.getRating());
+        values.put(VOTE_COUNT, contentItem.getVoteCount());
         values.put(POSTER_PATH, contentItem.getPosterPath());
         values.put(BACKDROP_PATH, contentItem.getBackdropPath());
         values.put(TYPE, contentItem.getType());
@@ -125,7 +128,7 @@ public class FavTvHelper {
 
     public boolean isTvExists(String searchItem) {
         String[] projection = {
-                _ID, TITLE, OVERVIEW, RELEASE, RATING, POSTER_PATH, BACKDROP_PATH, TYPE
+                _ID, TITLE, OVERVIEW, RELEASE, RATING, VOTE_COUNT, POSTER_PATH, BACKDROP_PATH, TYPE
         };
         String selection = TITLE + " =?";
         String[] selectionArgs = {searchItem};

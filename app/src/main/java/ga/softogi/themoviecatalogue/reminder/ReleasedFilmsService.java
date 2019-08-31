@@ -79,12 +79,13 @@ public class ReleasedFilmsService extends JobService {
 //                        }
                         String overview = movieItem.getString("overview");
                         String release = movieItem.getString("release_date");
-                        String rating = movieItem.getString("vote_average");
+                        double rating = movieItem.getDouble("vote_average");
+                        int vote_count = movieItem.getInt("vote_count");
                         String poster = movieItem.getString("poster_path");
                         String backdrop_path = movieItem.getString("backdrop_path");
                         String type = ContentItem.TYPE_MOVIE;
 
-                        ContentItem contentData = new ContentItem(id, title, overview, release, rating, poster, backdrop_path, type);
+                        ContentItem contentData = new ContentItem(id, title, overview, release, rating, vote_count, poster, backdrop_path, type);
 //                        if (movieItem.getString("release_date").equals(today)) {
                         listContent.add(contentData);
 //                        }

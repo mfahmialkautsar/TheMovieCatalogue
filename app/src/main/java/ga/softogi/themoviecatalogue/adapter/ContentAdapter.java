@@ -15,6 +15,8 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -82,31 +84,29 @@ public class ContentAdapter extends RecyclerView.Adapter<ContentAdapter.ContentV
 
     class ContentViewHolder extends RecyclerView.ViewHolder {
         TextView tvTitle;
-        TextView tvOverview;
-        TextView tvRelease;
+//        TextView tvOverview;
+//        TextView tvRelease;
         TextView tvRating;
         ImageView ivThumbnail;
-        Button favorite;
 
         ContentViewHolder(@NonNull View itemView) {
             super(itemView);
             tvTitle = itemView.findViewById(R.id.tv_title);
-            tvOverview = itemView.findViewById(R.id.tv_overview);
-            tvRelease = itemView.findViewById(R.id.tv_release);
+//            tvOverview = itemView.findViewById(R.id.tv_overview);
+//            tvRelease = itemView.findViewById(R.id.tv_release);
             tvRating = itemView.findViewById(R.id.tv_rating);
             ivThumbnail = itemView.findViewById(R.id.iv_thumbnail);
-            favorite = itemView.findViewById(R.id.action_favorite);
         }
 
         void bind(ContentItem content) {
             tvTitle.setText(content.getTitle());
             String overview = content.getOverview();
             String theOverview;
-            String rating = content.getRating();
+            double rating = content.getRating();
             String theRating;
 
             Picasso.get()
-                    .load("https://image.tmdb.org/t/p/w500/" + content.getPosterPath())
+                    .load("https://image.tmdb.org/t/p/w342/" + content.getPosterPath())
                     .placeholder(itemView.getContext().getResources().getDrawable(R.drawable.ic_loading_24dp))
                     .error(itemView.getContext().getResources().getDrawable(R.drawable.ic_error_outline_black_24dp))
                     .into(ivThumbnail);
@@ -117,12 +117,13 @@ public class ContentAdapter extends RecyclerView.Adapter<ContentAdapter.ContentV
                 theOverview = overview;
             }
 
-            if (Objects.equals(rating, "0")) {
+            NumberFormat numberFormat = new DecimalFormat("#.0");
+            if (Objects.equals(rating, 0.0)) {
                 theRating = itemView.getContext().getString(R.string.no_rating);
             } else {
-                theRating = rating;
+                theRating = numberFormat.format(rating/2) + "/5";
             }
-            tvOverview.setText(theOverview);
+//            tvOverview.setText(theOverview);
             tvRating.setText(String.format(" %s", theRating));
 
             String release = content.getRelease();
@@ -132,7 +133,7 @@ public class ContentAdapter extends RecyclerView.Adapter<ContentAdapter.ContentV
                 Date date = dateFormat.parse(release);
                 @SuppressLint("SimpleDateFormat") SimpleDateFormat newDateFormat = new SimpleDateFormat("yyyy");
                 String releaseDate = newDateFormat.format(date);
-                tvRelease.setText(releaseDate);
+//                tvRelease.setText(releaseDate);
             } catch (ParseException e) {
                 e.printStackTrace();
             }

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Katalog Film</string>
+    <string name="title_home">Rumah</string>
     <string name="title_movies">Film</string>
     <string name="title_tv">TV</string>
     <string name="backdropPath">backdropPath</string>
@@ -17,7 +18,7 @@
     <string name="add_fav_failed">\ GAGAL difavofitkan</string>
     <string name="del_fav_success">\ dihapus dari Favorite</string>
     <string name="del_fav_failed">\ GAGAL dihapus dari favorit</string>
-    <string name="favorite">Favorit</string>
+    <string name="title_favorite">Favorit</string>
     <string name="overview_not_found">Sinopsis tidak ditemukan</string>
     <string name="no_rating">Tidak Ada Rating</string>
     <string name="empty_fav">Belum ada favorit</string>
@@ -53,4 +54,6 @@
     <string name="daily_reminder_summary">Ngingetin kamu buat balik ke sini setiap jam 7 pagi</string>
     <string name="locale">Lokal</string>
     <string name="locale_summary">Ganti bahasa hp kamu</string>
+    <string name="no_fav_movie">Kamu belum menambahkan Film apapun ke Favorit</string>
+    <string name="no_fav_tv">Kamu belum menambahkan TV Show apapun ke Favorit</string>
 </resources>

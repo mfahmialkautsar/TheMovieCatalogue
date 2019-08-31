@@ -16,7 +16,9 @@ public class FavDatabaseContract {
         public static String TITLE = "title";
         public static String OVERVIEW = "overview";
         public static String RELEASE = "released";
+//        public static String GENRE = "genre";
         public static String RATING = "rating";
+        public static String VOTE_COUNT = "vote_count";
         public static String POSTER_PATH = "poster_path";
         public static String BACKDROP_PATH = "backdrop_path";
         public static String TYPE = "type";
@@ -38,5 +40,9 @@ public class FavDatabaseContract {
 
     public static int getColumnInt(Cursor cursor, String columnName) {
         return cursor.getInt(cursor.getColumnIndex(columnName));
+    }
+
+    public static double getColumnDouble(Cursor cursor, String columnName) {
+        return cursor.getDouble(cursor.getColumnIndex(columnName));
     }
 }

@@ -1,6 +1,7 @@
 package ga.softogi.thefavoritemovie.fragment;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -10,7 +11,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
@@ -18,6 +19,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.lang.ref.WeakReference;
@@ -38,6 +40,7 @@ public class TvFragment extends Fragment implements LoadFavoriteCallback {
 //    private static final String EXTRA_TV_STATE = "EXTRA_TV_STATE";
     private ProgressBar progressBar;
     private ContentAdapter adapter;
+    private TextView tvIfEmpty;
 
 
     public TvFragment() {
@@ -54,6 +57,7 @@ public class TvFragment extends Fragment implements LoadFavoriteCallback {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         progressBar = view.findViewById(R.id.progress_bar);
 
+        tvIfEmpty = view.findViewById(R.id.tv_if_empty);
         init(view, savedInstanceState);
 
         final SwipeRefreshLayout swipeRefreshLayout = view.findViewById(R.id.rl);
@@ -96,7 +100,12 @@ public class TvFragment extends Fragment implements LoadFavoriteCallback {
 
         RecyclerView rvFavorite = view.findViewById(R.id.rv_content);
         rvFavorite.setHasFixedSize(true);
-        rvFavorite.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+        if (Objects.requireNonNull(getActivity()).getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+            rvFavorite.setLayoutManager(new GridLayoutManager(getActivity(), 2));
+        } else {
+            rvFavorite.setLayoutManager(new GridLayoutManager(getActivity(), 4));
+        }
         rvFavorite.setAdapter(adapter);
 
         if (savedInstanceState == null) {
@@ -117,10 +126,11 @@ public class TvFragment extends Fragment implements LoadFavoriteCallback {
     public void postExecute(Cursor items) {
         ArrayList<ContentItem> listTv = mapCursorToArrayList(items);
         if (listTv.size() > 0) {
+            tvIfEmpty.setVisibility(View.GONE);
             adapter.setData(listTv);
         } else {
-            adapter.setData(new ArrayList<ContentItem>());
-            showToast(getString(R.string.empty_fav));
+            tvIfEmpty.setText(getString(R.string.no_fav_tv));
+            tvIfEmpty.setVisibility(View.VISIBLE);
         }
         progressBar.setVisibility(View.GONE);
     }
@@ -138,10 +148,6 @@ public class TvFragment extends Fragment implements LoadFavoriteCallback {
         super.onSaveInstanceState(outState);
     }
      */
-
-    private void showToast(String message) {
-        Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
-    }
 
     private void isNetworkAvailable() {
         ConnectivityManager connectivityManager = (ConnectivityManager) Objects.requireNonNull(getActivity())

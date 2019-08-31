@@ -7,8 +7,10 @@ import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
@@ -19,9 +21,13 @@ import android.widget.Toast;
 import com.github.ivbaranov.mfb.MaterialFavoriteButton;
 import com.squareup.picasso.Picasso;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 
 import ga.softogi.themoviecatalogue.R;
@@ -34,6 +40,7 @@ import static ga.softogi.themoviecatalogue.db.FavDatabaseContract.TableColumns.C
 import static ga.softogi.themoviecatalogue.db.FavDatabaseContract.TableColumns.OVERVIEW;
 import static ga.softogi.themoviecatalogue.db.FavDatabaseContract.TableColumns.POSTER_PATH;
 import static ga.softogi.themoviecatalogue.db.FavDatabaseContract.TableColumns.RATING;
+import static ga.softogi.themoviecatalogue.db.FavDatabaseContract.TableColumns.VOTE_COUNT;
 import static ga.softogi.themoviecatalogue.db.FavDatabaseContract.TableColumns.RELEASE;
 import static ga.softogi.themoviecatalogue.db.FavDatabaseContract.TableColumns.TITLE;
 import static ga.softogi.themoviecatalogue.db.FavDatabaseContract.TableColumns.TYPE;
@@ -47,6 +54,13 @@ public class DetailContentActivity extends AppCompatActivity {
     private MaterialFavoriteButton favoriteButton;
     private ProgressBar progressBar;
     private ContentItem content;
+    private List<ImageView> ivStar;
+    private ImageView ivStar1;
+    private ImageView ivStar2;
+    private ImageView ivStar3;
+    private ImageView ivStar4;
+    private ImageView ivStar5;
+    private CollapsingToolbarLayout collapsingToolbarLayout;
     private MaterialFavoriteButton.OnFavoriteChangeListener favoritedFailed = new MaterialFavoriteButton.OnFavoriteChangeListener() {
         @Override
         public void onFavoriteChanged(MaterialFavoriteButton buttonView, boolean favorite) {
@@ -68,6 +82,22 @@ public class DetailContentActivity extends AppCompatActivity {
         TextView tvOverview = findViewById(R.id.tv_overview);
         TextView tvRelease = findViewById(R.id.tv_release);
         TextView tvRating = findViewById(R.id.tv_rating);
+        TextView tvVoteCount = findViewById(R.id.tv_vote_count);
+        TextView tvGenre = findViewById(R.id.tv_genre);
+        collapsingToolbarLayout = findViewById(R.id.collapsing_toolbar);
+
+        ivStar1 = findViewById(R.id.iv_star1);
+        ivStar2 = findViewById(R.id.iv_star2);
+        ivStar3 = findViewById(R.id.iv_star3);
+        ivStar4 = findViewById(R.id.iv_star4);
+        ivStar5 = findViewById(R.id.iv_star5);
+
+        ivStar = new ArrayList<>();
+        ivStar.add(ivStar1);
+        ivStar.add(ivStar2);
+        ivStar.add(ivStar3);
+        ivStar.add(ivStar4);
+        ivStar.add(ivStar5);
 
         content = getIntent().getParcelableExtra(EXTRA_CONTENT);
 
@@ -90,20 +120,25 @@ public class DetailContentActivity extends AppCompatActivity {
         int id = content.getId();
         String title = content.getTitle();
         String overview = content.getOverview();
-        String rating = content.getRating();
+        double rating = content.getRating();
+        int vote_count = content.getVoteCount();
         String poster_path = content.getPosterPath();
         String backdrop_path = content.getBackdropPath();
         String type = content.getType();
 
-        String topType = (String) Objects.requireNonNull(getSupportActionBar()).getTitle();
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            String topTitle = (String) getSupportActionBar().getTitle();
             if (Objects.equals(type, TYPE_MOVIE)) {
-                topType = "Movie";
+                topTitle = "Movie";
             } else if (Objects.equals(type, TYPE_TV)) {
-                topType = "TV Show";
+                topTitle = "TV Show";
             }
-            getSupportActionBar().setTitle(topType);
+            getSupportActionBar().setTitle(topTitle);
         }
+        collapsingToolbarLayout.setExpandedTitleColor(getResources().getColor(android.R.color.transparent));
 
         tvTitle.setText(title);
         tvOverview.setText(overview);
@@ -116,14 +151,26 @@ public class DetailContentActivity extends AppCompatActivity {
         }
         tvOverview.setText(theOverview);
 
+        NumberFormat numberFormat = new DecimalFormat("#.0");
         String theRating;
-        if (Objects.equals(rating, "0")) {
+        if (Objects.equals(rating, 0.0)) {
             theRating = getString(R.string.no_rating);
         } else {
-            theRating = rating;
+            theRating = numberFormat.format(rating/2) + "/5";
         }
+
+        int integerRating = (int) rating/2;
+        for (int i = 0; i < integerRating; i++) {
+            ivStar.get(i).setImageResource(R.drawable.ic_star_full_24dp);
+        }
+        if (Math.round(rating) > integerRating) {
+            ivStar.get(integerRating).setImageResource(R.drawable.ic_star_half_24dp);
+        }
+
         tvOverview.setText(theOverview);
         tvRating.setText(String.format(" %s", theRating));
+
+        tvVoteCount.setText(String.valueOf(vote_count));
 
         String release = content.getRelease();
         @SuppressLint("SimpleDateFormat") SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -142,13 +189,13 @@ public class DetailContentActivity extends AppCompatActivity {
 
         Picasso.get()
                 .load("https://image.tmdb.org/t/p/original/" + poster_path)
-                .placeholder(this.getResources().getDrawable(R.drawable.ic_loading_24dp))
-                .error(this.getResources().getDrawable(R.drawable.ic_error_outline_black_24dp))
+                .placeholder(getResources().getDrawable(R.drawable.ic_loading_24dp))
+                .error(getResources().getDrawable(R.drawable.ic_error_outline_black_24dp))
                 .into(ivPoster);
         Picasso.get()
                 .load("https://image.tmdb.org/t/p/original/" + backdrop_path)
-                .placeholder(this.getResources().getDrawable(R.drawable.ic_loading_24dp))
-                .error(this.getResources().getDrawable(R.drawable.ic_error_outline_black_24dp))
+                .placeholder(getResources().getDrawable(R.drawable.ic_loading_24dp))
+                .error(getResources().getDrawable(R.drawable.ic_error_outline_black_24dp))
                 .into(ivBackdrop);
 
         progressBar = findViewById(R.id.progress_bar);
@@ -160,6 +207,7 @@ public class DetailContentActivity extends AppCompatActivity {
         values.put(OVERVIEW, overview);
         values.put(RELEASE, release);
         values.put(RATING, rating);
+        values.put(VOTE_COUNT, vote_count);
         values.put(POSTER_PATH, poster_path);
         values.put(BACKDROP_PATH, backdrop_path);
         values.put(TYPE, type);
@@ -190,7 +238,7 @@ public class DetailContentActivity extends AppCompatActivity {
 
     private void doFav(final int id, final String title, final String type, final ContentValues values) {
         String[] projection = {
-                _ID, TITLE, OVERVIEW, RELEASE, RATING, POSTER_PATH, BACKDROP_PATH, TYPE
+                _ID, TITLE, OVERVIEW, RELEASE, RATING, VOTE_COUNT, POSTER_PATH, BACKDROP_PATH, TYPE
         };
         String selection = _ID + " =?";
         String[] selectionArgs = {String.valueOf(id)};
@@ -263,8 +311,8 @@ public class DetailContentActivity extends AppCompatActivity {
 //                favoriteButton.setFavorite(true);
 //                favoriteButton.setOnFavoriteChangeListener(new MaterialFavoriteButton.OnFavoriteChangeListener() {
 //                    @Override
-//                    public void onFavoriteChanged(MaterialFavoriteButton buttonView, boolean favorite) {
-//                        if (favorite) {
+//                    public void onFavoriteChanged(MaterialFavoriteButton buttonView, boolean title_favorite) {
+//                        if (title_favorite) {
 //                            getContentResolver().insert(CONTENT_URI_TV, values);
 //                            //                        long result = favTvHelper.addToTvFav(content);
 //                            //                        if (result > 0) {
@@ -287,8 +335,8 @@ public class DetailContentActivity extends AppCompatActivity {
 //            } else {
 //                favoriteButton.setOnFavoriteChangeListener(new MaterialFavoriteButton.OnFavoriteChangeListener() {
 //                    @Override
-//                    public void onFavoriteChanged(MaterialFavoriteButton buttonView, boolean favorite) {
-//                        if (favorite) {
+//                    public void onFavoriteChanged(MaterialFavoriteButton buttonView, boolean title_favorite) {
+//                        if (title_favorite) {
 //                            getContentResolver().insert(CONTENT_URI_TV, values);
 //                            //                        long result = favTvHelper.addToTvFav(content);
 //                            //                        if (result > 0) {

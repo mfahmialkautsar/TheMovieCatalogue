@@ -2,7 +2,6 @@ package ga.softogi.themoviecatalogue.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
@@ -11,17 +10,18 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import ga.softogi.themoviecatalogue.R;
-import ga.softogi.themoviecatalogue.fragment.MovieFragment;
-import ga.softogi.themoviecatalogue.fragment.TvFragment;
+import ga.softogi.themoviecatalogue.fragment.root.FavoriteFragment;
+import ga.softogi.themoviecatalogue.fragment.root.HomeFragment;
+import ga.softogi.themoviecatalogue.preference.SettingsActivity;
 
 public class MainActivity extends AppCompatActivity {
 
-    private Fragment movieFragment = new MovieFragment();
-    private Fragment tvFragment = new TvFragment();
-    private Fragment activeFragment = movieFragment;
+    private Fragment homeFragment = new HomeFragment();
+    private Fragment favFragment = new FavoriteFragment();
+    private Fragment activeFragment = homeFragment;
 
-    private String movieTag = MovieFragment.class.getSimpleName();
-    private String tvTag = TvFragment.class.getSimpleName();
+    private String homeTag = HomeFragment.class.getSimpleName();
+    private String favTag = FavoriteFragment.class.getSimpleName();
     private String activeTag = "ActiveFragment";
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -29,15 +29,15 @@ public class MainActivity extends AppCompatActivity {
         public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
             switch (menuItem.getItemId()) {
                 case R.id.navigation_movies:
-                    getSupportFragmentManager().beginTransaction().hide(activeFragment).show(movieFragment).commit();
-                    activeFragment = movieFragment;
+                    getSupportFragmentManager().beginTransaction().hide(activeFragment).show(homeFragment).commit();
+                    activeFragment = homeFragment;
                     break;
                 case R.id.navigation_tv:
-                    getSupportFragmentManager().beginTransaction().hide(activeFragment).show(tvFragment).commit();
-                    if (null == find(tvTag)) {
-                        getSupportFragmentManager().beginTransaction().add(R.id.container_layout, tvFragment, tvTag).commit();
+                    getSupportFragmentManager().beginTransaction().hide(activeFragment).show(favFragment).commit();
+                    if (null == find(favTag)) {
+                        getSupportFragmentManager().beginTransaction().add(R.id.container_layout, favFragment, favTag).commit();
                     }
-                    activeFragment = tvFragment;
+                    activeFragment = favFragment;
                     break;
             }
             return true;
@@ -53,19 +53,21 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        if (getSupportActionBar() != null) getSupportActionBar().setElevation(0);
+
         BottomNavigationView navView = findViewById(R.id.nav_view);
         navView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
         if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction().add(R.id.container_layout, movieFragment, movieTag).commit();
+            getSupportFragmentManager().beginTransaction().add(R.id.container_layout, homeFragment, homeTag).commit();
         } else {
             activeFragment = getSupportFragmentManager().getFragment(savedInstanceState, activeTag);
             getSupportFragmentManager().beginTransaction().attach(activeFragment).commit();
-            movieFragment = getSupportFragmentManager().getFragment(savedInstanceState, movieTag);
-            getSupportFragmentManager().beginTransaction().attach(movieFragment).commit();
-            if (null != find(tvTag)) {
-                tvFragment = getSupportFragmentManager().getFragment(savedInstanceState, tvTag);
-                getSupportFragmentManager().beginTransaction().attach(tvFragment).commit();
+            homeFragment = getSupportFragmentManager().getFragment(savedInstanceState, homeTag);
+            getSupportFragmentManager().beginTransaction().attach(homeFragment).commit();
+            if (null != find(favTag)) {
+                favFragment = getSupportFragmentManager().getFragment(savedInstanceState, favTag);
+                getSupportFragmentManager().beginTransaction().attach(favFragment).commit();
             }
         }
     }
@@ -73,9 +75,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         getSupportFragmentManager().putFragment(outState, activeTag, activeFragment);
-        getSupportFragmentManager().putFragment(outState, movieTag, movieFragment);
-        if (null != find(tvTag)) {
-            getSupportFragmentManager().putFragment(outState, tvTag, tvFragment);
+        getSupportFragmentManager().putFragment(outState, homeTag, homeFragment);
+        if (null != find(favTag)) {
+            getSupportFragmentManager().putFragment(outState, favTag, favFragment);
         }
         super.onSaveInstanceState(outState);
     }
@@ -93,10 +95,10 @@ public class MainActivity extends AppCompatActivity {
                 Intent mIntent = new Intent(this, SettingsActivity.class);
                 startActivity(mIntent);
                 break;
-            case R.id.action_favorite:
-                Intent favoriteIntent = new Intent(MainActivity.this, FavActivity.class);
-                startActivity(favoriteIntent);
-                break;
+//            case R.id.action_favorite:
+//                Intent favoriteIntent = new Intent(MainActivity.this, FavActivity.class);
+//                startActivity(favoriteIntent);
+//                break;
         }
         return super.onOptionsItemSelected(item);
     }

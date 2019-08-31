@@ -12,6 +12,8 @@ import static ga.softogi.themoviecatalogue.db.FavDatabaseContract.TableColumns.R
 import static ga.softogi.themoviecatalogue.db.FavDatabaseContract.TableColumns.RELEASE;
 import static ga.softogi.themoviecatalogue.db.FavDatabaseContract.TableColumns.TITLE;
 import static ga.softogi.themoviecatalogue.db.FavDatabaseContract.TableColumns.TYPE;
+import static ga.softogi.themoviecatalogue.db.FavDatabaseContract.TableColumns.VOTE_COUNT;
+import static ga.softogi.themoviecatalogue.db.FavDatabaseContract.getColumnDouble;
 import static ga.softogi.themoviecatalogue.db.FavDatabaseContract.getColumnInt;
 import static ga.softogi.themoviecatalogue.db.FavDatabaseContract.getColumnString;
 
@@ -24,7 +26,8 @@ public class ContentItem implements Parcelable {
     private String title;
     private String overview;
     private String release;
-    private String rating;
+    private double rating;
+    private int voteCount;
     private String posterPath;
     private String backdropPath;
     private String type;
@@ -61,12 +64,20 @@ public class ContentItem implements Parcelable {
         this.release = release;
     }
 
-    public String getRating() {
+    public double getRating() {
         return rating;
     }
 
-    public void setRating(String rating) {
+    public void setRating(double rating) {
         this.rating = rating;
+    }
+
+    public int getVoteCount() {
+        return voteCount;
+    }
+
+    public void setVoteCount(int voteCount) {
+        this.voteCount = voteCount;
     }
 
     public String getPosterPath() {
@@ -104,7 +115,8 @@ public class ContentItem implements Parcelable {
         dest.writeString(this.title);
         dest.writeString(this.overview);
         dest.writeString(this.release);
-        dest.writeString(this.rating);
+        dest.writeDouble(this.rating);
+        dest.writeInt(this.voteCount);
         dest.writeString(this.posterPath);
         dest.writeString(this.backdropPath);
         dest.writeString(this.type);
@@ -113,12 +125,13 @@ public class ContentItem implements Parcelable {
     public ContentItem() {
     }
 
-    public ContentItem(int id, String title, String overview, String release, String rating, String posterPath, String backdropPath, String type) {
+    public ContentItem(int id, String title, String overview, String release, double rating, int voteCount, String posterPath, String backdropPath, String type) {
         this.id = id;
         this.title = title;
         this.overview = overview;
         this.release = release;
         this.rating = rating;
+        this.voteCount = voteCount;
         this.posterPath = posterPath;
         this.backdropPath = backdropPath;
         this.type = type;
@@ -129,7 +142,8 @@ public class ContentItem implements Parcelable {
         this.title = getColumnString(cursor, TITLE);
         this.overview = getColumnString(cursor, OVERVIEW);
         this.release = getColumnString(cursor, RELEASE);
-        this.rating = getColumnString(cursor, RATING);
+        this.rating = getColumnDouble(cursor, RATING);
+        this.voteCount = getColumnInt(cursor, VOTE_COUNT);
         this.posterPath = getColumnString(cursor, POSTER_PATH);
         this.backdropPath = getColumnString(cursor, BACKDROP_PATH);
         this.type = getColumnString(cursor, TYPE);
@@ -145,7 +159,8 @@ public class ContentItem implements Parcelable {
         this.title = in.readString();
         this.overview = in.readString();
         this.release = in.readString();
-        this.rating = in.readString();
+        this.rating = in.readDouble();
+        this.voteCount = in.readInt();
         this.posterPath = in.readString();
         this.backdropPath = in.readString();
         this.type = in.readString();

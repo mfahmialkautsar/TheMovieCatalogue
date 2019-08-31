@@ -79,8 +79,8 @@ public class ContentAdapter extends RecyclerView.Adapter<ContentAdapter.ContentV
 
     class ContentViewHolder extends RecyclerView.ViewHolder {
         TextView tvTitle;
-        TextView tvOverview;
-        TextView tvRelease;
+        //        TextView tvOverview;
+//        TextView tvRelease;
         TextView tvRating;
         ImageView ivThumbnail;
         Button favorite;
@@ -88,18 +88,18 @@ public class ContentAdapter extends RecyclerView.Adapter<ContentAdapter.ContentV
         ContentViewHolder(@NonNull View itemView) {
             super(itemView);
             tvTitle = itemView.findViewById(R.id.tv_title);
-            tvOverview = itemView.findViewById(R.id.tv_overview);
-            tvRelease = itemView.findViewById(R.id.tv_release);
+//            tvOverview = itemView.findViewById(R.id.tv_overview);
+//            tvRelease = itemView.findViewById(R.id.tv_release);
             tvRating = itemView.findViewById(R.id.tv_rating);
             ivThumbnail = itemView.findViewById(R.id.iv_thumbnail);
-            favorite = itemView.findViewById(R.id.favorite);
+//            favorite = itemView.findViewById(R.id.favorite);
         }
 
         void bind(ContentItem content) {
             tvTitle.setText(content.getTitle());
             String overview = content.getOverview();
             String theOverview;
-            String rating = content.getRating();
+            double rating = content.getRating();
             String theRating;
 
             Picasso.get()
@@ -114,12 +114,12 @@ public class ContentAdapter extends RecyclerView.Adapter<ContentAdapter.ContentV
                 theOverview = overview;
             }
 
-            if (Objects.equals(rating, "0")) {
+            if (Objects.equals(rating, 0)) {
                 theRating = itemView.getContext().getString(R.string.no_rating);
             } else {
-                theRating = rating;
+                theRating = String.valueOf(rating);
             }
-            tvOverview.setText(theOverview);
+//            tvOverview.setText(theOverview);
             tvRating.setText(String.format(" %s", theRating));
 
             String release = content.getRelease();
@@ -129,7 +129,7 @@ public class ContentAdapter extends RecyclerView.Adapter<ContentAdapter.ContentV
                 Date date = dateFormat.parse(release);
                 @SuppressLint("SimpleDateFormat") SimpleDateFormat newDateFormat = new SimpleDateFormat("yyyy");
                 String releaseDate = newDateFormat.format(date);
-                tvRelease.setText(releaseDate);
+//                tvRelease.setText(releaseDate);
             } catch (ParseException e) {
                 e.printStackTrace();
             }

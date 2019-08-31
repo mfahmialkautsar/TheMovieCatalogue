@@ -1,6 +1,7 @@
 package ga.softogi.themoviecatalogue.fragment;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -9,7 +10,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
@@ -17,6 +18,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.lang.ref.WeakReference;
@@ -37,7 +39,8 @@ public class FavTvFragment extends Fragment implements LoadFavoriteCallback {
     private ProgressBar progressBar;
     private FavTvHelper favTvHelper;
     private ContentAdapter adapter;
-    private RecyclerView rvFavorite;
+    private RecyclerView rvFavTv;
+    private TextView tvIfEmpty;
     private HandlerThread handlerThread;
 //    private DataObserver myObserver;
 
@@ -58,6 +61,7 @@ public class FavTvFragment extends Fragment implements LoadFavoriteCallback {
 //        favTvHelper = FavTvHelper.getInstance(getContext());
 //        favTvHelper.openTv();
 
+        tvIfEmpty = view.findViewById(R.id.tv_if_empty);
         init(view, savedInstanceState);
 
         final SwipeRefreshLayout swipeRefreshLayout = view.findViewById(R.id.rl);
@@ -104,10 +108,14 @@ public class FavTvFragment extends Fragment implements LoadFavoriteCallback {
 //        view.getContext().getContentResolver().registerContentObserver(CONTENT_URI_TV, true, myObserver);
         adapter = new ContentAdapter();
 
-        rvFavorite = view.findViewById(R.id.rv_content);
-        rvFavorite.setHasFixedSize(true);
-        rvFavorite.setLayoutManager(new LinearLayoutManager(getActivity()));
-        rvFavorite.setAdapter(adapter);
+        rvFavTv = view.findViewById(R.id.rv_content);
+        rvFavTv.setHasFixedSize(true);
+        if (Objects.requireNonNull(getActivity()).getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+            rvFavTv.setLayoutManager(new GridLayoutManager(getActivity(), 2));
+        } else {
+            rvFavTv.setLayoutManager(new GridLayoutManager(getActivity(), 4));
+        }
+        rvFavTv.setAdapter(adapter);
 
         if (savedInstanceState == null) {
             new FavTvFragment.LoadFavoriteAsync(getContext(), this, searchTv).execute();
@@ -136,10 +144,13 @@ public class FavTvFragment extends Fragment implements LoadFavoriteCallback {
     public void postExecute(Cursor items) {
         ArrayList<ContentItem> listTv = mapCursorToArrayList(items);
         if (listTv.size() > 0) {
+            tvIfEmpty.setVisibility(View.GONE);
             adapter.setData(listTv);
         } else {
-            adapter.setData(new ArrayList<ContentItem>());
-            showToast(getString(R.string.empty_fav));
+//            adapter.setData(new ArrayList<ContentItem>());
+//            showToast(getString(R.string.empty_fav));
+            tvIfEmpty.setText(getString(R.string.no_fav_tv));
+            tvIfEmpty.setVisibility(View.VISIBLE);
         }
         progressBar.setVisibility(View.GONE);
     }

@@ -20,6 +20,8 @@ import android.widget.Toast;
 import com.github.ivbaranov.mfb.MaterialFavoriteButton;
 import com.squareup.picasso.Picasso;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -38,6 +40,7 @@ import static ga.softogi.thefavoritemovie.db.DatabaseContract.TableColumns.RATIN
 import static ga.softogi.thefavoritemovie.db.DatabaseContract.TableColumns.RELEASE;
 import static ga.softogi.thefavoritemovie.db.DatabaseContract.TableColumns.TITLE;
 import static ga.softogi.thefavoritemovie.db.DatabaseContract.TableColumns.TYPE;
+import static ga.softogi.thefavoritemovie.db.DatabaseContract.TableColumns.VOTE_COUNT;
 import static ga.softogi.thefavoritemovie.entity.ContentItem.TYPE_MOVIE;
 import static ga.softogi.thefavoritemovie.entity.ContentItem.TYPE_TV;
 
@@ -66,6 +69,20 @@ public class DetailContentActivity extends AppCompatActivity {
         TextView tvOverview = findViewById(R.id.tv_overview);
         TextView tvRelease = findViewById(R.id.tv_release);
         TextView tvRating = findViewById(R.id.tv_rating);
+//        TextView tvVoteCount = findViewById(R.id.tv_vote_count);
+//
+//        ImageView ivStar1 = findViewById(R.id.iv_star1);
+//        ImageView ivStar2 = findViewById(R.id.iv_star2);
+//        ImageView ivStar3 = findViewById(R.id.iv_star3);
+//        ImageView ivStar4 = findViewById(R.id.iv_star4);
+//        ImageView ivStar5 = findViewById(R.id.iv_star5);
+//
+//        List<ImageView> ivStar = new ArrayList<>();
+//        ivStar.add(ivStar1);
+//        ivStar.add(ivStar2);
+//        ivStar.add(ivStar3);
+//        ivStar.add(ivStar4);
+//        ivStar.add(ivStar5);
 
         Uri uri = getIntent().getData();
 
@@ -80,7 +97,8 @@ public class DetailContentActivity extends AppCompatActivity {
         int id = content.getId();
         String title = content.getTitle();
         String overview = content.getOverview();
-        String rating = content.getRating();
+        double rating = content.getRating();
+        int vote_count = content.getVoteCount();
         String type = content.getType();
         String poster_path = content.getPosterPath();
         String backdrop_path = content.getBackdropPath();
@@ -106,14 +124,26 @@ public class DetailContentActivity extends AppCompatActivity {
         }
         tvOverview.setText(theOverview);
 
+        NumberFormat numberFormat = new DecimalFormat("#.0");
         String theRating;
-        if (Objects.equals(rating, "0")) {
+        if (Objects.equals(rating, 0)) {
             theRating = getString(R.string.no_rating);
         } else {
-            theRating = rating;
+            theRating = numberFormat.format(rating / 2) + "/5";
         }
+
+//        int integerRating = (int) rating/2;
+//        for (int i = 0; i < integerRating; i++) {
+//            ivStar.get(i).setImageResource(R.drawable.ic_star_full_24dp);
+//        }
+//        if (Math.round(rating) > integerRating) {
+//            ivStar.get(integerRating).setImageResource(R.drawable.ic_star_half_24dp);
+//        }
+
         tvOverview.setText(theOverview);
         tvRating.setText(String.format(" %s", theRating));
+
+//        tvVoteCount.setText(vote_count);
 
         String release = content.getRelease();
         @SuppressLint("SimpleDateFormat") SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -150,6 +180,7 @@ public class DetailContentActivity extends AppCompatActivity {
         values.put(OVERVIEW, overview);
         values.put(RELEASE, release);
         values.put(RATING, rating);
+        values.put(VOTE_COUNT, vote_count);
         values.put(POSTER_PATH, poster_path);
         values.put(BACKDROP_PATH, backdrop_path);
         values.put(TYPE, type);
@@ -170,7 +201,7 @@ public class DetailContentActivity extends AppCompatActivity {
 
     private void doFav(final int id, final String title, final String type, final ContentValues values) {
         String[] projection = {
-                _ID, TITLE, OVERVIEW, RELEASE, RATING, POSTER_PATH, BACKDROP_PATH, TYPE
+                _ID, TITLE, OVERVIEW, RELEASE, RATING, VOTE_COUNT, POSTER_PATH, BACKDROP_PATH, TYPE
         };
         String selection = _ID + " =?";
         String[] selectionArgs = {String.valueOf(id)};
