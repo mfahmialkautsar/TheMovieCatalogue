@@ -34,13 +34,14 @@
                 android:resource="@xml/favorite_widget_info" />
         </receiver>
 
-        <activity android:name=".activity.DetailContentActivity"
-            android:theme="@style/Theme.MaterialComponents.Light.NoActionBar.Bridge"
-            android:parentActivityName=".activity.MainActivity">
-        </activity>
+<!--        <activity android:name=".activity.DetailContentActivity"-->
+<!--            android:theme="@style/Theme.MaterialComponents.Light.NoActionBar.Bridge"-->
+<!--            android:parentActivityName=".activity.MainActivity">-->
+<!--        </activity>-->
         <activity
             android:name=".activity.MainActivity"
             android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar"
             android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -51,6 +52,9 @@
         <activity android:name=".preference.SettingsActivity"
             android:label="@string/settings"
             android:parentActivityName=".activity.MainActivity"/>
+        <activity android:name=".activity.DetailActivity"
+            android:theme="@style/Theme.MaterialComponents.Light.NoActionBar.Bridge"
+            android:parentActivityName=".activity.MainActivity" />
 
         <provider
             android:name=".provider.FavTvProvider"

@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context=".activity.DetailContentActivity">
+    tools:context=".activity.DetailActivity">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/appbar"
@@ -56,22 +56,21 @@
 
         <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:paddingTop="@dimen/activity_vertical_margin">
 
             <ImageView
                 android:id="@+id/iv_poster"
-                android:layout_width="150dp"
-                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_height="160dp"
                 android:layout_marginStart="@dimen/activity_horizontal_margin"
                 android:adjustViewBounds="true"
                 android:background="@drawable/shadow"
                 android:contentDescription="@string/posterPath"
-                android:elevation="8dp"
+                android:elevation="6dp"
                 android:scaleType="fitXY"
-                app:layout_constraintBottom_toBottomOf="@id/iv_star1"
                 app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="1"
                 tools:src="@drawable/poster_gotham" />
 
@@ -80,9 +79,8 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/activity_horizontal_margin"
-                android:layout_marginTop="@dimen/activity_vertical_margin"
                 android:layout_marginEnd="@dimen/activity_horizontal_margin"
-                android:textSize="20sp"
+                android:textSize="18sp"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/iv_poster"
@@ -95,129 +93,257 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:text="@string/release"
-                android:textStyle="bold"
+                android:textSize="12sp"
                 app:layout_constraintEnd_toEndOf="@id/tv_title"
                 app:layout_constraintStart_toStartOf="@id/tv_title"
-                app:layout_constraintTop_toBottomOf="@id/tv_title" />
+                app:layout_constraintTop_toBottomOf="@id/tv_runtime" />
 
             <TextView
                 android:id="@+id/tv_release"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/activity_horizontal_margin"
-                android:text="@string/release"
+                android:text="@string/release_date"
+                android:textSize="13sp"
+                android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="@id/release"
                 app:layout_constraintStart_toStartOf="@id/release"
                 app:layout_constraintTop_toBottomOf="@id/release" />
+
+            <View
+                android:id="@+id/view_star"
+                android:layout_width="150dp"
+                android:layout_height="0dp"
+                android:orientation="horizontal"
+                app:layout_constraintStart_toStartOf="@id/star_start"
+                app:layout_constraintEnd_toEndOf="@id/star_end"
+                app:layout_constraintTop_toBottomOf="@id/iv_poster"/>
+
+            <View
+                android:id="@+id/line_top"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginBottom="15dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/bg"
+                android:backgroundTint="@color/colorPrimary"
+                app:layout_constraintBottom_toTopOf="@id/tv_rating"
+                app:layout_constraintCircleRadius="@dimen/activity_vertical_margin"/>
+
+            <View
+                android:layout_width="2dp"
+                android:layout_height="0dp"
+                android:background="@drawable/bg"
+                android:backgroundTint="@color/colorPrimary"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                app:layout_constraintTop_toBottomOf="@id/line_top"
+                app:layout_constraintBottom_toTopOf="@id/line_bot"
+                app:layout_constraintStart_toEndOf="@id/iv_star5"
+                app:layout_constraintEnd_toStartOf="@id/favorite_button"/>
+
+            <View
+                android:id="@+id/line_bot"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/bg"
+                android:backgroundTint="@color/colorPrimary"
+                app:layout_constraintTop_toBottomOf="@id/tv_rating"/>
 
             <TextView
                 android:id="@+id/tv_rating"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:layout_marginTop="36dp"
                 android:background="@drawable/bg"
                 android:elevation="4dp"
                 android:gravity="center"
-                android:padding="4dp"
+                android:paddingEnd="5dp"
+                android:paddingStart="2dp"
+                android:paddingBottom="2dp"
                 android:text="@string/rating"
                 android:textColor="@android:color/white"
                 android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="@id/iv_star1"
-                app:layout_constraintEnd_toEndOf="@id/iv_star5"
-                app:layout_constraintTop_toBottomOf="@id/tv_release" />
+                app:layout_constraintEnd_toStartOf="@id/iv_star1"
+                app:layout_constraintStart_toStartOf="@id/view_star"
+                app:layout_constraintTop_toBottomOf="@id/iv_poster" />
 
             <ImageView
                 android:id="@+id/iv_star1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
+                android:layout_marginStart="4dp"
                 android:src="@drawable/ic_star_border_24dp"
-                android:tint="@android:color/tertiary_text_light"
-                app:layout_constraintStart_toStartOf="@id/tv_title"
-                app:layout_constraintTop_toBottomOf="@id/tv_rating"/>
+                android:tint="#FFD700"
+                android:layout_marginEnd="0dp"
+                app:layout_constraintBottom_toBottomOf="@id/tv_rating"
+                app:layout_constraintStart_toEndOf="@id/tv_rating"
+                app:layout_constraintEnd_toStartOf="@id/iv_star2"
+                app:layout_constraintTop_toTopOf="@id/tv_rating"
+                android:contentDescription="@string/star1" />
 
             <ImageView
                 android:id="@+id/iv_star2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_star_border_24dp"
-                android:tint="@android:color/tertiary_text_light"
+                android:tint="#FFD700"
+                android:layout_marginEnd="0dp"
+                app:layout_constraintBottom_toBottomOf="@id/iv_star1"
                 app:layout_constraintStart_toEndOf="@id/iv_star1"
+                app:layout_constraintEnd_toStartOf="@id/iv_star3"
                 app:layout_constraintTop_toTopOf="@id/iv_star1"
-                app:layout_constraintBottom_toBottomOf="@id/iv_star1"/>
+                android:contentDescription="@string/star2" />
 
             <ImageView
                 android:id="@+id/iv_star3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_star_border_24dp"
-                android:tint="@android:color/tertiary_text_light"
+                android:tint="#FFD700"
+                android:layout_marginEnd="0dp"
+                app:layout_constraintBottom_toBottomOf="@id/iv_star2"
                 app:layout_constraintStart_toEndOf="@id/iv_star2"
+                app:layout_constraintEnd_toStartOf="@id/iv_star4"
                 app:layout_constraintTop_toTopOf="@id/iv_star2"
-                app:layout_constraintBottom_toBottomOf="@id/iv_star2"/>
+                android:contentDescription="@string/star3" />
 
             <ImageView
                 android:id="@+id/iv_star4"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_star_border_24dp"
-                android:tint="@android:color/tertiary_text_light"
+                android:tint="#FFD700"
+                android:layout_marginEnd="0dp"
+                app:layout_constraintBottom_toBottomOf="@id/iv_star3"
                 app:layout_constraintStart_toEndOf="@id/iv_star3"
+                app:layout_constraintEnd_toStartOf="@id/iv_star5"
                 app:layout_constraintTop_toTopOf="@id/iv_star3"
-                app:layout_constraintBottom_toBottomOf="@id/iv_star3"/>
+                android:contentDescription="@string/star4" />
 
             <ImageView
                 android:id="@+id/iv_star5"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_star_border_24dp"
-                android:tint="@android:color/tertiary_text_light"
+                android:tint="#FFD700"
+                app:layout_constraintBottom_toBottomOf="@id/iv_star4"
                 app:layout_constraintStart_toEndOf="@id/iv_star4"
                 app:layout_constraintTop_toTopOf="@id/iv_star4"
-                app:layout_constraintBottom_toBottomOf="@id/iv_star4"/>
+                app:layout_constraintEnd_toEndOf="@id/view_star"
+                android:contentDescription="@string/star5" />
 
-            <TextView
-                android:id="@+id/tv_vote_count"
+            <android.support.constraint.Guideline
+                android:id="@+id/star_start"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                tools:text="Vote Count"
-                android:layout_marginTop="4dp"
-                app:layout_constraintTop_toBottomOf="@id/iv_star1"
-                app:layout_constraintStart_toStartOf="@id/iv_star1"
-                app:layout_constraintEnd_toEndOf="@id/iv_star5"/>
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.15" />
+
+            <android.support.constraint.Guideline
+                android:id="@+id/star_end"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.4"/>
+
+<!--            <TextView-->
+<!--                android:id="@+id/tv_vote_count"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:textSize="12sp"-->
+<!--                app:layout_constraintEnd_toEndOf="@id/iv_star5"-->
+<!--                app:layout_constraintStart_toStartOf="@id/tv_rating"-->
+<!--                app:layout_constraintTop_toBottomOf="@id/iv_star1"-->
+<!--                tools:text="Vote Count" />-->
+
+            <View
+                android:id="@+id/view_fav"
+                android:layout_width="110sp"
+                android:layout_height="0dp"
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toEndOf="@id/fav_end"
+                app:layout_constraintStart_toStartOf="@id/fav_start"
+                app:layout_constraintTop_toTopOf="@id/fav"
+                app:layout_constraintBottom_toBottomOf="@id/fav"/>
 
             <com.github.ivbaranov.mfb.MaterialFavoriteButton
-                android:id="@+id/favorite"
+                android:id="@+id/favorite_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="@dimen/activity_vertical_margin"
                 app:layout_constraintBottom_toBottomOf="@id/tv_rating"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/fav"
+                app:layout_constraintStart_toStartOf="@id/view_fav"
                 app:layout_constraintTop_toTopOf="@id/tv_rating"
-                app:mfb_color="black"
+                android:tint="@android:color/holo_red_light"
                 app:mfb_animate_favorite="true"
-                app:mfb_type="heart"/>
+                app:mfb_color="black"
+                app:mfb_type="heart" />
+
+            <TextView
+                android:id="@+id/fav"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/title_favorite"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:layout_marginStart="0dp"
+                app:layout_constraintEnd_toEndOf="@id/view_fav"
+                app:layout_constraintTop_toTopOf="@id/favorite_button"
+                app:layout_constraintBottom_toBottomOf="@id/favorite_button"
+                app:layout_constraintStart_toEndOf="@id/favorite_button" />
+
+            <android.support.constraint.Guideline
+                android:id="@+id/fav_end"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.85" />
+
+            <android.support.constraint.Guideline
+                android:id="@+id/fav_start"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.6" />
+
+            <TextView
+                android:id="@+id/genre"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:textSize="12sp"
+                android:text="@string/genre"
+                app:layout_constraintTop_toBottomOf="@id/tv_title"
+                app:layout_constraintStart_toStartOf="@id/tv_title" />
 
             <TextView
                 android:id="@+id/tv_genre"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                app:layout_constraintStart_toStartOf="@id/tv_title"
+                android:textSize="13sp"
+                android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="@id/tv_title"
-                app:layout_constraintTop_toBottomOf="@id/tv_vote_count"/>
+                app:layout_constraintStart_toStartOf="@id/tv_title"
+                app:layout_constraintTop_toBottomOf="@id/genre"
+                tools:text="Genre" />
 
             <TextView
                 android:id="@+id/overview"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/activity_horizontal_margin"
-                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:layout_marginTop="30dp"
                 android:layout_marginEnd="@dimen/activity_horizontal_margin"
                 android:text="@string/overview"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/iv_poster" />
+                app:layout_constraintTop_toBottomOf="@id/tv_rating" />
 
             <TextView
                 android:id="@+id/tv_overview"
@@ -232,6 +358,46 @@
                 app:layout_constraintTop_toBottomOf="@id/overview"
                 app:layout_constraintVertical_bias="0.0"
                 tools:text="@tools:sample/lorem/random" />
+
+            <TextView
+                android:id="@+id/runtime"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:textSize="12sp"
+                android:text="@string/runtime"
+                app:layout_constraintTop_toBottomOf="@id/tv_genre"
+                app:layout_constraintStart_toStartOf="@id/tv_title" />
+<!--
+            <View
+                android:id="@+id/line_video"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginStart="@dimen/activity_horizontal_margin"
+                android:layout_marginEnd="@dimen/activity_horizontal_margin"
+                android:background="@color/colorPrimary"
+                app:layout_constraintTop_toBottomOf="@id/tv_overview"/>
+
+            <WebView
+                android:id="@+id/vid_trailer"
+                android:layout_width="match_parent"
+                android:layout_height="350sp"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                app:layout_constraintTop_toBottomOf="@id/tv_overview"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"/>
+-->
+            <TextView
+                android:id="@+id/tv_runtime"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="@id/tv_title"
+                app:layout_constraintStart_toStartOf="@id/tv_title"
+                app:layout_constraintTop_toBottomOf="@id/runtime"
+                tools:text="Runtime" />
 
             <ProgressBar
                 android:id="@+id/progress_bar"

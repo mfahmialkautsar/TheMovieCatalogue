@@ -10,13 +10,17 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        buildConfigField("String", "API_KEY", '"61462e20daa2cbc48640e10a2a152d31"')
     }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
+    }
+    buildTypes.each {
+        it.buildConfigField('String', 'BASE_URL', BASE_URL)
+        it.buildConfigField('String', 'IMG_URL', IMG_URL)
+        it.buildConfigField('String', 'API_KEY', API_KEY)
     }
 }
 
@@ -35,6 +39,9 @@ dependencies {
     implementation 'com.android.support:preference-v7:28.0.0'
     annotationProcessor "android.arch.lifecycle:compiler:1.1.1"
     implementation 'com.loopj.android:android-async-http:1.4.9'
+    implementation 'com.squareup.retrofit2:retrofit:2.5.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.5.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:3.8.0'
 
     implementation 'com.android.support:recyclerview-v7:28.0.0'
     implementation 'com.squareup.picasso:picasso:2.71828'

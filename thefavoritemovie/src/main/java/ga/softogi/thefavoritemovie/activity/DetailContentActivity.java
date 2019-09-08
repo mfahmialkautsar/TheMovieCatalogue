@@ -8,8 +8,10 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
@@ -24,7 +26,9 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 
 import ga.softogi.thefavoritemovie.R;
@@ -34,10 +38,12 @@ import static android.provider.BaseColumns._ID;
 import static ga.softogi.thefavoritemovie.db.DatabaseContract.TableColumns.BACKDROP_PATH;
 import static ga.softogi.thefavoritemovie.db.DatabaseContract.TableColumns.CONTENT_URI_MOVIE;
 import static ga.softogi.thefavoritemovie.db.DatabaseContract.TableColumns.CONTENT_URI_TV;
+import static ga.softogi.thefavoritemovie.db.DatabaseContract.TableColumns.GENRE;
 import static ga.softogi.thefavoritemovie.db.DatabaseContract.TableColumns.OVERVIEW;
 import static ga.softogi.thefavoritemovie.db.DatabaseContract.TableColumns.POSTER_PATH;
 import static ga.softogi.thefavoritemovie.db.DatabaseContract.TableColumns.RATING;
 import static ga.softogi.thefavoritemovie.db.DatabaseContract.TableColumns.RELEASE;
+import static ga.softogi.thefavoritemovie.db.DatabaseContract.TableColumns.RUNTIME;
 import static ga.softogi.thefavoritemovie.db.DatabaseContract.TableColumns.TITLE;
 import static ga.softogi.thefavoritemovie.db.DatabaseContract.TableColumns.TYPE;
 import static ga.softogi.thefavoritemovie.db.DatabaseContract.TableColumns.VOTE_COUNT;
@@ -54,6 +60,7 @@ public class DetailContentActivity extends AppCompatActivity {
         @Override
         public void onFavoriteChanged(MaterialFavoriteButton buttonView, boolean favorite) {
             showSnackbarMessage(getString(R.string.favorite_failed));
+            favoriteButton.setFavorite(false);
         }
     };
 
@@ -62,6 +69,11 @@ public class DetailContentActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail_content);
 
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        CollapsingToolbarLayout collapsingToolbarLayout = findViewById(R.id.collapsing_toolbar);
+        collapsingToolbarLayout.setExpandedTitleColor(getResources().getColor(android.R.color.transparent));
+
         ImageView ivPoster = findViewById(R.id.iv_poster);
         ImageView ivBackdrop = findViewById(R.id.iv_backdrop);
 
@@ -69,20 +81,22 @@ public class DetailContentActivity extends AppCompatActivity {
         TextView tvOverview = findViewById(R.id.tv_overview);
         TextView tvRelease = findViewById(R.id.tv_release);
         TextView tvRating = findViewById(R.id.tv_rating);
+        TextView tvRuntime = findViewById(R.id.tv_runtime);
+        TextView tvGenre = findViewById(R.id.tv_genre);
 //        TextView tvVoteCount = findViewById(R.id.tv_vote_count);
-//
-//        ImageView ivStar1 = findViewById(R.id.iv_star1);
-//        ImageView ivStar2 = findViewById(R.id.iv_star2);
-//        ImageView ivStar3 = findViewById(R.id.iv_star3);
-//        ImageView ivStar4 = findViewById(R.id.iv_star4);
-//        ImageView ivStar5 = findViewById(R.id.iv_star5);
-//
-//        List<ImageView> ivStar = new ArrayList<>();
-//        ivStar.add(ivStar1);
-//        ivStar.add(ivStar2);
-//        ivStar.add(ivStar3);
-//        ivStar.add(ivStar4);
-//        ivStar.add(ivStar5);
+
+        ImageView ivStar1 = findViewById(R.id.iv_star1);
+        ImageView ivStar2 = findViewById(R.id.iv_star2);
+        ImageView ivStar3 = findViewById(R.id.iv_star3);
+        ImageView ivStar4 = findViewById(R.id.iv_star4);
+        ImageView ivStar5 = findViewById(R.id.iv_star5);
+
+        List<ImageView> ivStar = new ArrayList<>();
+        ivStar.add(ivStar1);
+        ivStar.add(ivStar2);
+        ivStar.add(ivStar3);
+        ivStar.add(ivStar4);
+        ivStar.add(ivStar5);
 
         Uri uri = getIntent().getData();
 
@@ -98,13 +112,16 @@ public class DetailContentActivity extends AppCompatActivity {
         String title = content.getTitle();
         String overview = content.getOverview();
         double rating = content.getRating();
-        int vote_count = content.getVoteCount();
+//        int vote_count = content.getVoteCount();
+        String runtime = content.getRuntime();
+        String genre = content.getGenre();
         String type = content.getType();
         String poster_path = content.getPosterPath();
         String backdrop_path = content.getBackdropPath();
 
-        String topType = (String) Objects.requireNonNull(getSupportActionBar()).getTitle();
         if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            String topType = (String) getSupportActionBar().getTitle();
             if (Objects.equals(type, TYPE_MOVIE)) {
                 topType = "Movie";
             } else if (Objects.equals(type, TYPE_TV)) {
@@ -126,23 +143,27 @@ public class DetailContentActivity extends AppCompatActivity {
 
         NumberFormat numberFormat = new DecimalFormat("#.0");
         String theRating;
-        if (Objects.equals(rating, 0)) {
+        if (Objects.equals(rating, 0.0)) {
             theRating = getString(R.string.no_rating);
         } else {
-            theRating = numberFormat.format(rating / 2) + "/5";
+            theRating = numberFormat.format(rating);
         }
 
-//        int integerRating = (int) rating/2;
-//        for (int i = 0; i < integerRating; i++) {
-//            ivStar.get(i).setImageResource(R.drawable.ic_star_full_24dp);
-//        }
-//        if (Math.round(rating) > integerRating) {
-//            ivStar.get(integerRating).setImageResource(R.drawable.ic_star_half_24dp);
-//        }
+        int integerRating = (int) rating/2;
+        for (int i = 0; i < integerRating; i++) {
+            ivStar.get(i).setImageResource(R.drawable.ic_star_full_24dp);
+        }
+        if (Math.round(rating) > integerRating) {
+            ivStar.get(integerRating).setImageResource(R.drawable.ic_star_half_24dp);
+        }
 
         tvOverview.setText(theOverview);
         tvRating.setText(String.format(" %s", theRating));
 
+        tvRuntime.setText(runtime);
+        tvGenre.setText(genre);
+        tvGenre.setMaxLines(2);
+        tvGenre.setEllipsize(TextUtils.TruncateAt.END);
 //        tvVoteCount.setText(vote_count);
 
         String release = content.getRelease();
@@ -180,12 +201,14 @@ public class DetailContentActivity extends AppCompatActivity {
         values.put(OVERVIEW, overview);
         values.put(RELEASE, release);
         values.put(RATING, rating);
-        values.put(VOTE_COUNT, vote_count);
+        values.put(RUNTIME, runtime);
+        values.put(GENRE, genre);
+//        values.put(VOTE_COUNT, vote_count);
         values.put(POSTER_PATH, poster_path);
         values.put(BACKDROP_PATH, backdrop_path);
         values.put(TYPE, type);
 
-        favoriteButton = findViewById(R.id.favorite);
+        favoriteButton = findViewById(R.id.favorite_button);
         if (type != null) {
             doFav(id, title, type, values);
         } else {

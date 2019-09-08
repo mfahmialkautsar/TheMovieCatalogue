@@ -1,4 +1,4 @@
-package ga.softogi.themoviecatalogue;
+package ga.softogi.themoviecatalogue.util;
 
 import android.view.View;
 

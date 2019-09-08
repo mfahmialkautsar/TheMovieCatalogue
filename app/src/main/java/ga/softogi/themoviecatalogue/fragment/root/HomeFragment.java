@@ -1,5 +1,6 @@
 package ga.softogi.themoviecatalogue.fragment.root;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
@@ -13,16 +14,16 @@ import android.view.ViewGroup;
 import java.util.Objects;
 
 import ga.softogi.themoviecatalogue.R;
-import ga.softogi.themoviecatalogue.fragment.MovieFragment;
-import ga.softogi.themoviecatalogue.fragment.TvFragment;
+import ga.softogi.themoviecatalogue.fragment.MainMovieFragment;
+import ga.softogi.themoviecatalogue.fragment.MainTvFragment;
 
 public class HomeFragment extends Fragment {
-    private Fragment movieFragment = new MovieFragment();
-    private Fragment tvFragment = new TvFragment();
+    private Fragment movieFragment = new MainMovieFragment();
+    private Fragment tvFragment = new MainTvFragment();
     private Fragment activeFragment = movieFragment;
 
-    private String movieTag = MovieFragment.class.getSimpleName();
-    private String tvTag = TvFragment.class.getSimpleName();
+    private String movieTag = MainMovieFragment.class.getSimpleName();
+    private String tvTag = MainTvFragment.class.getSimpleName();
     private String activeTag = "ActiveTab";
 
     private TabLayout tabLayout;

@@ -16,7 +16,8 @@ public class FavDatabaseContract {
         public static String TITLE = "title";
         public static String OVERVIEW = "overview";
         public static String RELEASE = "released";
-//        public static String GENRE = "genre";
+        public static String GENRE = "genre";
+        public static String RUNTIME = "runtime";
         public static String RATING = "rating";
         public static String VOTE_COUNT = "vote_count";
         public static String POSTER_PATH = "poster_path";

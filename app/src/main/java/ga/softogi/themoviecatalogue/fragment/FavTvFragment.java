@@ -2,9 +2,11 @@ package ga.softogi.themoviecatalogue.fragment;
 
 import android.content.Context;
 import android.content.res.Configuration;
+import android.database.ContentObserver;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.HandlerThread;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -27,23 +29,42 @@ import java.util.Objects;
 
 import ga.softogi.themoviecatalogue.LoadFavoriteCallback;
 import ga.softogi.themoviecatalogue.R;
-import ga.softogi.themoviecatalogue.adapter.ContentAdapter;
-import ga.softogi.themoviecatalogue.db.FavTvHelper;
-import ga.softogi.themoviecatalogue.entity.ContentItem;
+import ga.softogi.themoviecatalogue.adapter.TvAdapter;
+import ga.softogi.themoviecatalogue.entity.TvData;
 
-import static ga.softogi.themoviecatalogue.MappingHelper.mapCursorToArrayList;
+import static ga.softogi.themoviecatalogue.MappingHelper.mapTvCursorToArrayList;
 import static ga.softogi.themoviecatalogue.db.FavDatabaseContract.TableColumns.CONTENT_URI_TV;
 
 public class FavTvFragment extends Fragment implements LoadFavoriteCallback {
     private static final String EXTRA_TV_STATE = "EXTRA_TV_STATE";
+    private static final String EXTRA_IS_NOT_FOUND = "extra_is_not_found";
+    private static final String EXTRA_SEARCH = "extra_search";
+    private static final String EXTRA_HELPER = "extra_helper";
+    private static final String EXTRA_IS_EMPTY = "extra_is_empty";
+    private static final String EXTRA_TEXT_IF_EMPTY = "extra_text_if_empty";
     private ProgressBar progressBar;
-    private FavTvHelper favTvHelper;
-    private ContentAdapter adapter;
+    private TvAdapter adapter;
     private RecyclerView rvFavTv;
+    private SwipeRefreshLayout swipeRefreshLayout;
+    private SearchView searchView;
     private TextView tvIfEmpty;
+    private String searchKeyword;
+    private TextView tvHelper;
+    private String emptyFav;
+    private boolean showNoFound;
+//    private boolean showHelper;
+    private boolean showEmpty;
     private HandlerThread handlerThread;
-//    private DataObserver myObserver;
+    private TvDataObserver myObserver;
+    private Handler handler;
 
+    public Handler getHandler() {
+        return handler;
+    }
+
+    public String getSearchKeyword() {
+        return searchKeyword;
+    }
 
     public FavTvFragment() {
     }
@@ -58,18 +79,27 @@ public class FavTvFragment extends Fragment implements LoadFavoriteCallback {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         progressBar = view.findViewById(R.id.progress_bar);
+        tvHelper = view.findViewById(R.id.helper_text);
+        tvHelper.setVisibility(View.GONE);
 //        favTvHelper = FavTvHelper.getInstance(getContext());
 //        favTvHelper.openTv();
 
         tvIfEmpty = view.findViewById(R.id.tv_if_empty);
         init(view, savedInstanceState);
 
-        final SwipeRefreshLayout swipeRefreshLayout = view.findViewById(R.id.rl);
+        swipeRefreshLayout = view.findViewById(R.id.rl);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                onDestroy();
-                onViewCreated(Objects.requireNonNull(getView()), null);
+                if (TextUtils.isEmpty(searchView.getQuery().toString())) {
+                    searchKeyword = null;
+                    onDestroy();
+                    onViewCreated(Objects.requireNonNull(getView()), null);
+//                    showHelper = false;
+                } else {
+                    onDestroy();
+                    onViewCreated(Objects.requireNonNull(getView()), null);
+                }
                 swipeRefreshLayout.setRefreshing(false);
             }
         });
@@ -77,36 +107,63 @@ public class FavTvFragment extends Fragment implements LoadFavoriteCallback {
 
     private void init(View view, Bundle savedInstanceState) {
 
-        SearchView searchView = view.findViewById(R.id.search_view);
+        searchView = view.findViewById(R.id.search_view);
         searchView.setQueryHint(getString(R.string.search_tv));
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
+                if (isResumed()) {
+                    FavTvFragment.this.searchKeyword = s;
+                    onDestroy();
+                    onViewCreated(Objects.requireNonNull(getView()), null);
+//                    String showing = getString(R.string.showing) + searchKeyword;
+//                    tvHelper.setText(showing);
+//                    tvHelper.setVisibility(View.VISIBLE);
+//                    showHelper = true;
+                }
                 return false;
             }
 
             @Override
             public boolean onQueryTextChange(String s) {
-                onDestroy();
-                onViewCreated(Objects.requireNonNull(getView()), null);
                 return true;
             }
         });
 
-        String tvTitle = searchView.getQuery().toString();
-        String searchTv;
-        if (TextUtils.isEmpty(tvTitle)) {
-            searchTv = null;
-        } else {
-            searchTv = tvTitle;
+//        searchKeyword = searchView.getQuery().toString();
+//        String searchTv;
+//        if (TextUtils.isEmpty(searchKeyword)) {
+//            searchTv = null;
+//        } else {
+//            searchTv = searchKeyword;
+//        }
+/*
+        if (TextUtils.isEmpty(searchKeyword)) {
+            if (savedInstanceState != null) {
+                searchKeyword = savedInstanceState.getString(EXTRA_SEARCH);
+                showHelper = savedInstanceState.getBoolean(EXTRA_HELPER);
+                if (showHelper) {
+                    String showing = getString(R.string.showing) + searchKeyword;
+                    tvHelper.setText(showing);
+                    tvHelper.setVisibility(View.VISIBLE);
+                } else {
+                    tvHelper.setVisibility(View.GONE);
+                    showHelper = false;
+                }
+            } else {
+                tvHelper.setVisibility(View.GONE);
+                showHelper = false;
+            }
         }
+ */
 
-//        handlerThread = new HandlerThread("DataObserver");
-//        handlerThread.start();
-//        Handler handler = new Handler(handlerThread.getLooper());
-//        myObserver = new DataObserver(handler, view.getContext(), searchTv);
-//        view.getContext().getContentResolver().registerContentObserver(CONTENT_URI_TV, true, myObserver);
-        adapter = new ContentAdapter();
+        handlerThread = new HandlerThread("TvDataObserver");
+        handlerThread.start();
+        handler = new Handler(handlerThread.getLooper());
+        myObserver = new TvDataObserver(handler, this, getContext(), searchKeyword);
+        view.getContext().getContentResolver().registerContentObserver(CONTENT_URI_TV, true, myObserver);
+
+        adapter = new TvAdapter();
 
         rvFavTv = view.findViewById(R.id.rv_content);
         rvFavTv.setHasFixedSize(true);
@@ -118,58 +175,93 @@ public class FavTvFragment extends Fragment implements LoadFavoriteCallback {
         rvFavTv.setAdapter(adapter);
 
         if (savedInstanceState == null) {
-            new FavTvFragment.LoadFavoriteAsync(getContext(), this, searchTv).execute();
-        }
-        /*
-        else {
-            ArrayList<ContentItem> list = savedInstanceState.getParcelableArrayList(EXTRA_TV_STATE);
+            new LoadFavoriteAsync(getContext(), this, searchKeyword).execute();
+        } else {
+            showNoFound = savedInstanceState.getBoolean(EXTRA_IS_NOT_FOUND);
+            showEmpty = savedInstanceState.getBoolean(EXTRA_IS_EMPTY);
+            if (showNoFound) {
+                emptyFav = savedInstanceState.getString(EXTRA_TEXT_IF_EMPTY);
+                tvIfEmpty.setText(emptyFav);
+                tvIfEmpty.setVisibility(View.VISIBLE);
+            } else if (showEmpty) {
+                tvIfEmpty.setText(getString(R.string.no_fav_tv));
+                tvIfEmpty.setVisibility(View.VISIBLE);
+            } else {
+                tvIfEmpty.setVisibility(View.GONE);
+            }
+            ArrayList<TvData> list = savedInstanceState.getParcelableArrayList(EXTRA_TV_STATE);
             if (list != null) {
-                adapter.setData(list);
+                adapter.setTvDataList(list);
             }
         }
-         */
     }
 
     @Override
     public void preExecute() {
-        Objects.requireNonNull(getActivity()).runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                progressBar.setVisibility(View.VISIBLE);
-            }
-        });
+        if (getActivity() != null) {
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    progressBar.setVisibility(View.VISIBLE);
+                }
+            });
+        }
     }
 
     @Override
     public void postExecute(Cursor items) {
-        ArrayList<ContentItem> listTv = mapCursorToArrayList(items);
+        ArrayList<TvData> listTv = mapTvCursorToArrayList(items);
         if (listTv.size() > 0) {
             tvIfEmpty.setVisibility(View.GONE);
-            adapter.setData(listTv);
+            adapter.setTvDataList(listTv);
+            showNoFound = false;
+            showEmpty = false;
         } else {
+            adapter.clear();
+            if (getContext() != null) {
 //            adapter.setData(new ArrayList<ContentItem>());
-//            showToast(getString(R.string.empty_fav));
-            tvIfEmpty.setText(getString(R.string.no_fav_tv));
-            tvIfEmpty.setVisibility(View.VISIBLE);
+                if (TextUtils.isEmpty(searchKeyword)) {
+                    tvIfEmpty.setText(getString(R.string.no_fav_tv));
+                    showEmpty = true;
+                    showNoFound = false;
+                } else {
+                    emptyFav = "\"" + searchKeyword + "\"" + getString(R.string.search_not_in_favorite);
+                    tvIfEmpty.setText(emptyFav);
+                    showNoFound = true;
+                    showEmpty = false;
+                }
+                tvIfEmpty.setVisibility(View.VISIBLE);
+            }
         }
         progressBar.setVisibility(View.GONE);
     }
 
+//    @Override
+//    public void onResume() {
+//        super.onResume();
+//        init(Objects.requireNonNull(getView()), null);
+//    }
+
+//    @Override
+//    public void onDestroy() {
+//        super.onDestroy();
+////        favTvHelper.closeTv();
+//    }
+
     @Override
     public void onResume() {
         super.onResume();
-        init(Objects.requireNonNull(getView()), null);
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-//        favTvHelper.closeTv();
+        swipeRefreshLayout.requestFocus();
     }
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
-        outState.putParcelableArrayList(EXTRA_TV_STATE, adapter.getData());
+        outState.putParcelableArrayList(EXTRA_TV_STATE, adapter.getTvDataList());
+//        outState.putBoolean(EXTRA_HELPER, showHelper);
+        outState.putString(EXTRA_SEARCH, searchKeyword);
+        outState.putBoolean(EXTRA_IS_NOT_FOUND, showNoFound);
+        outState.putString(EXTRA_TEXT_IF_EMPTY, emptyFav);
+        outState.putBoolean(EXTRA_IS_EMPTY, showEmpty);
         super.onSaveInstanceState(outState);
     }
 
@@ -177,26 +269,28 @@ public class FavTvFragment extends Fragment implements LoadFavoriteCallback {
         Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
     }
 
-//    public static class DataObserver extends ContentObserver {
-//        /**
-//         * Creates a content observer.
-//         *
-//         * @param handler The handler to run {@link #onChange} on, or null if none.
-//         */
-//        final Context context;
-//        final String searchTv;
-//        public DataObserver(Handler handler, Context context, String searchTv) {
-//            super(handler);
-//            this.context = context;
-//            this.searchTv = searchTv;
-//        }
-//
-//        @Override
-//        public void onChange(boolean selfChange) {
-//            super.onChange(selfChange);
-//            new LoadFavoriteAsync(context, (LoadFavoriteCallback) context, searchTv).execute();
-//        }
-//    }
+    public static class TvDataObserver extends ContentObserver {
+        /**
+         * Creates a content observer.
+         *
+         * @param handler The handler to run {@link #onChange} on, or null if none.
+         */
+        final FavTvFragment favTvFragment;
+        final Context context;
+        final String searchTv;
+        public TvDataObserver(Handler handler, FavTvFragment favTvFragment, Context context, String searchTv) {
+            super(handler);
+            this.favTvFragment = favTvFragment;
+            this.context = context;
+            this.searchTv = searchTv;
+        }
+
+        @Override
+        public void onChange(boolean selfChange) {
+            super.onChange(selfChange);
+            new LoadFavoriteAsync(context, favTvFragment, searchTv).execute();
+        }
+    }
 
     private static class LoadFavoriteAsync extends AsyncTask<Void, Void, Cursor> {
         //        private final WeakReference<FavTvHelper> weakTvHelper;

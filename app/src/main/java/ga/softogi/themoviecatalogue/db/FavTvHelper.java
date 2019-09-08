@@ -7,10 +7,12 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.text.TextUtils;
+import android.util.Log;
 
 import java.util.ArrayList;
 
-import ga.softogi.themoviecatalogue.entity.ContentItem;
+import ga.softogi.themoviecatalogue.entity.MovieData;
+import ga.softogi.themoviecatalogue.entity.TvData;
 
 import static android.provider.BaseColumns._ID;
 import static ga.softogi.themoviecatalogue.db.FavDatabaseContract.TableColumns.BACKDROP_PATH;
@@ -60,8 +62,8 @@ public class FavTvHelper {
         }
     }
 
-    public ArrayList<ContentItem> getAllTv(String title) {
-        ArrayList<ContentItem> arrayList = new ArrayList<>();
+    public ArrayList<MovieData> getAllTv(String title) {
+        ArrayList<MovieData> arrayList = new ArrayList<>();
         Cursor cursor;
         Cursor cursorSearch = database.query(DATABASE_TV, null,
                 "TITLE LIKE ?",
@@ -86,18 +88,19 @@ public class FavTvHelper {
         }
         cursor.moveToFirst();
 
-        ContentItem contentItem;
+        MovieData contentItem;
         if (cursor.getCount() > 0) {
             do {
-                contentItem = new ContentItem();
+                contentItem = new MovieData();
                 contentItem.setId(cursor.getInt(cursor.getColumnIndexOrThrow(_ID)));
                 contentItem.setTitle(cursor.getString(cursor.getColumnIndexOrThrow(TITLE)));
                 contentItem.setOverview(cursor.getString(cursor.getColumnIndexOrThrow(OVERVIEW)));
-                contentItem.setRelease(cursor.getString(cursor.getColumnIndexOrThrow(RELEASE)));
-                contentItem.setRating(cursor.getDouble(cursor.getColumnIndexOrThrow(RATING)));
-                contentItem.setVoteCount(cursor.getInt(cursor.getColumnIndexOrThrow(VOTE_COUNT)));
+                contentItem.setReleaseDate(cursor.getString(cursor.getColumnIndexOrThrow(RELEASE)));
+                contentItem.setVoteAverage(cursor.getDouble(cursor.getColumnIndexOrThrow(RATING)));
+//                contentItem.setVoteCount(cursor.getInt(cursor.getColumnIndexOrThrow(VOTE_COUNT)));
                 contentItem.setPosterPath(cursor.getString(cursor.getColumnIndexOrThrow(POSTER_PATH)));
                 contentItem.setBackdropPath(cursor.getString(cursor.getColumnIndexOrThrow(BACKDROP_PATH)));
+                Log.d("BAKDROPPP", cursor.getString(cursor.getColumnIndexOrThrow(BACKDROP_PATH)));
                 contentItem.setType(cursor.getString(cursor.getColumnIndexOrThrow(TYPE)));
 
                 arrayList.add(contentItem);
@@ -108,19 +111,19 @@ public class FavTvHelper {
         return arrayList;
     }
 
-    public long addToTvFav(ContentItem contentItem) {
-        ContentValues values = new ContentValues();
-        values.put(_ID, contentItem.getId());
-        values.put(TITLE, contentItem.getTitle());
-        values.put(OVERVIEW, contentItem.getOverview());
-        values.put(RELEASE, contentItem.getRelease());
-        values.put(RATING, contentItem.getRating());
-        values.put(VOTE_COUNT, contentItem.getVoteCount());
-        values.put(POSTER_PATH, contentItem.getPosterPath());
-        values.put(BACKDROP_PATH, contentItem.getBackdropPath());
-        values.put(TYPE, contentItem.getType());
-        return database.insert(DATABASE_TV, null, values);
-    }
+//    public long addToTvFav(ContentItem contentItem) {
+//        ContentValues values = new ContentValues();
+//        values.put(_ID, contentItem.getId());
+//        values.put(TITLE, contentItem.getTitle());
+//        values.put(OVERVIEW, contentItem.getOverview());
+//        values.put(RELEASE, contentItem.getRelease());
+//        values.put(RATING, contentItem.getRating());
+//        values.put(VOTE_COUNT, contentItem.getVoteCount());
+//        values.put(POSTER_PATH, contentItem.getPosterPath());
+//        values.put(BACKDROP_PATH, contentItem.getBackdropPath());
+//        values.put(TYPE, contentItem.getType());
+//        return database.insert(DATABASE_TV, null, values);
+//    }
 
     public int deleteFromTvFav(int id) {
         return database.delete(DATABASE_TV, _ID + " = '" + id + "'", null);

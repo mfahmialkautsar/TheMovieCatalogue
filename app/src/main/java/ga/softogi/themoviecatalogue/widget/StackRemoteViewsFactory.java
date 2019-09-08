@@ -1,7 +1,5 @@
 package ga.softogi.themoviecatalogue.widget;
 
-import android.appwidget.AppWidgetManager;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -14,17 +12,21 @@ import android.widget.RemoteViewsService;
 
 import com.squareup.picasso.Picasso;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 import ga.softogi.themoviecatalogue.R;
 import ga.softogi.themoviecatalogue.db.FavMovieHelper;
 import ga.softogi.themoviecatalogue.db.FavTvHelper;
-import ga.softogi.themoviecatalogue.entity.ContentItem;
+import ga.softogi.themoviecatalogue.entity.MovieData;
+import ga.softogi.themoviecatalogue.entity.TvData;
+import ga.softogi.themoviecatalogue.network.NetworkContract;
 
 public class StackRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
     private final Context mContext;
     private Cursor cursor;
-    private ArrayList<ContentItem> list;
+    private ArrayList<MovieData> listMovie;
+    private ArrayList<TvData> listTv;
     private FavMovieHelper favMovieHelper;
     private FavTvHelper favTvHelper;
 
@@ -47,11 +49,13 @@ public class StackRemoteViewsFactory implements RemoteViewsService.RemoteViewsFa
 //        }
         final long identityToken = Binder.clearCallingIdentity();
 //        cursor = mContext.getContentResolver().query(CONTENT_URI_MOVIE, null, null, null, null);
-        list = new ArrayList<>();
+        listMovie = new ArrayList<>();
 
-        list.addAll(favMovieHelper.getAllMovies(null));
+        listMovie.addAll(favMovieHelper.getAllMovies(null));
+        listMovie.addAll(favTvHelper.getAllTv(null));
+//        listTv.addAll(favTvHelper.getAllTv(null));
 
-        list.addAll(favTvHelper.getAllTv(null));
+//        listMovie.addAllMovies(favTvHelper.getAllTv(null));
 
         Binder.restoreCallingIdentity(identityToken);
     }
@@ -64,7 +68,7 @@ public class StackRemoteViewsFactory implements RemoteViewsService.RemoteViewsFa
 
     @Override
     public int getCount() {
-        return list.size();
+        return listMovie.size();
     }
 
     @Override
@@ -74,15 +78,17 @@ public class StackRemoteViewsFactory implements RemoteViewsService.RemoteViewsFa
 //        if (cursor.moveToPosition(position)) {
 //            ContentItem contentItem = new ContentItem(cursor);
         Bitmap backdrop = null;
-        if (list.size() > 0) {
-            title = list.get(position).getTitle();
-            try {
-                backdrop = Picasso.get()
-                        .load("https://image.tmdb.org/t/p/w500/" + list.get(position).getBackdropPath())
-                        .get();
-            } catch (Exception e) {
-                Log.d("Widget load ERROR", e.getMessage());
-            }
+        if (listMovie.size() > 0) {
+            title = listMovie.get(position).getTitle();
+                if (listMovie.get(position).getBackdropPath() != null) {
+                    try {
+                        backdrop = Picasso.get()
+                                .load(NetworkContract.IMG_URL + "w500" + listMovie.get(position).getBackdropPath())
+                                .get();
+                    } catch (Exception e) {
+                        Log.e("Widget load ERROR", e.getMessage());
+                    }
+                }
             rv.setImageViewBitmap(R.id.image_view, backdrop);
 //        }
         }

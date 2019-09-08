@@ -6,6 +6,7 @@
     <string name="backdropPath">backdropPath</string>
     <string name="posterPath">posterPath</string>
     <string name="release">Release: </string>
+    <string name="release_date">Release date</string>
     <string name="overview">Overview</string>
     <string name="rating"> Rating</string>
     <string name="title_content">Title</string>
@@ -59,4 +60,25 @@
     <string name="locale_summary">Change your phone language</string>
     <string name="no_fav_movie">You haven\'t added any Movie to Favorite</string>
     <string name="no_fav_tv">You haven\'t added any TV Show to Favorite</string>
+    <string name="minutes">\ minutes</string>
+    <string name="search_not_in_favorite">\ is not in Favorite</string>
+    <string name="search_not_found">\ not found</string>
+    <string name="no_data">No Data!</string>
+    <string name="connection_error">Connection ERROR!</string>
+    <string name="request_timeout">Request Timeout, Refresh!</string>
+    <string name="runtime_unknown">Runtime Unknown</string>
+    <string name="genre_unknown">Genre Unknown</string>
+    <string name="has_released">Released: \</string>
+    <string name="coming_soon">Coming soon: \</string>
+    <string name="discovering_movies">Discovering Movies</string>
+    <string name="showing">Showing: \</string>
+    <string name="genre">Genre:</string>
+    <string name="runtime">Runtime:</string>
+    <string name="movie">Movie</string>
+    <string name="tv_show">TV Show</string>
+    <string name="star1">star1</string>
+    <string name="star2">star2</string>
+    <string name="star3">star3</string>
+    <string name="star4">star4</string>
+    <string name="star5">star5</string>
 </resources>

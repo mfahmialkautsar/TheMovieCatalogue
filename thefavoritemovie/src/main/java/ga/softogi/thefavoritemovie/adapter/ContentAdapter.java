@@ -32,7 +32,10 @@ import static ga.softogi.thefavoritemovie.db.DatabaseContract.TableColumns.CONTE
 public class ContentAdapter extends RecyclerView.Adapter<ContentAdapter.ContentViewHolder> {
     private ArrayList<ContentItem> mData = new ArrayList<>();
 
-    private ArrayList<ContentItem> getData() {
+    public ContentAdapter() {
+    }
+
+    public ArrayList<ContentItem> getData() {
         return mData;
     }
 
@@ -40,6 +43,24 @@ public class ContentAdapter extends RecyclerView.Adapter<ContentAdapter.ContentV
         mData.clear();
         mData.addAll(contents);
         notifyDataSetChanged();
+    }
+
+    public void remove(ContentItem item) {
+        int position = mData.indexOf(item);
+        if (position >= 0) {
+            mData.remove(position);
+            notifyItemRemoved(position);
+        }
+    }
+
+    public void clear() {
+        while (getItemCount() > 0) {
+            remove(getItem(0));
+        }
+    }
+
+    public ContentItem getItem(int position) {
+        return mData.get(position);
     }
 
     @NonNull
@@ -92,7 +113,7 @@ public class ContentAdapter extends RecyclerView.Adapter<ContentAdapter.ContentV
 //            tvRelease = itemView.findViewById(R.id.tv_release);
             tvRating = itemView.findViewById(R.id.tv_rating);
             ivThumbnail = itemView.findViewById(R.id.iv_thumbnail);
-//            favorite = itemView.findViewById(R.id.favorite);
+//            favorite_button = itemView.findViewById(R.id.favorite_button);
         }
 
         void bind(ContentItem content) {
@@ -103,7 +124,7 @@ public class ContentAdapter extends RecyclerView.Adapter<ContentAdapter.ContentV
             String theRating;
 
             Picasso.get()
-                    .load("https://image.tmdb.org/t/p/w500/" + content.getPosterPath())
+                    .load("https://image.tmdb.org/t/p/w342" + content.getPosterPath())
                     .placeholder(itemView.getContext().getResources().getDrawable(R.drawable.ic_loading_24dp))
                     .error(itemView.getContext().getResources().getDrawable(R.drawable.ic_error_outline_black_24dp))
                     .into(ivThumbnail);
@@ -114,7 +135,7 @@ public class ContentAdapter extends RecyclerView.Adapter<ContentAdapter.ContentV
                 theOverview = overview;
             }
 
-            if (Objects.equals(rating, 0)) {
+            if (Objects.equals(rating, 0.0)) {
                 theRating = itemView.getContext().getString(R.string.no_rating);
             } else {
                 theRating = String.valueOf(rating);

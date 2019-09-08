@@ -37,6 +37,8 @@ public class DatabaseContract {
         public static String OVERVIEW = "overview";
         public static String RELEASE = "released";
         public static String RATING = "rating";
+        public static String GENRE = "genre";
+        public static String RUNTIME = "runtime";
         public static String VOTE_COUNT = "vote_count";
         public static String POSTER_PATH = "poster_path";
         public static String BACKDROP_PATH = "backdrop_path";

@@ -1,56 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_gravity="center"
-    android:layout_margin="2dp">
+    android:layout_marginStart="6dp"
+    android:layout_marginTop="4dp"
+    android:layout_marginEnd="6dp"
+    android:layout_marginBottom="8dp"
+    android:background="@drawable/shadow"
+    android:elevation="4dp">
 
-
-    <FrameLayout
+    <ImageView
+        android:id="@+id/iv_thumbnail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="6dp"
-        android:background="@drawable/shadow"
-        android:elevation="4dp">
+        android:adjustViewBounds="true"
+        android:contentDescription="@string/posterPath"
+        android:scaleType="fitXY"
+        tools:src="@color/colorAccent" />
 
-        <ImageView
-            android:id="@+id/iv_thumbnail"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:adjustViewBounds="true"
-            android:contentDescription="@string/posterPath"
-            android:scaleType="fitXY"
-            tools:src="@color/colorAccent" />
+    <TextView
+        android:id="@+id/tv_rating"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="#6D000000"
+        android:drawableStart="@drawable/ic_star_16dp"
+        android:elevation="8dp"
+        android:gravity="center"
+        android:paddingStart="4dp"
+        android:paddingTop="2dp"
+        android:paddingEnd="6dp"
+        android:paddingBottom="3dp"
+        android:text="@string/rating"
+        android:textColor="@android:color/white"
+        android:textStyle="bold" />
 
-        <TextView
-            android:id="@+id/tv_rating"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="#6D000000"
-            android:drawableStart="@drawable/ic_star_16dp"
-            android:elevation="8dp"
-            android:gravity="center"
-            android:paddingStart="4dp"
-            android:paddingTop="2dp"
-            android:paddingEnd="6dp"
-            android:paddingBottom="3dp"
-            android:text="@string/rating"
-            android:textColor="@android:color/white"
-            android:textStyle="bold" />
+    <TextView
+        android:id="@+id/tv_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:background="#4D000000"
+        android:ellipsize="end"
+        android:maxLines="2"
+        android:padding="4dp"
+        android:textColor="@android:color/white"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        tools:text="@string/title_content" />
 
-        <TextView
-            android:id="@+id/tv_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:background="#4D000000"
-            android:maxLines="2"
-            android:padding="4dp"
-            android:textColor="@android:color/white"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            tools:text="@string/title_content" />
-    </FrameLayout>
-
-</LinearLayout>
+</FrameLayout>

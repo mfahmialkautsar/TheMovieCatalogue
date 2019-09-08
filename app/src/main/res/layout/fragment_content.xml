@@ -1,25 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/fragment_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:theme="@style/Theme.AppCompat.DayNight.DarkActionBar">
 
-    <android.support.v7.widget.SearchView
-        android:id="@+id/search_view"
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/search_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:maxLines="1"
-        app:actionViewClass="android.support.v7.widget.SearchView" />
+        android:background="@drawable/sharp_shadow"
+        android:backgroundTint="@android:color/transparent"
+        android:elevation="2dp">
+
+        <android.support.v7.widget.SearchView
+            android:id="@+id/search_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:maxLines="1"
+            app:actionViewClass="android.support.v7.widget.SearchView"
+            android:background="@drawable/sharp_shadow"
+            android:backgroundTint="@android:color/transparent"
+            android:elevation="1dp" />
+
+        <TextView
+            android:id="@+id/helper_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            tools:text="Showing:"
+            android:visibility="gone"
+            android:paddingStart="1dp"
+            android:paddingEnd="1dp"
+            android:paddingBottom="1dp"/>
+    </android.support.design.widget.TextInputLayout>
 
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/rl"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/search_view"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp">
+        android:layout_below="@id/search_layout"
+        android:layout_marginStart="4dp"
+        android:layout_marginEnd="4dp">
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/rv_content"

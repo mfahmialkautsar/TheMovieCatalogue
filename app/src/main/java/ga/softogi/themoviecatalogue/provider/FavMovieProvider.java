@@ -7,6 +7,7 @@ import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
@@ -14,6 +15,7 @@ import java.util.Objects;
 
 import ga.softogi.themoviecatalogue.R;
 import ga.softogi.themoviecatalogue.db.FavMovieHelper;
+import ga.softogi.themoviecatalogue.fragment.FavMovieFragment;
 import ga.softogi.themoviecatalogue.widget.FavoriteWidget;
 
 import static ga.softogi.themoviecatalogue.db.FavDatabaseContract.AUTHORITY_MOVIE;
@@ -25,6 +27,7 @@ public class FavMovieProvider extends ContentProvider {
     private static final int MOVIE_ID = 2;
     private static final int MOVIE_TITLE = 3;
     private static final UriMatcher sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
+    private FavMovieFragment favMovieFragment = new FavMovieFragment();
 
     static {
         sUriMatcher.addURI(AUTHORITY_MOVIE, TABLE_MOVIE, MOVIE);
@@ -35,6 +38,9 @@ public class FavMovieProvider extends ContentProvider {
     }
 
     private FavMovieHelper favMovieHelper;
+    private String searchMovie = favMovieFragment.getSearchMovie();
+    private Handler handler = favMovieFragment.getHandler();
+    private FavMovieFragment.MovieDataObserver movieDataObserver = new FavMovieFragment.MovieDataObserver(handler, favMovieFragment, getContext(), searchMovie);
 
     @Override
     public boolean onCreate() {
@@ -73,8 +79,9 @@ public class FavMovieProvider extends ContentProvider {
         favMovieHelper.openMovie();
         long added = favMovieHelper.insertProvider(values);
 
+        if (getContext() != null)
+        getContext().getContentResolver().notifyChange(CONTENT_URI_MOVIE, movieDataObserver);
         notifyMovieWidgetChange();
-        getContext().getContentResolver().notifyChange(uri, null);
         return Uri.parse(CONTENT_URI_MOVIE + "/" + added);
     }
 
@@ -91,8 +98,9 @@ public class FavMovieProvider extends ContentProvider {
                 break;
         }
 
+        if (getContext() != null)
+        getContext().getContentResolver().notifyChange(CONTENT_URI_MOVIE, movieDataObserver);
         notifyMovieWidgetChange();
-        getContext().getContentResolver().notifyChange(uri, null);
         return deleted;
     }
 
