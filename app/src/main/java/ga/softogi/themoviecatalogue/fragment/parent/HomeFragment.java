@@ -1,43 +1,39 @@
-package ga.softogi.themoviecatalogue.fragment.root;
+package ga.softogi.themoviecatalogue.fragment.parent;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.Objects;
 
 import ga.softogi.themoviecatalogue.R;
-import ga.softogi.themoviecatalogue.fragment.MainMovieFragment;
-import ga.softogi.themoviecatalogue.fragment.MainTvFragment;
+import ga.softogi.themoviecatalogue.fragment.child.HomeMovieFragment;
+import ga.softogi.themoviecatalogue.fragment.child.HomeTvFragment;
 
 public class HomeFragment extends Fragment {
-    private Fragment movieFragment = new MainMovieFragment();
-    private Fragment tvFragment = new MainTvFragment();
+    private Fragment movieFragment = new HomeMovieFragment();
+    private Fragment tvFragment = new HomeTvFragment();
     private Fragment activeFragment = movieFragment;
 
-    private String movieTag = MainMovieFragment.class.getSimpleName();
-    private String tvTag = MainTvFragment.class.getSimpleName();
+    private String movieTag = HomeMovieFragment.class.getSimpleName();
+    private String tvTag = HomeTvFragment.class.getSimpleName();
     private String activeTag = "ActiveTab";
-
-    private TabLayout tabLayout;
-    private TabLayout.Tab tab;
     private int position;
 
     public HomeFragment() {
     }
 
+    private Fragment find(String fTag) {
+        return getChildFragmentManager().findFragmentByTag(fTag);
+    }
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        //        String movieTitle = editSearch.getText().toString();
-//        bundle.putString("extra_search", movieTitle);
         return inflater.inflate(R.layout.fragment_tab, container, false);
     }
 
@@ -45,15 +41,10 @@ public class HomeFragment extends Fragment {
     public void onViewCreated(@NonNull View view, final Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        tabLayout = view.findViewById(R.id.tabs);
-//        adapter = new SectionsPagerAdapter(getChildFragmentManager(), tabLayout.getTabCount());
-
-//        adapter.populateFragment(movieFragment);
-//        adapter.populateFragment(tvFragment);
+        TabLayout tabLayout = view.findViewById(R.id.tabs);
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                HomeFragment.this.tab = tab;
                 switch (tab.getPosition()) {
                     case 0:
                         getChildFragmentManager().beginTransaction().hide(activeFragment).show(movieFragment).commit();
@@ -61,42 +52,32 @@ public class HomeFragment extends Fragment {
                         break;
                     case 1:
                         getChildFragmentManager().beginTransaction().hide(activeFragment).show(tvFragment).commit();
-                        if (null == getChildFragmentManager().findFragmentByTag(tvTag)) {
+                        if (null == find(tvTag)) {
                             getChildFragmentManager().beginTransaction().add(R.id.view_frame, tvFragment, tvTag).commit();
                         }
                         activeFragment = tvFragment;
                         break;
                 }
                 position = tab.getPosition();
-//                Bundle bundle = new Bundle();
-//                bundle.putInt("tabpos", position);
-//                Intent intent = new Intent(getContext(), HomeFragment.class);
-//                intent.putExtras(bundle);
             }
 
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
-
             }
 
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
-
             }
         });
 
-//        setViewPager(viewPager);
-//        tabLayout.setupWithViewPager(viewPager);
         if (savedInstanceState == null) {
             getChildFragmentManager().beginTransaction().add(R.id.view_frame, movieFragment, movieTag).commit();
         } else {
-//            tab = tabLayout.getTabAt(position);
-//            Objects.requireNonNull(tab).select();
             activeFragment = getChildFragmentManager().getFragment(savedInstanceState, activeTag);
             getChildFragmentManager().beginTransaction().attach(activeFragment).commit();
             movieFragment = getChildFragmentManager().getFragment(savedInstanceState, movieTag);
             getChildFragmentManager().beginTransaction().attach(movieFragment).commit();
-            if (null != getChildFragmentManager().findFragmentByTag(tvTag)) {
+            if (null != find(tvTag)) {
                 tvFragment = getChildFragmentManager().getFragment(savedInstanceState, tvTag);
                 getChildFragmentManager().beginTransaction().attach(tvFragment).commit();
             }
@@ -105,24 +86,16 @@ public class HomeFragment extends Fragment {
             } else if (tvFragment.isHidden()) {
                 position = 0;
             }
-            tab = tabLayout.getTabAt(position);
+            TabLayout.Tab tab = tabLayout.getTabAt(position);
             Objects.requireNonNull(tab).select();
         }
     }
 
-//    private void setViewPager(ViewPager viewPager) {
-//        SectionsPagerAdapter adapter = new SectionsPagerAdapter(getContext(), getChildFragmentManager());
-//        adapter.populateFragment(new MovieFragment(), getString(R.string.title_movies));
-//        adapter.populateFragment(new FavoriteFragment(), getString(R.string.title_tv));
-//        viewPager.setAdapter(adapter);
-//    }
-
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
-//        position = outState.getInt("tabpos");
         getChildFragmentManager().putFragment(outState, activeTag, activeFragment);
         getChildFragmentManager().putFragment(outState, movieTag, movieFragment);
-        if (null != getChildFragmentManager().findFragmentByTag(tvTag)) {
+        if (null != find(tvTag)) {
             getChildFragmentManager().putFragment(outState, tvTag, tvFragment);
         }
         super.onSaveInstanceState(outState);

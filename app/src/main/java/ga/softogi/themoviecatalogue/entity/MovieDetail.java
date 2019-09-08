@@ -5,6 +5,8 @@ import com.google.gson.annotations.SerializedName;
 import java.util.List;
 
 public class MovieDetail {
+    @SerializedName("runtime")
+    public int runtime;
     @SerializedName("id")
     private int id;
     @SerializedName("overview")
@@ -19,8 +21,6 @@ public class MovieDetail {
     private String backdropPath;
     @SerializedName("release_date")
     private String releaseDate;
-    @SerializedName("runtime")
-    public int runtime;
     @SerializedName("vote_average")
     private double voteAverage;
     @SerializedName("homepage")

@@ -3,9 +3,7 @@ package ga.softogi.themoviecatalogue;
 import android.database.Cursor;
 
 import java.util.ArrayList;
-import java.util.List;
 
-import ga.softogi.themoviecatalogue.entity.Genre;
 import ga.softogi.themoviecatalogue.entity.MovieData;
 import ga.softogi.themoviecatalogue.entity.TvData;
 
@@ -15,9 +13,8 @@ import static ga.softogi.themoviecatalogue.db.FavDatabaseContract.TableColumns.G
 import static ga.softogi.themoviecatalogue.db.FavDatabaseContract.TableColumns.OVERVIEW;
 import static ga.softogi.themoviecatalogue.db.FavDatabaseContract.TableColumns.POSTER_PATH;
 import static ga.softogi.themoviecatalogue.db.FavDatabaseContract.TableColumns.RATING;
-import static ga.softogi.themoviecatalogue.db.FavDatabaseContract.TableColumns.RUNTIME;
-import static ga.softogi.themoviecatalogue.db.FavDatabaseContract.TableColumns.VOTE_COUNT;
 import static ga.softogi.themoviecatalogue.db.FavDatabaseContract.TableColumns.RELEASE;
+import static ga.softogi.themoviecatalogue.db.FavDatabaseContract.TableColumns.RUNTIME;
 import static ga.softogi.themoviecatalogue.db.FavDatabaseContract.TableColumns.TITLE;
 import static ga.softogi.themoviecatalogue.db.FavDatabaseContract.TableColumns.TYPE;
 
@@ -32,7 +29,6 @@ public class MappingHelper {
             String overview = cursor.getString(cursor.getColumnIndexOrThrow(OVERVIEW));
             String release = cursor.getString(cursor.getColumnIndexOrThrow(RELEASE));
             double rating = cursor.getDouble(cursor.getColumnIndexOrThrow(RATING));
-//            int voteCount = cursor.getInt(cursor.getColumnIndexOrThrow(VOTE_COUNT));
             String poster = cursor.getString(cursor.getColumnIndexOrThrow(POSTER_PATH));
             String backdrop = cursor.getString(cursor.getColumnIndexOrThrow(BACKDROP_PATH));
             String runtime = cursor.getString(cursor.getColumnIndexOrThrow(RUNTIME));
@@ -52,7 +48,6 @@ public class MappingHelper {
             String overview = cursor.getString(cursor.getColumnIndexOrThrow(OVERVIEW));
             String release = cursor.getString(cursor.getColumnIndexOrThrow(RELEASE));
             double rating = cursor.getDouble(cursor.getColumnIndexOrThrow(RATING));
-//            int voteCount = cursor.getInt(cursor.getColumnIndexOrThrow(VOTE_COUNT));
             String poster = cursor.getString(cursor.getColumnIndexOrThrow(POSTER_PATH));
             String backdrop = cursor.getString(cursor.getColumnIndexOrThrow(BACKDROP_PATH));
             String runtime = cursor.getString(cursor.getColumnIndexOrThrow(RUNTIME));

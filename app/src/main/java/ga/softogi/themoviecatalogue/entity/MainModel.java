@@ -10,7 +10,7 @@ public class MainModel<T> {
     @SerializedName("results")
     private ArrayList<T> results;
 
-    public MainModel() {
+    MainModel() {
     }
 
     public int getPage() {

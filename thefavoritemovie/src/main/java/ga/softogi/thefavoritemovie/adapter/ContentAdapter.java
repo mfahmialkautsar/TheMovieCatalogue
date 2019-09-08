@@ -1,24 +1,18 @@
 package ga.softogi.thefavoritemovie.adapter;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Objects;
 
 import ga.softogi.thefavoritemovie.CustomOnItemClickListener;
@@ -45,7 +39,7 @@ public class ContentAdapter extends RecyclerView.Adapter<ContentAdapter.ContentV
         notifyDataSetChanged();
     }
 
-    public void remove(ContentItem item) {
+    private void remove(ContentItem item) {
         int position = mData.indexOf(item);
         if (position >= 0) {
             mData.remove(position);
@@ -55,12 +49,12 @@ public class ContentAdapter extends RecyclerView.Adapter<ContentAdapter.ContentV
 
     public void clear() {
         while (getItemCount() > 0) {
-            remove(getItem(0));
+            remove(getItem());
         }
     }
 
-    public ContentItem getItem(int position) {
-        return mData.get(position);
+    private ContentItem getItem() {
+        return mData.get(0);
     }
 
     @NonNull
@@ -100,26 +94,18 @@ public class ContentAdapter extends RecyclerView.Adapter<ContentAdapter.ContentV
 
     class ContentViewHolder extends RecyclerView.ViewHolder {
         TextView tvTitle;
-        //        TextView tvOverview;
-//        TextView tvRelease;
         TextView tvRating;
         ImageView ivThumbnail;
-        Button favorite;
 
         ContentViewHolder(@NonNull View itemView) {
             super(itemView);
             tvTitle = itemView.findViewById(R.id.tv_title);
-//            tvOverview = itemView.findViewById(R.id.tv_overview);
-//            tvRelease = itemView.findViewById(R.id.tv_release);
             tvRating = itemView.findViewById(R.id.tv_rating);
             ivThumbnail = itemView.findViewById(R.id.iv_thumbnail);
-//            favorite_button = itemView.findViewById(R.id.favorite_button);
         }
 
         void bind(ContentItem content) {
             tvTitle.setText(content.getTitle());
-            String overview = content.getOverview();
-            String theOverview;
             double rating = content.getRating();
             String theRating;
 
@@ -129,31 +115,12 @@ public class ContentAdapter extends RecyclerView.Adapter<ContentAdapter.ContentV
                     .error(itemView.getContext().getResources().getDrawable(R.drawable.ic_error_outline_black_24dp))
                     .into(ivThumbnail);
 
-            if (TextUtils.isEmpty(overview)) {
-                theOverview = itemView.getContext().getString(R.string.overview_not_found);
-            } else {
-                theOverview = overview;
-            }
-
             if (Objects.equals(rating, 0.0)) {
                 theRating = itemView.getContext().getString(R.string.no_rating);
             } else {
                 theRating = String.valueOf(rating);
             }
-//            tvOverview.setText(theOverview);
             tvRating.setText(String.format(" %s", theRating));
-
-            String release = content.getRelease();
-            @SuppressLint("SimpleDateFormat") SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-
-            try {
-                Date date = dateFormat.parse(release);
-                @SuppressLint("SimpleDateFormat") SimpleDateFormat newDateFormat = new SimpleDateFormat("yyyy");
-                String releaseDate = newDateFormat.format(date);
-//                tvRelease.setText(releaseDate);
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
         }
     }
 }

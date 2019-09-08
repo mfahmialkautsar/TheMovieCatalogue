@@ -46,12 +46,31 @@ import static ga.softogi.thefavoritemovie.db.DatabaseContract.TableColumns.RELEA
 import static ga.softogi.thefavoritemovie.db.DatabaseContract.TableColumns.RUNTIME;
 import static ga.softogi.thefavoritemovie.db.DatabaseContract.TableColumns.TITLE;
 import static ga.softogi.thefavoritemovie.db.DatabaseContract.TableColumns.TYPE;
-import static ga.softogi.thefavoritemovie.db.DatabaseContract.TableColumns.VOTE_COUNT;
 import static ga.softogi.thefavoritemovie.entity.ContentItem.TYPE_MOVIE;
 import static ga.softogi.thefavoritemovie.entity.ContentItem.TYPE_TV;
 
 public class DetailContentActivity extends AppCompatActivity {
     public static final int NO_INTERNET = R.string.no_internet;
+    private static final String EXTRA_ID = "extra_id";
+    private static final String EXTRA_TITLE = "extra_title";
+    private static final String EXTRA_OVERVIEW = "extra_overview";
+    private static final String EXTRA_RELEASE = "extra_release";
+    private static final String EXTRA_RATING = "extra_rating";
+    private static final String EXTRA_RUNTIME = "extra_runtime";
+    private static final String EXTRA_GENRE = "extra_genre";
+    private static final String EXTRA_TYPE = "extra_type";
+    private static final String EXTRA_POSTER = "extra_poster";
+    private static final String EXTRA_BACKDROP = "extra_backdrop";
+    private int id;
+    private String title;
+    private String overview;
+    private String release;
+    private double rating;
+    private String runtime;
+    private String genre;
+    private String type;
+    private String poster_path;
+    private String backdrop_path;
     private MaterialFavoriteButton favoriteButton;
     private ProgressBar progressBar;
 
@@ -83,7 +102,7 @@ public class DetailContentActivity extends AppCompatActivity {
         TextView tvRating = findViewById(R.id.tv_rating);
         TextView tvRuntime = findViewById(R.id.tv_runtime);
         TextView tvGenre = findViewById(R.id.tv_genre);
-//        TextView tvVoteCount = findViewById(R.id.tv_vote_count);
+        TextView isReleased = findViewById(R.id.release);
 
         ImageView ivStar1 = findViewById(R.id.iv_star1);
         ImageView ivStar2 = findViewById(R.id.iv_star2);
@@ -108,16 +127,29 @@ public class DetailContentActivity extends AppCompatActivity {
                 cursor.close();
             }
         }
-        int id = content.getId();
-        String title = content.getTitle();
-        String overview = content.getOverview();
-        double rating = content.getRating();
-//        int vote_count = content.getVoteCount();
-        String runtime = content.getRuntime();
-        String genre = content.getGenre();
-        String type = content.getType();
-        String poster_path = content.getPosterPath();
-        String backdrop_path = content.getBackdropPath();
+        if (savedInstanceState == null) {
+            id = content.getId();
+            title = content.getTitle();
+            overview = content.getOverview();
+            release = content.getRelease();
+            rating = content.getRating();
+            runtime = content.getRuntime();
+            genre = content.getGenre();
+            type = content.getType();
+            poster_path = content.getPosterPath();
+            backdrop_path = content.getBackdropPath();
+        } else {
+            id = savedInstanceState.getInt(EXTRA_ID);
+            title = savedInstanceState.getString(EXTRA_TITLE);
+            overview = savedInstanceState.getString(EXTRA_OVERVIEW);
+            release = savedInstanceState.getString(EXTRA_RELEASE);
+            rating = savedInstanceState.getDouble(EXTRA_RATING);
+            runtime = savedInstanceState.getString(EXTRA_RUNTIME);
+            genre = savedInstanceState.getString(EXTRA_GENRE);
+            type = savedInstanceState.getString(EXTRA_TYPE);
+            poster_path = savedInstanceState.getString(EXTRA_POSTER);
+            backdrop_path = savedInstanceState.getString(EXTRA_BACKDROP);
+        }
 
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -135,7 +167,7 @@ public class DetailContentActivity extends AppCompatActivity {
 
         String theOverview;
         if (TextUtils.isEmpty(overview)) {
-            theOverview = getString(R.string.overview_not_found);
+            theOverview = getString(R.string.overview_unknown);
         } else {
             theOverview = overview;
         }
@@ -149,7 +181,7 @@ public class DetailContentActivity extends AppCompatActivity {
             theRating = numberFormat.format(rating);
         }
 
-        int integerRating = (int) rating/2;
+        int integerRating = (int) rating / 2;
         for (int i = 0; i < integerRating; i++) {
             ivStar.get(i).setImageResource(R.drawable.ic_star_full_24dp);
         }
@@ -164,11 +196,26 @@ public class DetailContentActivity extends AppCompatActivity {
         tvGenre.setText(genre);
         tvGenre.setMaxLines(2);
         tvGenre.setEllipsize(TextUtils.TruncateAt.END);
-//        tvVoteCount.setText(vote_count);
 
-        String release = content.getRelease();
+        if (tvOverview.getText().toString().equals("Overview unknown") || tvOverview.getText().toString().equals("Sinopsis tidak diketahui")) {
+            tvOverview.setText(getString(R.string.overview_unknown));
+        }
+
+        if (tvRuntime.getText().toString().equals("Runtime Unknown") || tvRuntime.getText().toString().equals("Durasi tidak diketahui")) {
+            tvRuntime.setText(getString(R.string.runtime_unknown));
+        }
+
+        if (tvGenre.getText().toString().equals("Genre Unknown") || tvGenre.getText().toString().equals("Genre tidak diketahui")) {
+            tvGenre.setText(getString(R.string.genre_unknown));
+        }
+
+        if (tvRelease.getText().toString().equals("Release date Unknown") || tvRelease.getText().toString().equals("Tanggal rilis tidak diketahui")) {
+            tvRelease.setText(getString(R.string.release_date_unknown));
+        }
+
         @SuppressLint("SimpleDateFormat") SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
+        Date today = new Date();
         String theDate = getString(R.string.date);
 
         try {
@@ -176,7 +223,14 @@ public class DetailContentActivity extends AppCompatActivity {
             @SuppressLint("SimpleDateFormat") SimpleDateFormat newDateFormat = new SimpleDateFormat(theDate);
             String releaseYear = newDateFormat.format(date);
             tvRelease.setText(releaseYear);
-
+            if (today.equals(date) || today.after(date)) {
+                isReleased.setText(getString(R.string.has_released));
+                if (type.equals(TYPE_TV)) {
+                    isReleased.setText(getString(R.string.first_episode));
+                }
+            } else {
+                isReleased.setText(getString(R.string.coming_soon));
+            }
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -203,7 +257,6 @@ public class DetailContentActivity extends AppCompatActivity {
         values.put(RATING, rating);
         values.put(RUNTIME, runtime);
         values.put(GENRE, genre);
-//        values.put(VOTE_COUNT, vote_count);
         values.put(POSTER_PATH, poster_path);
         values.put(BACKDROP_PATH, backdrop_path);
         values.put(TYPE, type);
@@ -215,7 +268,7 @@ public class DetailContentActivity extends AppCompatActivity {
             favoriteButton.setOnFavoriteChangeListener(favoritedFailed);
         }
 
-        if (ivPoster != null && ivBackdrop != null && tvRelease != null) {
+        if (ivPoster != null && ivBackdrop != null) {
             showLoading(false);
         }
 
@@ -224,50 +277,48 @@ public class DetailContentActivity extends AppCompatActivity {
 
     private void doFav(final int id, final String title, final String type, final ContentValues values) {
         String[] projection = {
-                _ID, TITLE, OVERVIEW, RELEASE, RATING, VOTE_COUNT, POSTER_PATH, BACKDROP_PATH, TYPE
+                _ID, TITLE, OVERVIEW, RELEASE, RATING, POSTER_PATH, BACKDROP_PATH, GENRE, RUNTIME, TYPE
         };
         String selection = _ID + " =?";
         String[] selectionArgs = {String.valueOf(id)};
         Cursor cursor = getContentResolver().query(Objects.requireNonNull(getIntent().getData()), projection, selection, selectionArgs, null);
-        if (cursor != null) {
-            if (cursor.getCount() > 0) {
-                favoriteButton.setFavorite(true);
-                favoriteButton.setOnFavoriteChangeListener(new MaterialFavoriteButton.OnFavoriteChangeListener() {
-                    @Override
-                    public void onFavoriteChanged(MaterialFavoriteButton buttonView, boolean favorite) {
-                        if (favorite) {
-                            if (type.equals(TYPE_MOVIE)) {
-                                getContentResolver().insert(CONTENT_URI_MOVIE, values);
-                            } else if (type.equals(TYPE_TV)) {
-                                getContentResolver().insert(CONTENT_URI_TV, values);
-                            }
-                            showSnackbarMessage(title + getString(R.string.add_fav_success));
-                        } else {
-                            getContentResolver().delete(Objects.requireNonNull(getIntent().getData()), String.valueOf(id), null);
-                            showSnackbarMessage(title + getString(R.string.del_fav_success));
+        if (Objects.requireNonNull(cursor).getCount() > 0) {
+            favoriteButton.setFavorite(true);
+            favoriteButton.setOnFavoriteChangeListener(new MaterialFavoriteButton.OnFavoriteChangeListener() {
+                @Override
+                public void onFavoriteChanged(MaterialFavoriteButton buttonView, boolean favorite) {
+                    if (favorite) {
+                        if (type.equals(TYPE_MOVIE)) {
+                            getContentResolver().insert(CONTENT_URI_MOVIE, values);
+                        } else if (type.equals(TYPE_TV)) {
+                            getContentResolver().insert(CONTENT_URI_TV, values);
                         }
+                        showSnackbarMessage(title + getString(R.string.add_fav_success));
+                    } else {
+                        getContentResolver().delete(Objects.requireNonNull(getIntent().getData()), String.valueOf(id), null);
+                        showSnackbarMessage(title + getString(R.string.del_fav_success));
                     }
-                });
-            } else {
-                favoriteButton.setOnFavoriteChangeListener(new MaterialFavoriteButton.OnFavoriteChangeListener() {
-                    @Override
-                    public void onFavoriteChanged(MaterialFavoriteButton buttonView, boolean favorite) {
-                        if (favorite) {
-                            if (type.equals(TYPE_MOVIE)) {
-                                getContentResolver().insert(CONTENT_URI_MOVIE, values);
-                            } else if (type.equals(TYPE_TV)) {
-                                getContentResolver().insert(CONTENT_URI_TV, values);
-                            }
-                            showSnackbarMessage(title + getString(R.string.add_fav_success));
-                        } else {
-                            getContentResolver().delete(Objects.requireNonNull(getIntent().getData()), String.valueOf(id), null);
-                            showSnackbarMessage(title + getString(R.string.del_fav_success));
+                }
+            });
+        } else {
+            favoriteButton.setOnFavoriteChangeListener(new MaterialFavoriteButton.OnFavoriteChangeListener() {
+                @Override
+                public void onFavoriteChanged(MaterialFavoriteButton buttonView, boolean favorite) {
+                    if (favorite) {
+                        if (type.equals(TYPE_MOVIE)) {
+                            getContentResolver().insert(CONTENT_URI_MOVIE, values);
+                        } else if (type.equals(TYPE_TV)) {
+                            getContentResolver().insert(CONTENT_URI_TV, values);
                         }
+                        showSnackbarMessage(title + getString(R.string.add_fav_success));
+                    } else {
+                        getContentResolver().delete(Objects.requireNonNull(getIntent().getData()), String.valueOf(id), null);
+                        showSnackbarMessage(title + getString(R.string.del_fav_success));
                     }
-                });
-            }
-            cursor.close();
+                }
+            });
         }
+        cursor.close();
     }
 
     private void showSnackbarMessage(String message) {
@@ -291,5 +342,20 @@ public class DetailContentActivity extends AppCompatActivity {
         if (networkInfo != null) {
             networkInfo.isConnected();
         }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt(EXTRA_ID, id);
+        outState.putString(EXTRA_TITLE, title);
+        outState.putString(EXTRA_OVERVIEW, overview);
+        outState.putString(EXTRA_RELEASE, release);
+        outState.putDouble(EXTRA_RATING, rating);
+        outState.putString(EXTRA_RUNTIME, runtime);
+        outState.putString(EXTRA_GENRE, genre);
+        outState.putString(EXTRA_TYPE, type);
+        outState.putString(EXTRA_POSTER, poster_path);
+        outState.putString(EXTRA_BACKDROP, backdrop_path);
     }
 }

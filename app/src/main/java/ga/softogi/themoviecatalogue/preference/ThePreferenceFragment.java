@@ -44,7 +44,7 @@ public class ThePreferenceFragment extends PreferenceFragmentCompat implements P
 
         if (key.equals(RELEASE_REMINDER)) {
             if (isOn) {
-                alarmReceiver.startJob(getContext());
+                alarmReceiver.setRepeatingAlarm(Objects.requireNonNull(getActivity()), AlarmReceiver.TYPE_RELEASED, releasedTime, null);
             } else {
                 alarmReceiver.cancelAlarm(Objects.requireNonNull(getActivity()), AlarmReceiver.TYPE_RELEASED);
             }

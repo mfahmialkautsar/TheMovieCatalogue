@@ -3,14 +3,14 @@
 
     <item
         android:id="@+id/navigation_movies"
-        android:icon="@drawable/ic_home_black_24dp"
         android:name="@string/title_home"
+        android:icon="@drawable/ic_home_black_24dp"
         android:title="@string/title_home" />
 
     <item
         android:id="@+id/navigation_tv"
-        android:icon="@drawable/ic_favorite_black_24dp"
         android:name="@string/title_favorite"
+        android:icon="@drawable/ic_favorite_black_24dp"
         android:title="@string/title_favorite" />
 
 </menu>

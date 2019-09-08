@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="ga.softogi.thefavoritemovie">
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -9,14 +10,16 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/ic_movie_black_24dp"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@drawable/ic_movie_black_24dp"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
-        <activity android:name=".activity.DetailContentActivity"
+        android:theme="@style/AppTheme"
+        tools:ignore="AllowBackup,GoogleAppIndexingWarning">
+        <activity
+            android:name=".activity.DetailContentActivity"
             android:parentActivityName=".activity.MainActivity"
-            android:theme="@style/Theme.MaterialComponents.Light.NoActionBar.Bridge"></activity>
+            android:theme="@style/Theme.MaterialComponents.Light.NoActionBar.Bridge" />
         <activity
             android:name=".activity.MainActivity"
             android:label="@string/app_name"

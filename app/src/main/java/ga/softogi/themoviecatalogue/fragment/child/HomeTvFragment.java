@@ -1,4 +1,4 @@
-package ga.softogi.themoviecatalogue.fragment;
+package ga.softogi.themoviecatalogue.fragment.child;
 
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -21,18 +21,18 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 import ga.softogi.themoviecatalogue.R;
-import ga.softogi.themoviecatalogue.adapter.MovieAdapter;
-import ga.softogi.themoviecatalogue.entity.Movie;
-import ga.softogi.themoviecatalogue.entity.MovieData;
+import ga.softogi.themoviecatalogue.adapter.TvAdapter;
+import ga.softogi.themoviecatalogue.entity.Tv;
+import ga.softogi.themoviecatalogue.entity.TvData;
 import ga.softogi.themoviecatalogue.network.ApiService;
 import ga.softogi.themoviecatalogue.util.EndlessOnScrollListener;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MainMovieFragment extends Fragment {
+public class HomeTvFragment extends Fragment {
 
-    private static final String STATE_MOVIE = "state_movie";
+    private static final String STATE_TV = "state_tv";
     private static final String EXTRA_IS_NOT_FOUND = "extra_is_not_found";
     private static final String EXTRA_SEARCH = "extra_search";
     private static final String EXTRA_HELPER = "extra_helper";
@@ -42,32 +42,22 @@ public class MainMovieFragment extends Fragment {
     private static final String EXTRA_TEXT_IF_EMPTY = "extra_text_if_empty";
     private RecyclerView rvMovies;
     private GridLayoutManager gridLayoutManager;
-    private MovieAdapter adapter;
+    private TvAdapter adapter;
     private SwipeRefreshLayout swipeRefreshLayout;
-    private SearchView searchView;
-    private TextView tvHelper;
     private ProgressBar progressBar;
     private TextView tvIfEmpty;
     private String keyword;
+    private SearchView searchView;
+    private TextView tvHelper;
     private boolean shouldAddScroll;
-    private ArrayList<MovieData> movieList = new ArrayList<>();
-    private MainMovieFragment mainMovieFragment;
     private boolean nextPageInstance;
-    private String noFound;
+    private boolean showHelper;
     private boolean showNoFound;
-    private boolean showHelper = false;
+    private String noFound;
 
     private int page;
-//    private int limit = 20;
 
     private EndlessOnScrollListener endlessOnScrollListener;
-
-    private ApiService apiService;
-    private Call<Movie> callMovie;
-
-    public void scroll() {
-        rvMovies.scrollTo(0, 0);
-    }
 
 
     @Override
@@ -78,7 +68,7 @@ public class MainMovieFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        adapter = new MovieAdapter();
+        adapter = new TvAdapter();
         progressBar = view.findViewById(R.id.progress_bar);
         tvHelper = view.findViewById(R.id.helper_text);
 
@@ -96,16 +86,12 @@ public class MainMovieFragment extends Fragment {
         rvMovies.setAdapter(adapter);
 
         searchView = view.findViewById(R.id.search_view);
-//        searchView.clearFocus();
-        searchView.setQueryHint(getString(R.string.search_movie));
+        searchView.clearFocus();
+        searchView.setQueryHint(getString(R.string.search_tv));
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
-//                removeScroll();
-//                page = 1;
-//                onDestroy();
-//                onViewCreated(Objects.requireNonNull(getView()), null);
-                MainMovieFragment.this.keyword = s;
+                HomeTvFragment.this.keyword = s;
                 refreshData(keyword);
                 String showing = getString(R.string.showing) + keyword;
                 tvHelper.setText(showing);
@@ -121,7 +107,6 @@ public class MainMovieFragment extends Fragment {
             }
         });
 
-//        keyword = searchView.getQuery().toString();
         if (TextUtils.isEmpty(searchView.getQuery())) {
             if (savedInstanceState != null) {
                 keyword = savedInstanceState.getString(EXTRA_SEARCH);
@@ -147,6 +132,7 @@ public class MainMovieFragment extends Fragment {
                     removeScroll();
                     page = 1;
                     keyword = null;
+                    adapter.clear();
                     onDestroy();
                     onViewCreated(Objects.requireNonNull(getView()), null);
                     showHelper = false;
@@ -175,8 +161,8 @@ public class MainMovieFragment extends Fragment {
             if (shouldAddScroll) {
                 addScroll(keyword, nextPageInstance);
             }
-            movieList = savedInstanceState.getParcelableArrayList(STATE_MOVIE);
-            adapter.setMovieDataList(movieList);
+            ArrayList<TvData> tvList = savedInstanceState.getParcelableArrayList(STATE_TV);
+            adapter.setTvDataList(tvList);
         }
     }
 
@@ -199,38 +185,31 @@ public class MainMovieFragment extends Fragment {
     }
 
     private void loadData(String keyword) {
-//        if (swipeRefreshLayout != null) {
-//            swipeRefreshLayout.post(new Runnable() {
-//                @Override
-//                public void run() {
-//                    swipeRefreshLayout.setRefreshing(true);
-                    progressBar.setVisibility(View.VISIBLE);
-//                }
-//            });
-//        }
+        progressBar.setVisibility(View.VISIBLE);
 
-        apiService = new ApiService();
+        ApiService apiService = new ApiService();
+        Call<Tv> callTv;
         if (TextUtils.isEmpty(keyword)) {
-            callMovie = apiService.getApiInterface().discoverMovies(page);
+            callTv = apiService.getApiInterface().discoverTvs(page);
         } else {
-            callMovie = apiService.getApiInterface().searchMovie(page, keyword);
+            callTv = apiService.getApiInterface().searchTv(page, keyword);
         }
-        callMovie.enqueue(callback(keyword));
+        callTv.enqueue(callback(keyword));
     }
 
-    private Callback<Movie> callback(final String keyword) {
-        return new Callback<Movie>() {
+    private Callback<Tv> callback(final String keyword) {
+        return new Callback<Tv>() {
             @Override
-            public void onResponse(@NonNull Call<Movie> call, @NonNull Response<Movie> response) {
-                Movie movie = response.body();
+            public void onResponse(@NonNull Call<Tv> call, @NonNull Response<Tv> response) {
+                Tv tv = response.body();
 
-                if (movie != null) {
+                if (tv != null) {
                     if (adapter != null) {
-                        adapter.addAllMovies(movie.getResults());
+                        adapter.addAllTvs(tv.getResults());
                         tvIfEmpty.setVisibility(View.GONE);
                         showNoFound = false;
                     }
-                    if (movie.getTotalResults() == 0) {
+                    if (tv.getTotalResults() == 0) {
                         noFound = "\"" + keyword + "\"" + getString(R.string.search_not_found);
                         tvIfEmpty.setText(noFound);
                         tvIfEmpty.setVisibility(View.VISIBLE);
@@ -239,15 +218,11 @@ public class MainMovieFragment extends Fragment {
                 } else {
                     Toast.makeText(getContext(), getString(R.string.no_data), Toast.LENGTH_LONG).show();
                 }
-
-//            if (swipeRefreshLayout != null) {
-//                swipeRefreshLayout.setRefreshing(false);
-//            }
                 shouldAddScroll = true;
                 nextPageInstance = true;
                 removeScroll();
                 addScroll(keyword, nextPageInstance);
-                if (movie != null && page >= movie.getTotalPages()) {
+                if (tv != null && page >= tv.getTotalPages()) {
                     removeScroll();
                     shouldAddScroll = false;
                 }
@@ -255,7 +230,7 @@ public class MainMovieFragment extends Fragment {
             }
 
             @Override
-            public void onFailure(@NonNull Call<Movie> call, @NonNull Throwable t) {
+            public void onFailure(@NonNull Call<Tv> call, @NonNull Throwable t) {
                 if (t instanceof SocketTimeoutException) {
                     Toast.makeText(getContext(), getString(R.string.request_timeout), Toast.LENGTH_SHORT).show();
                 } else {
@@ -265,7 +240,6 @@ public class MainMovieFragment extends Fragment {
                 if (swipeRefreshLayout != null) {
                     swipeRefreshLayout.setRefreshing(false);
                 }
-                shouldAddScroll = true;
                 nextPageInstance = false;
                 progressBar.setVisibility(View.GONE);
                 removeScroll();
@@ -279,12 +253,7 @@ public class MainMovieFragment extends Fragment {
             adapter.clear();
         }
         page = 1;
-
-//        limit = 20;
-
         removeScroll();
-//        addScroll(keyword, true);
-
         loadData(keyword);
     }
 
@@ -297,7 +266,7 @@ public class MainMovieFragment extends Fragment {
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putParcelableArrayList(STATE_MOVIE, adapter.getMovieDataList());
+        outState.putParcelableArrayList(STATE_TV, adapter.getTvDataList());
         outState.putBoolean(EXTRA_PAGE_STATE, nextPageInstance);
         outState.putInt(EXTRA_PAGE, page);
         outState.putString(EXTRA_SEARCH, keyword);

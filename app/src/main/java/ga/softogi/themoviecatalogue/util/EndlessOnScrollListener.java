@@ -11,12 +11,11 @@ public abstract class EndlessOnScrollListener extends RecyclerView.OnScrollListe
     private int firstVisibleItem;
 
     private int offset;
-//    private int limit = 0;
 
     private RecyclerView.LayoutManager mLayoutManager;
     private boolean isUsingLinearLayout;
 
-    public EndlessOnScrollListener(LinearLayoutManager linearLayoutManager, int offset) {
+    protected EndlessOnScrollListener(LinearLayoutManager linearLayoutManager, int offset) {
         this.mLayoutManager = linearLayoutManager;
         isUsingLinearLayout = true;
         this.offset = offset;

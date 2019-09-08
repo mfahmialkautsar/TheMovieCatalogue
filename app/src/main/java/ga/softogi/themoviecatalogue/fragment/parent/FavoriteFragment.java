@@ -1,4 +1,4 @@
-package ga.softogi.themoviecatalogue.fragment.root;
+package ga.softogi.themoviecatalogue.fragment.parent;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -11,8 +11,8 @@ import android.view.ViewGroup;
 import java.util.Objects;
 
 import ga.softogi.themoviecatalogue.R;
-import ga.softogi.themoviecatalogue.fragment.FavMovieFragment;
-import ga.softogi.themoviecatalogue.fragment.FavTvFragment;
+import ga.softogi.themoviecatalogue.fragment.child.FavMovieFragment;
+import ga.softogi.themoviecatalogue.fragment.child.FavTvFragment;
 
 public class FavoriteFragment extends Fragment {
     private Fragment favMovieFragment = new FavMovieFragment();
@@ -22,12 +22,13 @@ public class FavoriteFragment extends Fragment {
     private String favMovieTag = FavMovieFragment.class.getSimpleName();
     private String favTvTag = FavTvFragment.class.getSimpleName();
     private String favActiveTag = "FavActiveTab";
-
-    private TabLayout tabLayout;
-    private TabLayout.Tab tab;
     private int position;
 
     public FavoriteFragment() {
+    }
+
+    private Fragment find(String fTag) {
+        return getChildFragmentManager().findFragmentByTag(fTag);
     }
 
     @Override
@@ -40,7 +41,7 @@ public class FavoriteFragment extends Fragment {
     public void onViewCreated(@NonNull View view, final Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        tabLayout = view.findViewById(R.id.tabs);
+        TabLayout tabLayout = view.findViewById(R.id.tabs);
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
@@ -51,7 +52,7 @@ public class FavoriteFragment extends Fragment {
                         break;
                     case 1:
                         getChildFragmentManager().beginTransaction().hide(favActiveFragment).show(favTvFragment).commit();
-                        if (null == getChildFragmentManager().findFragmentByTag(favTvTag)) {
+                        if (null == find(favTvTag)) {
                             getChildFragmentManager().beginTransaction().add(R.id.view_frame, favTvFragment, favTvTag).commit();
                         }
                         favActiveFragment = favTvFragment;
@@ -62,12 +63,10 @@ public class FavoriteFragment extends Fragment {
 
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
-
             }
 
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
-
             }
         });
 
@@ -78,7 +77,7 @@ public class FavoriteFragment extends Fragment {
             getChildFragmentManager().beginTransaction().attach(favActiveFragment).commit();
             favMovieFragment = getChildFragmentManager().getFragment(savedInstanceState, favMovieTag);
             getChildFragmentManager().beginTransaction().attach(favMovieFragment).commit();
-            if (null != getChildFragmentManager().findFragmentByTag(favTvTag)) {
+            if (null != find(favTvTag)) {
                 favTvFragment = getChildFragmentManager().getFragment(savedInstanceState, favTvTag);
                 getChildFragmentManager().beginTransaction().attach(favTvFragment).commit();
             }
@@ -87,7 +86,7 @@ public class FavoriteFragment extends Fragment {
             } else if (favTvFragment.isHidden()) {
                 position = 0;
             }
-            tab = tabLayout.getTabAt(position);
+            TabLayout.Tab tab = tabLayout.getTabAt(position);
             Objects.requireNonNull(tab).select();
         }
     }
@@ -97,7 +96,7 @@ public class FavoriteFragment extends Fragment {
     public void onSaveInstanceState(@NonNull Bundle outState) {
         getChildFragmentManager().putFragment(outState, favActiveTag, favActiveFragment);
         getChildFragmentManager().putFragment(outState, favMovieTag, favMovieFragment);
-        if (null != getChildFragmentManager().findFragmentByTag(favTvTag)) {
+        if (null != find(favTvTag)) {
             getChildFragmentManager().putFragment(outState, favTvTag, favTvFragment);
         }
         super.onSaveInstanceState(outState);

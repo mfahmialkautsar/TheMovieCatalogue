@@ -3,7 +3,6 @@ package ga.softogi.themoviecatalogue.network;
 import ga.softogi.themoviecatalogue.entity.Movie;
 import ga.softogi.themoviecatalogue.entity.MovieDetail;
 import ga.softogi.themoviecatalogue.entity.MovieTrailer;
-import ga.softogi.themoviecatalogue.entity.MovieTrailerData;
 import ga.softogi.themoviecatalogue.entity.Tv;
 import ga.softogi.themoviecatalogue.entity.TvDetail;
 import retrofit2.Call;

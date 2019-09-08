@@ -7,26 +7,18 @@
     <string name="backdropPath">backdropPath</string>
     <string name="posterPath">posterPath</string>
     <string name="release">Rilis: </string>
-    <string name="release_date">Tanggal rilis</string>
+    <string name="first_episode">Episode Pertama:</string>
+    <string name="release_date_unknown">Tanggal rilis tidak diketahui</string>
     <string name="overview">Sinopsis</string>
     <string name="rating"> Rating</string>
     <string name="title_content">Judul</string>
-    <string name="change_language_setting">Ganti bahasa</string>
     <string name="date">d MMMM yyyy</string>
-    <string name="no_internet">GAK ADA INTERNET!</string>
-    <string name="lang">id-ID</string>
     <string name="add_fav_success">\ difavofitkan</string>
-    <string name="add_fav_failed">\ GAGAL difavofitkan</string>
     <string name="del_fav_success">\ dihapus dari Favorite</string>
-    <string name="del_fav_failed">\ GAGAL dihapus dari favorit</string>
     <string name="title_favorite">Favorit</string>
-    <string name="overview_not_found">Sinopsis tidak ditemukan</string>
-    <string name="no_rating">Tidak Ada Rating</string>
-    <string name="empty_fav">Belum ada favorit</string>
+    <string name="overview_unknown">Sinopsis tidak diketahui</string>
+    <string name="no_rating">Belum Ada</string>
     <string name="favorite_failed">Gagal</string>
-    <string name="Search">Cari…</string>
-    <string name="appwidget_text">CONTOH</string>
-    <string name="add_widget">Tambah Widget</string>
     <string name="favorite_films">Film Favorit</string>
     <string name="widget_image">Gambar Widget</string>
     <string name="settings">Pengaturan</string>
@@ -38,7 +30,7 @@
     <string name="activated">diaktifkan</string>
     <string name="deactivated">dinonaktifkan</string>
 
-    <string name="daily_reminder_message">Selamat pagi! Jangan lupa buat cek film hari ini ya!</string>
+    <string name="daily_reminder_message">Selamat pagi! Jangan lupa cek film hari ini ya!</string>
     <string name="daily_release_reminder">Pengingat rilis film harian</string>
     <string name="release_plural">\ film telah</string>
     <string name="release_singular">\ film telah</string>
@@ -67,7 +59,6 @@
     <string name="genre_unknown">Genre tidak diketahui</string>
     <string name="has_released">Dirilis: \</string>
     <string name="coming_soon">Akan datang: \</string>
-    <string name="discovering_movies">Menjelajahi Film</string>
     <string name="showing">Menampilkan: \</string>
     <string name="genre">Genre:</string>
     <string name="runtime">Durasi:</string>

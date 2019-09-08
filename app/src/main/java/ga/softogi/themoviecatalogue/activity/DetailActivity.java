@@ -2,10 +2,7 @@ package ga.softogi.themoviecatalogue.activity;
 
 import android.annotation.SuppressLint;
 import android.content.ContentValues;
-import android.content.Context;
 import android.database.Cursor;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -17,9 +14,6 @@ import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
-import android.webkit.WebChromeClient;
-import android.webkit.WebSettings;
-import android.webkit.WebView;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -43,8 +37,6 @@ import ga.softogi.themoviecatalogue.R;
 import ga.softogi.themoviecatalogue.entity.Genre;
 import ga.softogi.themoviecatalogue.entity.MovieData;
 import ga.softogi.themoviecatalogue.entity.MovieDetail;
-import ga.softogi.themoviecatalogue.entity.MovieTrailer;
-import ga.softogi.themoviecatalogue.entity.MovieTrailerData;
 import ga.softogi.themoviecatalogue.entity.TvData;
 import ga.softogi.themoviecatalogue.entity.TvDetail;
 import ga.softogi.themoviecatalogue.network.ApiService;
@@ -68,23 +60,14 @@ import static ga.softogi.themoviecatalogue.entity.MovieData.TYPE_MOVIE;
 import static ga.softogi.themoviecatalogue.entity.TvData.TYPE_TV;
 
 public class DetailActivity extends AppCompatActivity {
-    private static final String STATE_RUNTIME = "state_runtime";
-    private static final String STATE_GENRE = "state_genre";
     public static final String EXTRA_MOVIE = "extra_movie";
     public static final String EXTRA_TV = "extra_tv";
-    public static final int NO_INTERNET = R.string.no_internet;
+    private static final String STATE_RUNTIME = "state_runtime";
+    private static final String STATE_GENRE = "state_genre";
     private MaterialFavoriteButton favoriteButton;
     private ProgressBar progressBar;
-    private List<ImageView> ivStar;
-    private ImageView ivStar1;
-    private ImageView ivStar2;
-    private ImageView ivStar3;
-    private ImageView ivStar4;
-    private ImageView ivStar5;
     private ContentValues values;
     private int id;
-    private ImageView ivPoster;
-    private ImageView ivBackdrop;
     private String title;
     private String overview;
     private double rating;
@@ -93,21 +76,12 @@ public class DetailActivity extends AppCompatActivity {
     private String poster_path;
     private String backdrop_path;
     private String type;
-    private String theOverview;
     private String release;
     private List<Genre> genreList;
     private MovieData movieDataUri;
-    private TvData tvDataUri;
     private Cursor cursor;
-    private WebView webView;
-//    private Cursor cursorTv;
+//    private WebView webView;
 
-    private TextView tvTitle;
-    private TextView tvOverview;
-    private TextView tvRelease;
-    private TextView tvRating;
-    private TextView isReleased;
-    private TextView tvVoteCount;
     private TextView tvGenre;
     private TextView tvRuntime;
     private MaterialFavoriteButton.OnFavoriteChangeListener favoritedFailed = new MaterialFavoriteButton.OnFavoriteChangeListener() {
@@ -128,14 +102,9 @@ public class DetailActivity extends AppCompatActivity {
                 MovieDetail movieDetail = response.body();
 
                 if (movieDetail != null) {
-//                    int id = movieDetail.getId();
                     runtime = movieDetail.getRuntime();
                     genreList = movieDetail.getGenres();
-//                    tvVoteCount.setText(String.valueOf(vote_count));
-//                    setGenreList(genreList);
-//                    setRuntime(runtime);
                     String theRuntime = runtime + getString(R.string.minutes);
-//                    if (loadOnline) {
                     tvRuntime.setText(theRuntime);
                     for (int i = 0; i < genreList.size(); i++) {
                         Genre genre = genreList.get(i);
@@ -146,12 +115,10 @@ public class DetailActivity extends AppCompatActivity {
                             tvGenre.append(genre.getName());
                         }
                     }
-//                    }
-
                     showLoading(false);
                 }
                 if (tvRuntime.getText().toString().matches("0" + getString(R.string.minutes))
-                || tvRuntime.getText().toString().matches("" + getString(R.string.minutes))) {
+                        || tvRuntime.getText().toString().matches("" + getString(R.string.minutes))) {
                     tvRuntime.setText(getString(R.string.runtime_unknown));
                 }
                 if (tvGenre.getText().toString().matches("")) {
@@ -190,15 +157,10 @@ public class DetailActivity extends AppCompatActivity {
                 TvDetail tvDetail = response.body();
 
                 if (tvDetail != null) {
-//                    int id = movieDetail.getId();
                     episodeRunTIme = tvDetail.getRuntime();
                     genreList = tvDetail.getGenres();
-//                    tvVoteCount.setText(String.valueOf(vote_count));
-//                    setGenreList(genreList);
-//                    setRuntime(runtime);
                     String theRuntime = episodeRunTIme.toString().replace("[", "")
                             .replace(",", " -").replace("]", "") + getString(R.string.minutes);
-//                    if (loadOnline) {
                     tvRuntime.setText(theRuntime);
                     if (tvRuntime.getText().toString().matches("0" + getString(R.string.minutes))
                             || tvRuntime.getText().toString().matches("" + getString(R.string.minutes))) {
@@ -213,8 +175,6 @@ public class DetailActivity extends AppCompatActivity {
                             tvGenre.append(genre.getName());
                         }
                     }
-//                    }
-
                     showLoading(false);
                 }
                 if (tvRuntime.getText().toString().matches("0" + getString(R.string.minutes))) {
@@ -261,27 +221,26 @@ public class DetailActivity extends AppCompatActivity {
         CollapsingToolbarLayout collapsingToolbarLayout = findViewById(R.id.collapsing_toolbar);
         collapsingToolbarLayout.setExpandedTitleColor(getResources().getColor(android.R.color.transparent));
 
-        ivPoster = findViewById(R.id.iv_poster);
-        ivBackdrop = findViewById(R.id.iv_backdrop);
+        ImageView ivPoster = findViewById(R.id.iv_poster);
+        ImageView ivBackdrop = findViewById(R.id.iv_backdrop);
 
-        tvTitle = findViewById(R.id.tv_title);
-        tvOverview = findViewById(R.id.tv_overview);
-        tvRelease = findViewById(R.id.tv_release);
-        tvRating = findViewById(R.id.tv_rating);
-//        tvVoteCount = findViewById(R.id.tv_vote_count);
+        TextView tvTitle = findViewById(R.id.tv_title);
+        TextView tvOverview = findViewById(R.id.tv_overview);
+        TextView tvRelease = findViewById(R.id.tv_release);
+        TextView tvRating = findViewById(R.id.tv_rating);
         tvRuntime = findViewById(R.id.tv_runtime);
         tvGenre = findViewById(R.id.tv_genre);
-        isReleased = findViewById(R.id.release);
+        TextView isReleased = findViewById(R.id.release);
 
-        ivStar1 = findViewById(R.id.iv_star1);
-        ivStar2 = findViewById(R.id.iv_star2);
-        ivStar3 = findViewById(R.id.iv_star3);
-        ivStar4 = findViewById(R.id.iv_star4);
-        ivStar5 = findViewById(R.id.iv_star5);
+        ImageView ivStar1 = findViewById(R.id.iv_star1);
+        ImageView ivStar2 = findViewById(R.id.iv_star2);
+        ImageView ivStar3 = findViewById(R.id.iv_star3);
+        ImageView ivStar4 = findViewById(R.id.iv_star4);
+        ImageView ivStar5 = findViewById(R.id.iv_star5);
 
         favoriteButton = findViewById(R.id.favorite_button);
 
-        ivStar = new ArrayList<>();
+        List<ImageView> ivStar = new ArrayList<>();
         ivStar.add(ivStar1);
         ivStar.add(ivStar2);
         ivStar.add(ivStar3);
@@ -296,9 +255,8 @@ public class DetailActivity extends AppCompatActivity {
             Cursor cursor = getContentResolver().query(uri, null, null, null, null);
 
             if (cursor != null) {
-                if (cursor.moveToFirst()){
+                if (cursor.moveToFirst()) {
                     movieDataUri = new MovieData(cursor);
-                    tvDataUri = new TvData(cursor);
                 }
                 cursor.close();
             }
@@ -315,10 +273,8 @@ public class DetailActivity extends AppCompatActivity {
         String[] selectionArgs = {String.valueOf(id)};
         if (uri != null) {
             cursor = getContentResolver().query(uri, projection, selection, selectionArgs, null);
-//            cursorTv = getContentResolver().query(uri, projection, selection, selectionArgs, null);
         }
         if (cursor != null && cursor.getCount() > 0) {
-            cursor.close();
             id = movieDataUri.getId();
             title = movieDataUri.getTitle();
             overview = movieDataUri.getOverview();
@@ -344,22 +300,8 @@ public class DetailActivity extends AppCompatActivity {
             poster_path = movieData.getPosterPath();
             backdrop_path = movieData.getBackdropPath();
             type = movieData.getType();
-//            runtime = movieData.getRuntime();
-//            String genre = movieData.getGenre();
-//            if (genreList != null) {
-//                tvGenre.setText(genre);
-//            } else {
-//                loadOnline = true;
-//            }
             if (savedInstanceState == null) {
-//                if (null != movieDataUri.getRuntime()
-//                        && null != movieDataUri.getGenre()) {
-//                    tvRuntime.setText(movieDataUri.getRuntime());
-//                    tvGenre.setText(movieDataUri.getGenre());
-//                    showLoading(false);
-//                } else {
-                    loadMovieDetail(id);
-//                }
+                loadMovieDetail(id);
             } else {
                 tvRuntime.setText(savedInstanceState.getString(STATE_RUNTIME));
                 tvGenre.setText(savedInstanceState.getString(STATE_GENRE));
@@ -412,8 +354,9 @@ public class DetailActivity extends AppCompatActivity {
             getSupportActionBar().setTitle(topTitle);
         }
 
+        String theOverview;
         if (TextUtils.isEmpty(overview)) {
-            theOverview = getString(R.string.overview_not_found);
+            theOverview = getString(R.string.overview_unknown);
         } else {
             theOverview = overview;
         }
@@ -428,7 +371,7 @@ public class DetailActivity extends AppCompatActivity {
             theRating = numberFormat.format(rating);
         }
 
-        int integerRating = (int) rating/2;
+        int integerRating = (int) rating / 2;
         for (int i = 0; i < integerRating; i++) {
             ivStar.get(i).setImageResource(R.drawable.ic_star_full_24dp);
         }
@@ -439,6 +382,22 @@ public class DetailActivity extends AppCompatActivity {
         tvRating.setText(String.format(" %s", theRating));
         tvGenre.setMaxLines(2);
         tvGenre.setEllipsize(TextUtils.TruncateAt.END);
+
+        if (tvOverview.getText().toString().equals("Overview unknown") || tvOverview.getText().toString().equals("Sinopsis tidak diketahui")) {
+            tvOverview.setText(getString(R.string.overview_unknown));
+        }
+
+        if (tvRuntime.getText().toString().equals("Runtime Unknown") || tvRuntime.getText().toString().equals("Durasi tidak diketahui")) {
+            tvRuntime.setText(getString(R.string.runtime_unknown));
+        }
+
+        if (tvGenre.getText().toString().equals("Genre Unknown") || tvGenre.getText().toString().equals("Genre tidak diketahui")) {
+            tvGenre.setText(getString(R.string.genre_unknown));
+        }
+
+        if (tvRelease.getText().toString().equals("Release date Unknown") || tvRelease.getText().toString().equals("Tanggal rilis tidak diketahui")) {
+            tvRelease.setText(getString(R.string.release_date_unknown));
+        }
 
         @SuppressLint("SimpleDateFormat") SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -452,10 +411,12 @@ public class DetailActivity extends AppCompatActivity {
             tvRelease.setText(releaseYear);
             if (today.equals(date) || today.after(date)) {
                 isReleased.setText(getString(R.string.has_released));
+                if (type.equals(TYPE_TV)) {
+                    isReleased.setText(getString(R.string.first_episode));
+                }
             } else {
                 isReleased.setText(getString(R.string.coming_soon));
             }
-
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -480,7 +441,6 @@ public class DetailActivity extends AppCompatActivity {
             //hampir sama kayak loadTrailer buat movie
         }
  */
-//        isNetworkAvailable();
     }
 /* kalo mao pake trailer
     private void loadTrailer(int id) {
@@ -513,7 +473,6 @@ public class DetailActivity extends AppCompatActivity {
 
     private void showTrailers(ArrayList<MovieTrailerData> results) {
             MovieTrailerData movieTrailerData = results.get(0);
-            Log.d("TRAILERRRR", movieTrailerData.getKey());
             webView.loadData("<iframe width=\"100%\" height=\"100%\" src=\"https://www.youtube.com/embed/" + movieTrailerData.getKey() + "\" frameborder=\"0\" allowfullscreen></iframe>"
                     , "text/html", "utf-8");
     }
@@ -526,7 +485,6 @@ public class DetailActivity extends AppCompatActivity {
         values.put(OVERVIEW, overview);
         values.put(RELEASE, release);
         values.put(RATING, rating);
-//                values.put(VOTE_COUNT, vote_count);
         values.put(POSTER_PATH, poster_path);
         values.put(BACKDROP_PATH, backdrop_path);
         values.put(RUNTIME, tvRuntime.getText().toString());
@@ -549,19 +507,10 @@ public class DetailActivity extends AppCompatActivity {
                         } else if (type.equals(TYPE_TV)) {
                             getContentResolver().insert(CONTENT_URI_TV, values);
                         }
-                        //                        favMovieHelper.beginTransaction();
-                        //                        favMovieHelper.insertTransaction(content);
-                        //                        favMovieHelper.setTransactionSuccess();
                         showSnackbarMessage(title + getString(R.string.add_fav_success));
-                        //                        favMovieHelper.endTransaction();
                     } else {
                         getContentResolver().delete(Objects.requireNonNull(getIntent().getData()), String.valueOf(id), null);
-                        //                        long result = favMovieHelper.deleteFromMovieFav(content.getId());
-                        //                        if (result > 0) {
                         showSnackbarMessage(title + getString(R.string.del_fav_success));
-                        //                        } else {
-                        //                            showSnackbarMessage(title + getString(R.string.del_fav_failed));
-                        //                        }
                     }
                 }
             });
@@ -575,19 +524,10 @@ public class DetailActivity extends AppCompatActivity {
                         } else if (type.equals(TYPE_TV)) {
                             getContentResolver().insert(CONTENT_URI_TV, values);
                         }
-                        //                        favMovieHelper.beginTransaction();
-                        //                        favMovieHelper.insertTransaction(content);
-                        //                        favMovieHelper.setTransactionSuccess();
                         showSnackbarMessage(title + getString(R.string.add_fav_success));
-                        //                        favMovieHelper.endTransaction();
                     } else {
                         getContentResolver().delete(Objects.requireNonNull(getIntent().getData()), String.valueOf(id), null);
-                        //                        long result = favMovieHelper.deleteFromMovieFav(content.getId());
-                        //                        if (result > 0) {
                         showSnackbarMessage(title + getString(R.string.del_fav_success));
-                        //                        } else {
-                        //                            showSnackbarMessage(title + getString(R.string.del_fav_failed));
-                        //                        }
                     }
                 }
             });
@@ -607,15 +547,10 @@ public class DetailActivity extends AppCompatActivity {
         }
     }
 
-    private void isNetworkAvailable() {
-        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
-        if (networkInfo == null) {
-            Toast.makeText(this, NO_INTERNET, Toast.LENGTH_LONG).show();
-        }
-        if (networkInfo != null) {
-            networkInfo.isConnected();
-        }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        cursor.close();
     }
 
     @Override

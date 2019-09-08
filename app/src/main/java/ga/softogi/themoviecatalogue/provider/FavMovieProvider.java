@@ -15,7 +15,7 @@ import java.util.Objects;
 
 import ga.softogi.themoviecatalogue.R;
 import ga.softogi.themoviecatalogue.db.FavMovieHelper;
-import ga.softogi.themoviecatalogue.fragment.FavMovieFragment;
+import ga.softogi.themoviecatalogue.fragment.child.FavMovieFragment;
 import ga.softogi.themoviecatalogue.widget.FavoriteWidget;
 
 import static ga.softogi.themoviecatalogue.db.FavDatabaseContract.AUTHORITY_MOVIE;
@@ -27,7 +27,6 @@ public class FavMovieProvider extends ContentProvider {
     private static final int MOVIE_ID = 2;
     private static final int MOVIE_TITLE = 3;
     private static final UriMatcher sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
-    private FavMovieFragment favMovieFragment = new FavMovieFragment();
 
     static {
         sUriMatcher.addURI(AUTHORITY_MOVIE, TABLE_MOVIE, MOVIE);
@@ -37,6 +36,7 @@ public class FavMovieProvider extends ContentProvider {
         sUriMatcher.addURI(AUTHORITY_MOVIE, TABLE_MOVIE, MOVIE_TITLE);
     }
 
+    private FavMovieFragment favMovieFragment = new FavMovieFragment();
     private FavMovieHelper favMovieHelper;
     private String searchMovie = favMovieFragment.getSearchMovie();
     private Handler handler = favMovieFragment.getHandler();
@@ -80,7 +80,7 @@ public class FavMovieProvider extends ContentProvider {
         long added = favMovieHelper.insertProvider(values);
 
         if (getContext() != null)
-        getContext().getContentResolver().notifyChange(CONTENT_URI_MOVIE, movieDataObserver);
+            getContext().getContentResolver().notifyChange(CONTENT_URI_MOVIE, movieDataObserver);
         notifyMovieWidgetChange();
         return Uri.parse(CONTENT_URI_MOVIE + "/" + added);
     }
@@ -89,17 +89,14 @@ public class FavMovieProvider extends ContentProvider {
     public int delete(@NonNull Uri uri, String selection, String[] selectionArgs) {
         favMovieHelper.openMovie();
         int deleted;
-        switch (sUriMatcher.match(uri)) {
-            case MOVIE_ID:
-                deleted = favMovieHelper.deleteProvider(uri.getLastPathSegment());
-                break;
-            default:
-                deleted = 0;
-                break;
+        if (sUriMatcher.match(uri) == MOVIE_ID) {
+            deleted = favMovieHelper.deleteProvider(uri.getLastPathSegment());
+        } else {
+            deleted = 0;
         }
 
         if (getContext() != null)
-        getContext().getContentResolver().notifyChange(CONTENT_URI_MOVIE, movieDataObserver);
+            getContext().getContentResolver().notifyChange(CONTENT_URI_MOVIE, movieDataObserver);
         notifyMovieWidgetChange();
         return deleted;
     }

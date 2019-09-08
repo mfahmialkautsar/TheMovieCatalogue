@@ -1,6 +1,5 @@
 package ga.softogi.themoviecatalogue.entity;
 
-import android.database.Cursor;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -9,22 +8,19 @@ import com.google.gson.annotations.SerializedName;
 import java.util.ArrayList;
 import java.util.List;
 
-import static android.provider.BaseColumns._ID;
-import static ga.softogi.themoviecatalogue.db.FavDatabaseContract.TableColumns.BACKDROP_PATH;
-import static ga.softogi.themoviecatalogue.db.FavDatabaseContract.TableColumns.GENRE;
-import static ga.softogi.themoviecatalogue.db.FavDatabaseContract.TableColumns.OVERVIEW;
-import static ga.softogi.themoviecatalogue.db.FavDatabaseContract.TableColumns.POSTER_PATH;
-import static ga.softogi.themoviecatalogue.db.FavDatabaseContract.TableColumns.RATING;
-import static ga.softogi.themoviecatalogue.db.FavDatabaseContract.TableColumns.RELEASE;
-import static ga.softogi.themoviecatalogue.db.FavDatabaseContract.TableColumns.RUNTIME;
-import static ga.softogi.themoviecatalogue.db.FavDatabaseContract.TableColumns.TITLE;
-import static ga.softogi.themoviecatalogue.db.FavDatabaseContract.TableColumns.TYPE;
-import static ga.softogi.themoviecatalogue.db.FavDatabaseContract.getColumnDouble;
-import static ga.softogi.themoviecatalogue.db.FavDatabaseContract.getColumnInt;
-import static ga.softogi.themoviecatalogue.db.FavDatabaseContract.getColumnString;
-
 public class TvData implements Parcelable {
     public static final String TYPE_TV = "type_tv";
+    public static final Parcelable.Creator<TvData> CREATOR = new Parcelable.Creator<TvData>() {
+        @Override
+        public TvData createFromParcel(Parcel source) {
+            return new TvData(source);
+        }
+
+        @Override
+        public TvData[] newArray(int size) {
+            return new TvData[size];
+        }
+    };
     @SerializedName("id")
     private int id;
     @SerializedName("name")
@@ -48,6 +44,36 @@ public class TvData implements Parcelable {
     private String type;
     private String runtime;
     private String genre;
+
+    public TvData(int id, String name, String overview, String release, double rating, String poster, String backdrop, String runtime, String genre, String type) {
+        this.id = id;
+        this.name = name;
+        this.overview = overview;
+        this.firstAirDate = release;
+        this.voteAverage = rating;
+        this.posterPath = poster;
+        this.backdropPath = backdrop;
+        this.runtime = runtime;
+        this.genre = genre;
+        this.type = type;
+    }
+
+    private TvData(Parcel in) {
+        this.id = in.readInt();
+        this.name = in.readString();
+        this.posterPath = in.readString();
+        this.overview = in.readString();
+        this.firstAirDate = in.readString();
+        this.genreIds = new ArrayList<>();
+        in.readList(this.genreIds, Integer.class.getClassLoader());
+        this.backdropPath = in.readString();
+        this.popularity = in.readDouble();
+        this.voteCount = in.readInt();
+        this.voteAverage = in.readDouble();
+        this.type = in.readString();
+        this.runtime = in.readString();
+        this.genre = in.readString();
+    }
 
     public int getId() {
         return id;
@@ -175,69 +201,4 @@ public class TvData implements Parcelable {
         dest.writeString(this.runtime);
         dest.writeString(this.genre);
     }
-
-    public TvData() {
-    }
-
-    public TvData(int id, String name, String overview, String release, double rating, String poster, String backdrop, String runtime, String genre, String type) {
-        this.id = id;
-        this.name = name;
-        this.overview = overview;
-        this.firstAirDate = release;
-        this.voteAverage = rating;
-//        this.voteCount = voteCount;
-        this.posterPath = poster;
-        this.backdropPath = backdrop;
-        this.runtime = runtime;
-        this.genre = genre;
-        this.type = type;
-    }
-
-    public TvData(Cursor cursor) {
-        this.id = getColumnInt(cursor, _ID);
-        this.name = getColumnString(cursor, TITLE);
-        this.overview = getColumnString(cursor, OVERVIEW);
-        this.firstAirDate = getColumnString(cursor, RELEASE);
-        this.voteAverage = getColumnDouble(cursor, RATING);
-//        this.voteCount = getColumnInt(cursor, VOTE_COUNT);
-        this.posterPath = getColumnString(cursor, POSTER_PATH);
-        this.backdropPath = getColumnString(cursor, BACKDROP_PATH);
-        this.runtime = getColumnString(cursor, RUNTIME);
-        this.genre = getColumnString(cursor, GENRE);
-        this.type = getColumnString(cursor, TYPE);
-//        if (getColumnString(cursor, TYPE_MOVIE) != null) {
-//            this.type = getColumnString(cursor, TYPE_MOVIE);
-//        } else if (getColumnString(cursor, TYPE_TV) != null) {
-//            this.type = getColumnString(cursor, TYPE_TV);
-//        }
-    }
-
-    protected TvData(Parcel in) {
-        this.id = in.readInt();
-        this.name = in.readString();
-        this.posterPath = in.readString();
-        this.overview = in.readString();
-        this.firstAirDate = in.readString();
-        this.genreIds = new ArrayList<>();
-        in.readList(this.genreIds, Integer.class.getClassLoader());
-        this.backdropPath = in.readString();
-        this.popularity = in.readDouble();
-        this.voteCount = in.readInt();
-        this.voteAverage = in.readDouble();
-        this.type = in.readString();
-        this.runtime = in.readString();
-        this.genre = in.readString();
-    }
-
-    public static final Parcelable.Creator<TvData> CREATOR = new Parcelable.Creator<TvData>() {
-        @Override
-        public TvData createFromParcel(Parcel source) {
-            return new TvData(source);
-        }
-
-        @Override
-        public TvData[] newArray(int size) {
-            return new TvData[size];
-        }
-    };
 }

@@ -16,7 +16,6 @@ public class FavMovieDatabaseHelper extends SQLiteOpenHelper {
             + FavDatabaseContract.TableColumns.GENRE + " TEXT, "
             + FavDatabaseContract.TableColumns.RUNTIME + " TEXT, "
             + FavDatabaseContract.TableColumns.RATING + " TEXT, "
-//            + FavDatabaseContract.TableColumns.VOTE_COUNT + " TEXT, "
             + FavDatabaseContract.TableColumns.POSTER_PATH + " TEXT, "
             + FavDatabaseContract.TableColumns.BACKDROP_PATH + " TEXT, "
             + FavDatabaseContract.TableColumns.TYPE + " TEXT NOT NULL"

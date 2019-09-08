@@ -1,77 +1,31 @@
 <resources>
     <string name="app_name">The Favorite Movie</string>
-    <string name="title_home">Home</string>
     <string name="title_movies">Movies</string>
     <string name="title_tv">TV</string>
     <string name="backdropPath">backdropPath</string>
     <string name="posterPath">posterPath</string>
     <string name="release">Release: </string>
-    <string name="release_date">Release date</string>
+    <string name="first_episode">First Episode:</string>
+    <string name="has_released">Released: \</string>
+    <string name="coming_soon">Coming soon: \</string>
+    <string name="release_date_unknown">Release date Unknown</string>
     <string name="overview">Overview</string>
     <string name="rating"> Rating</string>
     <string name="title_content">Title</string>
-    <string name="change_language_setting">Change Language</string>
     <string name="date">MMMM d, yyyy</string>
     <string name="no_internet">NO INTERNET!</string>
-    <string name="lang">en-US</string>
     <string name="add_fav_success">\ favorited</string>
-    <string name="add_fav_failed">\ favorited FAILED</string>
     <string name="del_fav_success">\ deleted from Favorite</string>
-    <string name="del_fav_failed">\ deleted from Favorite FAILED</string>
     <string name="title_favorite">Favorite</string>
-    <string name="overview_not_found">Overview not found</string>
+    <string name="overview_unknown">Overview unknown</string>
     <string name="no_rating">No Rating</string>
-    <string name="empty_fav">Nothing in Favorite</string>
     <string name="favorite_failed">Failed</string>
-    <string name="Search">Search…</string>
-    <string name="appwidget_text">EXAMPLE</string>
-    <string name="add_widget">Add widget</string>
-    <string name="favorite_films">Favorite Films</string>
-    <string name="widget_image">Widget Image</string>
-    <string name="settings">Settings</string>
-    <string name="search_movie">Search Movie…</string>
-    <string name="search_tv">Search TV Show…</string>
-    <string name="your_favorite_films_will_show_here">Your favorite films will show here</string>
 
-    <string name="daily_reminder_label">Daily reminder</string>
-    <string name="activated">activated</string>
-    <string name="deactivated">deactivated</string>
-
-    <string name="key_release_reminder" translatable="false">release_reminder</string>
-    <string name="key_daily_reminder" translatable="false">daily_reminder</string>
-    <string name="key_locale" translatable="false">locale</string>
-
-    <string name="daily_reminder_message">Good morning! Tap me now!</string>
-    <string name="daily_release_reminder">Daily release reminder</string>
-    <string name="release_plural">\ movies have</string>
-    <string name="release_singular">\ movie has</string>
-    <string name="one_released">\ just released today, one of the is \</string>
-    <string name="no_movie_released">There\'s no movie released today. This is so sad. Alexa, play despacito</string>
-    <string name="released">Released!</string>
-    <string name="hey_you">Hey you! Yes you!</string>
-
-    <string name="notification">Notification</string>
-    <string name="language">Language</string>
-    <string name="release_reminder">Release reminder</string>
-    <string name="release_reminder_summary">Get daily released movies</string>
-    <string name="daily_reminder">Daily Reminder</string>
-    <string name="daily_reminder_summary">Remind you to go return every 7 in a morning</string>
-    <string name="locale">Locale</string>
-    <string name="locale_summary">Change your phone language</string>
     <string name="no_fav_movie">You haven\'t added any Movie to Favorite</string>
     <string name="no_fav_tv">You haven\'t added any TV Show to Favorite</string>
-    <string name="minutes">\ minutes</string>
     <string name="search_not_in_favorite">\ is not in Favorite</string>
-    <string name="search_not_found">\ not found</string>
-    <string name="no_data">No Data!</string>
-    <string name="connection_error">Connection ERROR!</string>
-    <string name="request_timeout">Request Timeout, Refresh!</string>
     <string name="runtime_unknown">Runtime Unknown</string>
     <string name="genre_unknown">Genre Unknown</string>
-    <string name="has_released">Released: \</string>
-    <string name="coming_soon">Coming soon: \</string>
-    <string name="discovering_movies">Discovering Movies</string>
-    <string name="showing">Showing: \</string>
     <string name="genre">Genre:</string>
     <string name="runtime">Runtime:</string>
     <string name="star1">star1</string>

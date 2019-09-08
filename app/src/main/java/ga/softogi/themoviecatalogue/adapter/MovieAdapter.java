@@ -26,8 +26,6 @@ import ga.softogi.themoviecatalogue.util.CustomOnItemClickListener;
 import static ga.softogi.themoviecatalogue.db.FavDatabaseContract.TableColumns.CONTENT_URI_MOVIE;
 
 public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHolder> {
-    private MovieData movieData;
-//    private TvData tvData;
 
     private ArrayList<MovieData> movieDataList = new ArrayList<>();
 
@@ -38,19 +36,6 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
         return movieDataList;
     }
 
-//    private ArrayList<TvData> tvDataList = new ArrayList<>();
-//
-//    public ArrayList<TvData> getTvDataList() {
-//        return tvDataList;
-//    }
-//
-//    public void setTvDataList(ArrayList<TvData> tvs) {
-//        tvDataList.clear();
-//        tvDataList.addAll(tvs);
-//        notifyDataSetChanged();
-//    }
-//    private OnMovieItemSelectedListener onMovieItemSelectedListener;
-
     public void setMovieDataList(ArrayList<MovieData> movies) {
         movieDataList.clear();
         movieDataList.addAll(movies);
@@ -60,12 +45,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
     private void addMovie(MovieData item) {
         movieDataList.add(item);
         notifyDataSetChanged();
-//        notifyItemInserted(movieDataList.size() - 1);
     }
-
-//    private void addTv(TvData tv) {
-//        tvDataList.add(tv);
-//    }
 
     public void addAllMovies(ArrayList<MovieData> movieDataList) {
         for (MovieData movieData : movieDataList) {
@@ -73,13 +53,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
         }
     }
 
-//    public void addAllTvs(ArrayList<TvData> tvDataList) {
-//        for (TvData tvData : tvDataList) {
-//            addTv(tvData);
-//        }
-//    }
-
-    public void remove(MovieData item) {
+    private void remove(MovieData item) {
         int position = movieDataList.indexOf(item);
         if (position >= 0) {
             movieDataList.remove(position);
@@ -89,83 +63,34 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
 
     public void clear() {
         while (getItemCount() > 0) {
-            remove(getItem(0));
+            remove(getItem());
         }
     }
 
-    public MovieData getItem(int position) {
-        return movieDataList.get(position);
+    private MovieData getItem() {
+        return movieDataList.get(0);
     }
 
     @NonNull
     @Override
     public MovieViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int position) {
         View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.content_model, viewGroup, false);
-//        final TvViewHolder movieViewHolder = new TvViewHolder(view);
-//        movieViewHolder.itemView.setOnClickListener(new CustomOnItemClickListener(position, new CustomOnItemClickListener.OnItemClickCallback() {
-//            @Override
-//            public void onItemClicked(View view, int position) {
-//                int adapterPos = movieViewHolder.getAdapterPosition();
-//                if (adapterPos != RecyclerView.NO_POSITION) {
-//                    if (onMovieItemSelectedListener != null) {
-//                        onMovieItemSelectedListener.onItemClick(movieViewHolder.itemView, adapterPos);
-//                    }
-//                }
-//            }
-//        }));
         return new MovieViewHolder(view);
-    }
-
-    public int position;
-
-    public int getThePosition() {
-        return position;
     }
 
     @Override
     public void onBindViewHolder(@NonNull final MovieViewHolder holder, int position) {
-
-//        if (Objects.equals(movieDataList.get(position).getType(), ContentItem.TYPE_MOVIE)) {
-            movieData = movieDataList.get(position);
-            holder.bindMovie(movieData);
-//        }
-
-//        if (Objects.equals(tvDataList.get(position).getType(), ContentItem.TYPE_TV)) {
-//            tvData = tvDataList.get(position);
-//            holder.bindTv(tvData);
-//        }
+        MovieData movieData = movieDataList.get(position);
+        holder.bindMovie(movieData);
 
         holder.itemView.setOnClickListener(new CustomOnItemClickListener(position, new CustomOnItemClickListener.OnItemClickCallback() {
             @Override
             public void onItemClicked(View view, int position) {
                 Intent intent = new Intent(holder.itemView.getContext(), DetailActivity.class);
-                MovieAdapter.this.position = position;
-//                Intent favIntent = new Intent(holder.itemView.getContext(), DetailFavActivity.class);
-
-//                Uri uri = null;
                 Uri uri = Uri.parse(CONTENT_URI_MOVIE + "/" + getMovieDataList().get(position).getId());
-//                String[] projection = {
-//                        _ID, TITLE, OVERVIEW, RELEASE, GENRE, RUNTIME, RATING, POSTER_PATH, BACKDROP_PATH, TYPE
-//                };
-//                    uri = uriMovie;
-//                } else if (Objects.equals(tvDataList.get(position).getType(), ContentItem.TYPE_TV)) {
-//                    intent.putExtra(DetailActivity.EXTRA_TV, tvDataList.get(holder.getAdapterPosition()));
-//                    uri = uriTv;
-//                }
-//                String selection = _ID + " =?";
-//                String[] selectionArgs = {String.valueOf(getMovieDataList().get(position).getId())};
-//                Cursor cursor = holder.itemView.getContext().getContentResolver().query(uri, projection, selection, selectionArgs, null);
-//                //                Uri uriTv = Uri.parse(CONTENT_URI_TV + "/" + getMovieDataList().get(position).getId());
-//                //                if (Objects.equals(movieDataList.get(position).getType(), ContentItem.TYPE_MOVIE)) {
-//                if (cursor != null && cursor.getCount() > 0) {
-//                    favIntent.setData(uri);
-//                    cursor.close();
-//                    holder.itemView.getContext().startActivity(favIntent);
-//                } else {
-                    intent.putExtra(DetailActivity.EXTRA_MOVIE, movieDataList.get(holder.getAdapterPosition()));
-                    intent.setData(uri);
-                    holder.itemView.getContext().startActivity(intent);
-//                }
+                intent.putExtra(DetailActivity.EXTRA_MOVIE, movieDataList.get(holder.getAdapterPosition()));
+                intent.setData(uri);
+                holder.itemView.getContext().startActivity(intent);
             }
         }));
     }
@@ -175,16 +100,12 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
         return movieDataList.size();
     }
 
-//    public void setOnMovieItemSelectedListener(OnMovieItemSelectedListener onMovieItemSelectedListener) {
-//        this.onMovieItemSelectedListener = onMovieItemSelectedListener;
-//    }
-
-    public class MovieViewHolder extends RecyclerView.ViewHolder {
+    class MovieViewHolder extends RecyclerView.ViewHolder {
         TextView tvTitle;
         TextView tvRating;
         ImageView ivThumbnail;
 
-        public MovieViewHolder(@NonNull View itemView) {
+        MovieViewHolder(@NonNull View itemView) {
             super(itemView);
             tvTitle = itemView.findViewById(R.id.tv_title);
             tvRating = itemView.findViewById(R.id.tv_rating);
@@ -211,8 +132,4 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
             tvRating.setText(String.format(" %s", theRating));
         }
     }
-
-//    public interface OnMovieItemSelectedListener {
-//        void onItemClick(View view, int position);
-//    }
 }

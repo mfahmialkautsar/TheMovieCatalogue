@@ -1,4 +1,4 @@
-package ga.softogi.themoviecatalogue.fragment;
+package ga.softogi.themoviecatalogue.fragment.child;
 
 import android.content.Context;
 import android.content.res.Configuration;
@@ -21,7 +21,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -39,24 +38,21 @@ public class FavTvFragment extends Fragment implements LoadFavoriteCallback {
     private static final String EXTRA_TV_STATE = "EXTRA_TV_STATE";
     private static final String EXTRA_IS_NOT_FOUND = "extra_is_not_found";
     private static final String EXTRA_SEARCH = "extra_search";
-    private static final String EXTRA_HELPER = "extra_helper";
     private static final String EXTRA_IS_EMPTY = "extra_is_empty";
     private static final String EXTRA_TEXT_IF_EMPTY = "extra_text_if_empty";
     private ProgressBar progressBar;
     private TvAdapter adapter;
-    private RecyclerView rvFavTv;
     private SwipeRefreshLayout swipeRefreshLayout;
     private SearchView searchView;
     private TextView tvIfEmpty;
     private String searchKeyword;
-    private TextView tvHelper;
     private String emptyFav;
     private boolean showNoFound;
-//    private boolean showHelper;
     private boolean showEmpty;
-    private HandlerThread handlerThread;
-    private TvDataObserver myObserver;
     private Handler handler;
+
+    public FavTvFragment() {
+    }
 
     public Handler getHandler() {
         return handler;
@@ -65,10 +61,6 @@ public class FavTvFragment extends Fragment implements LoadFavoriteCallback {
     public String getSearchKeyword() {
         return searchKeyword;
     }
-
-    public FavTvFragment() {
-    }
-
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -79,93 +71,39 @@ public class FavTvFragment extends Fragment implements LoadFavoriteCallback {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         progressBar = view.findViewById(R.id.progress_bar);
-        tvHelper = view.findViewById(R.id.helper_text);
+        TextView tvHelper = view.findViewById(R.id.helper_text);
         tvHelper.setVisibility(View.GONE);
-//        favTvHelper = FavTvHelper.getInstance(getContext());
-//        favTvHelper.openTv();
 
         tvIfEmpty = view.findViewById(R.id.tv_if_empty);
-        init(view, savedInstanceState);
-
-        swipeRefreshLayout = view.findViewById(R.id.rl);
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                if (TextUtils.isEmpty(searchView.getQuery().toString())) {
-                    searchKeyword = null;
-                    onDestroy();
-                    onViewCreated(Objects.requireNonNull(getView()), null);
-//                    showHelper = false;
-                } else {
-                    onDestroy();
-                    onViewCreated(Objects.requireNonNull(getView()), null);
-                }
-                swipeRefreshLayout.setRefreshing(false);
-            }
-        });
-    }
-
-    private void init(View view, Bundle savedInstanceState) {
 
         searchView = view.findViewById(R.id.search_view);
         searchView.setQueryHint(getString(R.string.search_tv));
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
-                if (isResumed()) {
-                    FavTvFragment.this.searchKeyword = s;
-                    onDestroy();
-                    onViewCreated(Objects.requireNonNull(getView()), null);
-//                    String showing = getString(R.string.showing) + searchKeyword;
-//                    tvHelper.setText(showing);
-//                    tvHelper.setVisibility(View.VISIBLE);
-//                    showHelper = true;
-                }
                 return false;
             }
 
             @Override
             public boolean onQueryTextChange(String s) {
+                if (isResumed()) {
+                    FavTvFragment.this.searchKeyword = s;
+                    onDestroy();
+                    onViewCreated(Objects.requireNonNull(getView()), null);
+                }
                 return true;
             }
         });
 
-//        searchKeyword = searchView.getQuery().toString();
-//        String searchTv;
-//        if (TextUtils.isEmpty(searchKeyword)) {
-//            searchTv = null;
-//        } else {
-//            searchTv = searchKeyword;
-//        }
-/*
-        if (TextUtils.isEmpty(searchKeyword)) {
-            if (savedInstanceState != null) {
-                searchKeyword = savedInstanceState.getString(EXTRA_SEARCH);
-                showHelper = savedInstanceState.getBoolean(EXTRA_HELPER);
-                if (showHelper) {
-                    String showing = getString(R.string.showing) + searchKeyword;
-                    tvHelper.setText(showing);
-                    tvHelper.setVisibility(View.VISIBLE);
-                } else {
-                    tvHelper.setVisibility(View.GONE);
-                    showHelper = false;
-                }
-            } else {
-                tvHelper.setVisibility(View.GONE);
-                showHelper = false;
-            }
-        }
- */
-
-        handlerThread = new HandlerThread("TvDataObserver");
+        HandlerThread handlerThread = new HandlerThread("TvDataObserver");
         handlerThread.start();
         handler = new Handler(handlerThread.getLooper());
-        myObserver = new TvDataObserver(handler, this, getContext(), searchKeyword);
+        TvDataObserver myObserver = new TvDataObserver(handler, this, getContext(), searchKeyword);
         view.getContext().getContentResolver().registerContentObserver(CONTENT_URI_TV, true, myObserver);
 
         adapter = new TvAdapter();
 
-        rvFavTv = view.findViewById(R.id.rv_content);
+        RecyclerView rvFavTv = view.findViewById(R.id.rv_content);
         rvFavTv.setHasFixedSize(true);
         if (Objects.requireNonNull(getActivity()).getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
             rvFavTv.setLayoutManager(new GridLayoutManager(getActivity(), 2));
@@ -194,6 +132,23 @@ public class FavTvFragment extends Fragment implements LoadFavoriteCallback {
                 adapter.setTvDataList(list);
             }
         }
+
+        swipeRefreshLayout = view.findViewById(R.id.rl);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                if (TextUtils.isEmpty(searchView.getQuery().toString())) {
+                    searchKeyword = null;
+                    adapter.clear();
+                    onDestroy();
+                    onViewCreated(Objects.requireNonNull(getView()), null);
+                } else {
+                    onDestroy();
+                    onViewCreated(Objects.requireNonNull(getView()), null);
+                }
+                swipeRefreshLayout.setRefreshing(false);
+            }
+        });
     }
 
     @Override
@@ -219,7 +174,6 @@ public class FavTvFragment extends Fragment implements LoadFavoriteCallback {
         } else {
             adapter.clear();
             if (getContext() != null) {
-//            adapter.setData(new ArrayList<ContentItem>());
                 if (TextUtils.isEmpty(searchKeyword)) {
                     tvIfEmpty.setText(getString(R.string.no_fav_tv));
                     showEmpty = true;
@@ -233,20 +187,9 @@ public class FavTvFragment extends Fragment implements LoadFavoriteCallback {
                 tvIfEmpty.setVisibility(View.VISIBLE);
             }
         }
+        items.close();
         progressBar.setVisibility(View.GONE);
     }
-
-//    @Override
-//    public void onResume() {
-//        super.onResume();
-//        init(Objects.requireNonNull(getView()), null);
-//    }
-
-//    @Override
-//    public void onDestroy() {
-//        super.onDestroy();
-////        favTvHelper.closeTv();
-//    }
 
     @Override
     public void onResume() {
@@ -257,7 +200,6 @@ public class FavTvFragment extends Fragment implements LoadFavoriteCallback {
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         outState.putParcelableArrayList(EXTRA_TV_STATE, adapter.getTvDataList());
-//        outState.putBoolean(EXTRA_HELPER, showHelper);
         outState.putString(EXTRA_SEARCH, searchKeyword);
         outState.putBoolean(EXTRA_IS_NOT_FOUND, showNoFound);
         outState.putString(EXTRA_TEXT_IF_EMPTY, emptyFav);
@@ -265,19 +207,11 @@ public class FavTvFragment extends Fragment implements LoadFavoriteCallback {
         super.onSaveInstanceState(outState);
     }
 
-    private void showToast(String message) {
-        Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
-    }
-
     public static class TvDataObserver extends ContentObserver {
-        /**
-         * Creates a content observer.
-         *
-         * @param handler The handler to run {@link #onChange} on, or null if none.
-         */
         final FavTvFragment favTvFragment;
         final Context context;
         final String searchTv;
+
         public TvDataObserver(Handler handler, FavTvFragment favTvFragment, Context context, String searchTv) {
             super(handler);
             this.favTvFragment = favTvFragment;
@@ -293,13 +227,11 @@ public class FavTvFragment extends Fragment implements LoadFavoriteCallback {
     }
 
     private static class LoadFavoriteAsync extends AsyncTask<Void, Void, Cursor> {
-        //        private final WeakReference<FavTvHelper> weakTvHelper;
         private final WeakReference<Context> weakContext;
         private final WeakReference<LoadFavoriteCallback> weakCallback;
         private final String title;
 
         private LoadFavoriteAsync(Context context, LoadFavoriteCallback callback, String searchTv) {
-//            weakTvHelper = new WeakReference<>(favTvHelper);
             weakContext = new WeakReference<>(context);
             weakCallback = new WeakReference<>(callback);
             title = searchTv;

@@ -39,11 +39,9 @@ import static ga.softogi.thefavoritemovie.db.DatabaseContract.TableColumns.CONTE
 import static ga.softogi.thefavoritemovie.helper.MappingHelper.mapCursorToArrayList;
 
 public class TvFragment extends Fragment implements LoadFavoriteCallback {
-    //Ini dipake kalo gak mao pake onResume (tapi harus implement parcellable di ContentItem). Bisa sih dipake berbarengan, tapi jadi useless
     private static final String EXTRA_TV_STATE = "EXTRA_TV_STATE";
     private static final String EXTRA_IS_NOT_FOUND = "extra_is_not_found";
     private static final String EXTRA_SEARCH = "extra_search";
-    private static final String EXTRA_HELPER = "extra_helper";
     private static final String EXTRA_IS_EMPTY = "extra_is_empty";
     private static final String EXTRA_TEXT_IF_EMPTY = "extra_text_if_empty";
     private ProgressBar progressBar;
@@ -51,13 +49,9 @@ public class TvFragment extends Fragment implements LoadFavoriteCallback {
     private SwipeRefreshLayout swipeRefreshLayout;
     private TextView tvIfEmpty;
     private String tvTitle;
-//    private TextView tvHelper;
     private String emptyFav;
     private boolean showNoFound;
-//    private boolean showHelper;
     private boolean showEmpty;
-    private HandlerThread handlerThread;
-    private TvDataObserver myObserver;
 
 
     public TvFragment() {
@@ -73,23 +67,8 @@ public class TvFragment extends Fragment implements LoadFavoriteCallback {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         progressBar = view.findViewById(R.id.progress_bar);
-//        tvHelper = view.findViewById(R.id.helper_text);
 
         tvIfEmpty = view.findViewById(R.id.tv_if_empty);
-        init(view, savedInstanceState);
-
-        swipeRefreshLayout = view.findViewById(R.id.rl);
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                onDestroy();
-                onViewCreated(Objects.requireNonNull(getView()), null);
-                swipeRefreshLayout.setRefreshing(false);
-            }
-        });
-    }
-
-    private void init(View view, Bundle savedInstanceState) {
 
         SearchView searchView = view.findViewById(R.id.search_view);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -101,6 +80,7 @@ public class TvFragment extends Fragment implements LoadFavoriteCallback {
             @Override
             public boolean onQueryTextChange(String s) {
                 if (isResumed()) {
+                    adapter.clear();
                     onDestroy();
                     onViewCreated(Objects.requireNonNull(getView()), null);
                 }
@@ -115,35 +95,11 @@ public class TvFragment extends Fragment implements LoadFavoriteCallback {
         } else {
             searchTv = tvTitle;
         }
-/*
-        if (!TextUtils.isEmpty(tvTitle)) {
-            String showing = getString(R.string.showing) + tvTitle;
-            tvHelper.setText(showing);
-            tvHelper.setVisibility(View.VISIBLE);
-            showHelper = true;
-        } else {
-            if (savedInstanceState != null) {
-                tvTitle = savedInstanceState.getString(EXTRA_SEARCH);
-                showHelper = savedInstanceState.getBoolean(EXTRA_HELPER);
-                if (showHelper) {
-                    String showing = getString(R.string.showing) + tvTitle;
-                    tvHelper.setText(showing);
-                    tvHelper.setVisibility(View.VISIBLE);
-                } else {
-                    tvHelper.setVisibility(View.GONE);
-                    showHelper = false;
-                }
-            } else {
-                tvHelper.setVisibility(View.GONE);
-                showHelper = false;
-            }
-        }
- */
 
-        handlerThread = new HandlerThread("TvDataObserver");
+        HandlerThread handlerThread = new HandlerThread("TvDataObserver");
         handlerThread.start();
         Handler handler = new Handler(handlerThread.getLooper());
-        myObserver = new TvDataObserver(handler, this, getContext(), searchTv);
+        TvDataObserver myObserver = new TvDataObserver(handler, this, getContext(), searchTv);
         view.getContext().getContentResolver().registerContentObserver(CONTENT_URI_TV, true, myObserver);
 
         adapter = new ContentAdapter();
@@ -179,6 +135,17 @@ public class TvFragment extends Fragment implements LoadFavoriteCallback {
                 adapter.setData(list);
             }
         }
+
+        swipeRefreshLayout = view.findViewById(R.id.rl);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                adapter.clear();
+                onDestroy();
+                onViewCreated(Objects.requireNonNull(getView()), null);
+                swipeRefreshLayout.setRefreshing(false);
+            }
+        });
     }
 
     @Override
@@ -205,6 +172,7 @@ public class TvFragment extends Fragment implements LoadFavoriteCallback {
                 tvIfEmpty.setVisibility(View.VISIBLE);
             }
         }
+        items.close();
         progressBar.setVisibility(View.GONE);
     }
 
@@ -212,14 +180,12 @@ public class TvFragment extends Fragment implements LoadFavoriteCallback {
     public void onResume() {
         super.onResume();
         swipeRefreshLayout.requestFocus();
-//        init(Objects.requireNonNull(getView()), null);
     }
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelableArrayList(EXTRA_TV_STATE, adapter.getData());
-//        outState.putBoolean(EXTRA_HELPER, showHelper);
         outState.putString(EXTRA_SEARCH, tvTitle);
         outState.putBoolean(EXTRA_IS_NOT_FOUND, showNoFound);
         outState.putString(EXTRA_TEXT_IF_EMPTY, emptyFav);
@@ -242,7 +208,8 @@ public class TvFragment extends Fragment implements LoadFavoriteCallback {
         final TvFragment tvFragment;
         final Context context;
         final String searchTv;
-        public TvDataObserver(Handler handler, TvFragment tvFragment, Context context, String searchTv) {
+
+        TvDataObserver(Handler handler, TvFragment tvFragment, Context context, String searchTv) {
             super(handler);
             this.tvFragment = tvFragment;
             this.context = context;

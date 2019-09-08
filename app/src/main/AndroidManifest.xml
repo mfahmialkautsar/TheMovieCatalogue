@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="ga.softogi.themoviecatalogue">
 
     <uses-permission android:name="android.permission.INTERNET" />
@@ -14,16 +15,19 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/ic_movie_black_24dp"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@drawable/ic_movie_black_24dp"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        tools:ignore="AllowBackup,GoogleAppIndexingWarning">
         <receiver
             android:name=".reminder.AlarmReceiver"
             android:enabled="true"
-            android:exported="true"/>
-        <receiver android:name=".widget.FavoriteWidget"
+            android:exported="true"
+            tools:ignore="ExportedReceiver" />
+        <receiver
+            android:name=".widget.FavoriteWidget"
             android:label="@string/favorite_films">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
@@ -34,27 +38,25 @@
                 android:resource="@xml/favorite_widget_info" />
         </receiver>
 
-<!--        <activity android:name=".activity.DetailContentActivity"-->
-<!--            android:theme="@style/Theme.MaterialComponents.Light.NoActionBar.Bridge"-->
-<!--            android:parentActivityName=".activity.MainActivity">-->
-<!--        </activity>-->
         <activity
             android:name=".activity.MainActivity"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:launchMode="singleTop">
+            android:launchMode="singleTop"
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".preference.SettingsActivity"
+        <activity
+            android:name=".preference.SettingsActivity"
             android:label="@string/settings"
-            android:parentActivityName=".activity.MainActivity"/>
-        <activity android:name=".activity.DetailActivity"
-            android:theme="@style/Theme.MaterialComponents.Light.NoActionBar.Bridge"
             android:parentActivityName=".activity.MainActivity" />
+        <activity
+            android:name=".activity.DetailActivity"
+            android:parentActivityName=".activity.MainActivity"
+            android:theme="@style/Theme.MaterialComponents.Light.NoActionBar.Bridge" />
 
         <provider
             android:name=".provider.FavTvProvider"
@@ -72,7 +74,8 @@
         <service
             android:name=".widget.StackWidgetService"
             android:permission="android.permission.BIND_REMOTEVIEWS" />
-        <service android:name=".reminder.ReleasedFilmsService"
+        <service
+            android:name=".reminder.ReleasedFilmsService"
             android:permission="android.permission.BIND_JOB_SERVICE" />
     </application>
 

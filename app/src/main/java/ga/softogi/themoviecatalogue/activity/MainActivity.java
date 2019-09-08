@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
-import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -12,8 +11,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import ga.softogi.themoviecatalogue.R;
-import ga.softogi.themoviecatalogue.fragment.root.FavoriteFragment;
-import ga.softogi.themoviecatalogue.fragment.root.HomeFragment;
+import ga.softogi.themoviecatalogue.fragment.parent.FavoriteFragment;
+import ga.softogi.themoviecatalogue.fragment.parent.HomeFragment;
 import ga.softogi.themoviecatalogue.preference.SettingsActivity;
 
 public class MainActivity extends AppCompatActivity {
@@ -57,8 +56,6 @@ public class MainActivity extends AppCompatActivity {
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-//        if (getSupportActionBar() != null)
-//        getSupportActionBar().setElevation(0);
 
         BottomNavigationView navView = findViewById(R.id.nav_view);
         navView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
@@ -95,15 +92,9 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_settings:
-                Intent mIntent = new Intent(this, SettingsActivity.class);
-                startActivity(mIntent);
-                break;
-//            case R.id.action_favorite:
-//                Intent favoriteIntent = new Intent(MainActivity.this, FavActivity.class);
-//                startActivity(favoriteIntent);
-//                break;
+        if (item.getItemId() == R.id.action_settings) {
+            Intent mIntent = new Intent(this, SettingsActivity.class);
+            startActivity(mIntent);
         }
         return super.onOptionsItemSelected(item);
     }

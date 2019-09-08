@@ -32,9 +32,6 @@ public class AlarmReceiver extends BroadcastReceiver {
     public static final int ID_RELEASED = 100;
     public static final int ID_REPEATING = 101;
     private static final int jobId = 10;
-    private static final int NOTIF_REQUEST_CODE = 200;
-    private String DATE_FORMAT = "yyyy-MM-dd";
-    private String TIME_FORMAT = "HH:mm";
 
 
     public AlarmReceiver() {
@@ -96,37 +93,7 @@ public class AlarmReceiver extends BroadcastReceiver {
         }
     }
 
-//    public void setReleasedAlarm(Context context, String type, String time, String message) {
-////        if (isDateInvalid(date, DATE_FORMAT) || isDateInvalid(time, TIME_FORMAT)) return;
-//
-//        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-//        Intent intent = new Intent(context, AlarmReceiver.class);
-//        intent.putExtra(EXTRA_MESSAGE, message);
-//        intent.putExtra(EXTRA_TYPE, type);
-//
-////        Log.e("ONE TIME", date + " " + time);
-////        String[] dateArray = date.split("-");
-//        String[] timeArray = time.split(":");
-//
-//        Calendar calendar = Calendar.getInstance();
-////        calendar.set(Calendar.YEAR, Integer.parseInt(dateArray[0]));
-////        calendar.set(Calendar.MONTH, Integer.parseInt(dateArray[1]) - 1);
-////        calendar.set(Calendar.DAY_OF_MONTH, Integer.parseInt(dateArray[2]));
-//        calendar.set(Calendar.HOUR_OF_DAY, Integer.parseInt(timeArray[0]));
-//        calendar.set(Calendar.MINUTE, Integer.parseInt(timeArray[1]));
-//        calendar.set(Calendar.SECOND, 0);
-//
-//        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, ID_RELEASED, intent, 0);
-//            Objects.requireNonNull(alarmManager).setInexactRepeating(AlarmManager.RTC_WAKEUP,
-//                    calendar.getTimeInMillis(),
-//                    AlarmManager.INTERVAL_DAY,
-//                    pendingIntent);
-//
-////        Toast.makeText(context, "One time alarm set up", Toast.LENGTH_SHORT).show();
-//    }
-
     public void setRepeatingAlarm(Context context, String type, String time, String message) {
-//        if (isDateInvalid(time, TIME_FORMAT)) return;
 
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(context, AlarmReceiver.class);
@@ -159,25 +126,6 @@ public class AlarmReceiver extends BroadcastReceiver {
         }
         Objects.requireNonNull(alarmManager).cancel(pendingIntent);
     }
-
-//    public boolean isAlarmSet(Context context, String type) {
-//        Intent intent = new Intent(context, AlarmReceiver.class);
-//        int requestCode = type.equalsIgnoreCase(TYPE_RELEASED) ? ID_RELEASED : ID_REPEATING;
-//
-//        return PendingIntent.getBroadcast(context, requestCode, intent, PendingIntent.FLAG_NO_CREATE) != null;
-//    }
-
-//    private boolean isDateInvalid(String date, String format) {
-//        DateFormat dateFormat = new SimpleDateFormat(format, Locale.getDefault());
-//        dateFormat.setLenient(false);
-//        try {
-//            dateFormat.parse(date);
-//            return false;
-//        } catch (ParseException e) {
-//            e.printStackTrace();
-//            return true;
-//        }
-//    }
 
     public void startJob(Context context) {
         ComponentName mServiceComponentName = new ComponentName(context, ReleasedFilmsService.class);

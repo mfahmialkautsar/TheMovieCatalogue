@@ -39,11 +39,9 @@ import static ga.softogi.thefavoritemovie.db.DatabaseContract.TableColumns.CONTE
 import static ga.softogi.thefavoritemovie.helper.MappingHelper.mapCursorToArrayList;
 
 public class MovieFragment extends Fragment implements LoadFavoriteCallback {
-    //Ini dipake kalo gak mao pake onResume (tapi harus implement parcellable di ContentItem). Bisa sih dipake berbarengan, tapi jadi useless
     private static final String EXTRA_MOVIE_STATE = "EXTRA_MOVIE_STATE";
     private static final String EXTRA_IS_NOT_FOUND = "extra_is_not_found";
     private static final String EXTRA_SEARCH = "extra_search";
-    private static final String EXTRA_HELPER = "extra_helper";
     private static final String EXTRA_IS_EMPTY = "extra_is_empty";
     private static final String EXTRA_TEXT_IF_EMPTY = "extra_text_if_empty";
     private ProgressBar progressBar;
@@ -51,12 +49,9 @@ public class MovieFragment extends Fragment implements LoadFavoriteCallback {
     private TextView tvIfEmpty;
     private SwipeRefreshLayout swipeRefreshLayout;
     private String movieTitle;
-//    private boolean showHelper;
     private String emptyFav;
     private boolean showNoFound;
     private boolean showEmpty;
-    private HandlerThread handlerThread;
-    private MovieDataObserver myObserver;
 
 
     public MovieFragment() {
@@ -85,6 +80,7 @@ public class MovieFragment extends Fragment implements LoadFavoriteCallback {
             @Override
             public boolean onQueryTextChange(String s) {
                 if (isResumed()) {
+                    adapter.clear();
                     onDestroy();
                     onViewCreated(Objects.requireNonNull(getView()), null);
                 }
@@ -99,35 +95,11 @@ public class MovieFragment extends Fragment implements LoadFavoriteCallback {
         } else {
             searchMovie = movieTitle;
         }
-/*
-        if (!TextUtils.isEmpty(movieTitle)) {
-            String showing = getString(R.string.showing) + movieTitle;
-            tvHelper.setText(showing);
-            tvHelper.setVisibility(View.VISIBLE);
-            showHelper = true;
-        } else {
-            if (savedInstanceState != null) {
-                movieTitle = savedInstanceState.getString(EXTRA_SEARCH);
-                showHelper = savedInstanceState.getBoolean(EXTRA_HELPER);
-                if (showHelper) {
-                    String showing = getString(R.string.showing) + movieTitle;
-                    tvHelper.setText(showing);
-                    tvHelper.setVisibility(View.VISIBLE);
-                } else {
-                    tvHelper.setVisibility(View.GONE);
-                    showHelper = false;
-                }
-            } else {
-                tvHelper.setVisibility(View.GONE);
-                showHelper = false;
-            }
-        }
- */
 
-        handlerThread = new HandlerThread("MovieDataObserver");
+        HandlerThread handlerThread = new HandlerThread("MovieDataObserver");
         handlerThread.start();
         Handler handler = new Handler(handlerThread.getLooper());
-        myObserver = new MovieDataObserver(handler, this, getContext(), searchMovie);
+        MovieDataObserver myObserver = new MovieDataObserver(handler, this, getContext(), searchMovie);
         view.getContext().getContentResolver().registerContentObserver(CONTENT_URI_MOVIE, true, myObserver);
 
         adapter = new ContentAdapter();
@@ -160,7 +132,7 @@ public class MovieFragment extends Fragment implements LoadFavoriteCallback {
             }
             ArrayList<ContentItem> listFavMovie = savedInstanceState.getParcelableArrayList(EXTRA_MOVIE_STATE);
             if (listFavMovie != null) {
-            adapter.setData(listFavMovie);
+                adapter.setData(listFavMovie);
             }
         }
 
@@ -168,6 +140,7 @@ public class MovieFragment extends Fragment implements LoadFavoriteCallback {
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+                adapter.clear();
                 onDestroy();
                 onViewCreated(Objects.requireNonNull(getView()), null);
                 swipeRefreshLayout.setRefreshing(false);
@@ -199,6 +172,7 @@ public class MovieFragment extends Fragment implements LoadFavoriteCallback {
                 tvIfEmpty.setVisibility(View.VISIBLE);
             }
         }
+        items.close();
         progressBar.setVisibility(View.GONE);
     }
 
@@ -206,7 +180,6 @@ public class MovieFragment extends Fragment implements LoadFavoriteCallback {
     public void onResume() {
         super.onResume();
         swipeRefreshLayout.requestFocus();
-//        init(Objects.requireNonNull(getView()), null);
     }
 
     private void isNetworkAvailable() {
@@ -221,22 +194,22 @@ public class MovieFragment extends Fragment implements LoadFavoriteCallback {
         }
     }
 
-        @Override
-        public void onSaveInstanceState(@NonNull Bundle outState) {
-            super.onSaveInstanceState(outState);
-            outState.putParcelableArrayList(EXTRA_MOVIE_STATE, adapter.getData());
-//            outState.putBoolean(EXTRA_HELPER, showHelper);
-            outState.putString(EXTRA_SEARCH, movieTitle);
-            outState.putBoolean(EXTRA_IS_NOT_FOUND, showNoFound);
-            outState.putString(EXTRA_TEXT_IF_EMPTY, emptyFav);
-            outState.putBoolean(EXTRA_IS_EMPTY, showEmpty);
-        }
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelableArrayList(EXTRA_MOVIE_STATE, adapter.getData());
+        outState.putString(EXTRA_SEARCH, movieTitle);
+        outState.putBoolean(EXTRA_IS_NOT_FOUND, showNoFound);
+        outState.putString(EXTRA_TEXT_IF_EMPTY, emptyFav);
+        outState.putBoolean(EXTRA_IS_EMPTY, showEmpty);
+    }
 
     public static class MovieDataObserver extends ContentObserver {
         final Context context;
         final MovieFragment movieFragment;
         final String searchMovie;
-        public MovieDataObserver(Handler handler, MovieFragment movieFragment, Context context, String searchMovie) {
+
+        MovieDataObserver(Handler handler, MovieFragment movieFragment, Context context, String searchMovie) {
             super(handler);
             this.movieFragment = movieFragment;
             this.searchMovie = searchMovie;

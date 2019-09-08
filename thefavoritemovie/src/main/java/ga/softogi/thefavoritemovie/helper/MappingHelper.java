@@ -16,7 +16,6 @@ import static ga.softogi.thefavoritemovie.db.DatabaseContract.TableColumns.RELEA
 import static ga.softogi.thefavoritemovie.db.DatabaseContract.TableColumns.RUNTIME;
 import static ga.softogi.thefavoritemovie.db.DatabaseContract.TableColumns.TITLE;
 import static ga.softogi.thefavoritemovie.db.DatabaseContract.TableColumns.TYPE;
-import static ga.softogi.thefavoritemovie.db.DatabaseContract.TableColumns.VOTE_COUNT;
 
 public class MappingHelper {
 
@@ -29,7 +28,6 @@ public class MappingHelper {
             String overview = movieCursor.getString(movieCursor.getColumnIndexOrThrow(OVERVIEW));
             String release = movieCursor.getString(movieCursor.getColumnIndexOrThrow(RELEASE));
             double rating = movieCursor.getDouble(movieCursor.getColumnIndexOrThrow(RATING));
-//            int voteCount = movieCursor.getInt(movieCursor.getColumnIndexOrThrow(VOTE_COUNT));
             String poster = movieCursor.getString(movieCursor.getColumnIndexOrThrow(POSTER_PATH));
             String backdrop = movieCursor.getString(movieCursor.getColumnIndexOrThrow(BACKDROP_PATH));
             String runtime = movieCursor.getString(movieCursor.getColumnIndexOrThrow(RUNTIME));

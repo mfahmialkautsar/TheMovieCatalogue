@@ -15,7 +15,7 @@ import java.util.Objects;
 
 import ga.softogi.themoviecatalogue.R;
 import ga.softogi.themoviecatalogue.db.FavTvHelper;
-import ga.softogi.themoviecatalogue.fragment.FavTvFragment;
+import ga.softogi.themoviecatalogue.fragment.child.FavTvFragment;
 import ga.softogi.themoviecatalogue.widget.FavoriteWidget;
 
 import static ga.softogi.themoviecatalogue.db.FavDatabaseContract.AUTHORITY_TV;
@@ -27,7 +27,6 @@ public class FavTvProvider extends ContentProvider {
     private static final int TV_ID = 2;
     private static final int TV_TITLE = 3;
     private static final UriMatcher sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
-    private FavTvFragment favTvFragment = new FavTvFragment();
 
     static {
         sUriMatcher.addURI(AUTHORITY_TV, TABLE_TV, TV);
@@ -37,6 +36,7 @@ public class FavTvProvider extends ContentProvider {
         sUriMatcher.addURI(AUTHORITY_TV, TABLE_TV, TV_TITLE);
     }
 
+    private FavTvFragment favTvFragment = new FavTvFragment();
     private FavTvHelper favTvHelper;
     private String searchTv = favTvFragment.getSearchKeyword();
     private Handler handler = favTvFragment.getHandler();
@@ -83,7 +83,7 @@ public class FavTvProvider extends ContentProvider {
         long added = favTvHelper.insertProvider(values);
 
         if (getContext() != null)
-        getContext().getContentResolver().notifyChange(CONTENT_URI_TV, tvDataObserver);
+            getContext().getContentResolver().notifyChange(CONTENT_URI_TV, tvDataObserver);
         notifyTvWidgetChange();
         return Uri.parse(CONTENT_URI_TV + "/" + added);
     }
@@ -92,17 +92,14 @@ public class FavTvProvider extends ContentProvider {
     public int delete(@NonNull Uri uri, @Nullable String selection, @Nullable String[] selectionArgs) {
         favTvHelper.openTv();
         int deleted;
-        switch (sUriMatcher.match(uri)) {
-            case TV_ID:
-                deleted = favTvHelper.deleteProvider(uri.getLastPathSegment());
-                break;
-            default:
-                deleted = 0;
-                break;
+        if (sUriMatcher.match(uri) == TV_ID) {
+            deleted = favTvHelper.deleteProvider(uri.getLastPathSegment());
+        } else {
+            deleted = 0;
         }
 
         if (getContext() != null)
-        getContext().getContentResolver().notifyChange(CONTENT_URI_TV, tvDataObserver);
+            getContext().getContentResolver().notifyChange(CONTENT_URI_TV, tvDataObserver);
         notifyTvWidgetChange();
         return deleted;
     }

@@ -1,4 +1,4 @@
-package ga.softogi.themoviecatalogue.fragment;
+package ga.softogi.themoviecatalogue.fragment.child;
 
 import android.content.Context;
 import android.content.res.Configuration;
@@ -15,13 +15,11 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -30,7 +28,6 @@ import java.util.Objects;
 import ga.softogi.themoviecatalogue.LoadFavoriteCallback;
 import ga.softogi.themoviecatalogue.R;
 import ga.softogi.themoviecatalogue.adapter.MovieAdapter;
-import ga.softogi.themoviecatalogue.db.FavMovieHelper;
 import ga.softogi.themoviecatalogue.entity.MovieData;
 
 import static ga.softogi.themoviecatalogue.MappingHelper.mapMovieCursorToArrayList;
@@ -40,25 +37,21 @@ public class FavMovieFragment extends Fragment implements LoadFavoriteCallback {
     private static final String EXTRA_MOVIE_STATE = "extra_movie_state";
     private static final String EXTRA_IS_NOT_FOUND = "extra_is_not_found";
     private static final String EXTRA_SEARCH = "extra_search";
-    private static final String EXTRA_HELPER = "extra_helper";
     private static final String EXTRA_IS_EMPTY = "extra_is_empty";
     private static final String EXTRA_TEXT_IF_EMPTY = "extra_text_if_empty";
     private ProgressBar progressBar;
-    private FavMovieHelper favMovieHelper;
     private MovieAdapter adapter;
     private SwipeRefreshLayout swipeRefreshLayout;
     private SearchView searchView;
     private TextView tvIfEmpty;
-    private TextView tvHelper;
-//    private boolean showHelper;
     private String searchKeyword;
     private String emptyFav;
     private boolean showNoFound;
     private boolean showEmpty;
-//    private String searchMovie;
-    private HandlerThread handlerThread;
-    private MovieDataObserver myObserver;
     private Handler handler;
+
+    public FavMovieFragment() {
+    }
 
     public Handler getHandler() {
         return handler;
@@ -67,21 +60,6 @@ public class FavMovieFragment extends Fragment implements LoadFavoriteCallback {
     public String getSearchMovie() {
         return searchKeyword;
     }
-//    private View.OnClickListener btnSearchListener = new View.OnClickListener() {
-//        @Override
-//        public void onClick(View v) {
-//            searchKeyword = editSearch.getText().toString();
-//            if (!TextUtils.isEmpty(searchKeyword)) {
-//                onDestroy();
-//                onViewCreated(Objects.requireNonNull(getView()), null);
-//            }
-//        }
-//    };
-
-
-    public FavMovieFragment() {
-    }
-
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -93,37 +71,10 @@ public class FavMovieFragment extends Fragment implements LoadFavoriteCallback {
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         progressBar = view.findViewById(R.id.progress_bar);
-        tvHelper = view.findViewById(R.id.helper_text);
+        TextView tvHelper = view.findViewById(R.id.helper_text);
         tvHelper.setVisibility(View.GONE);
-//        favMovieHelper = FavMovieHelper.getInstance(getContext());
-//        favMovieHelper.openMovie();
-
-//        Button btnSearch = view.findViewById(R.id.btn_search);
-//        btnSearch.setOnClickListener(btnSearchListener);
 
         tvIfEmpty = view.findViewById(R.id.tv_if_empty);
-        init(view, savedInstanceState);
-
-        swipeRefreshLayout = view.findViewById(R.id.rl);
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                if (TextUtils.isEmpty(searchView.getQuery().toString())) {
-                    searchKeyword = null;
-                    onDestroy();
-                    onViewCreated(Objects.requireNonNull(getView()), null);
-//                    showHelper = false;
-                } else {
-                    onDestroy();
-                    onViewCreated(Objects.requireNonNull(getView()), null);
-                }
-                swipeRefreshLayout.setRefreshing(false);
-            }
-        });
-    }
-
-    private void init(View view, Bundle savedInstanceState) {
-//        editSearch = view.findViewById(R.id.search_view);
 
         searchView = view.findViewById(R.id.search_view);
         searchView.setQueryHint(getString(R.string.search_movie));
@@ -139,45 +90,15 @@ public class FavMovieFragment extends Fragment implements LoadFavoriteCallback {
                     FavMovieFragment.this.searchKeyword = s;
                     onDestroy();
                     onViewCreated(Objects.requireNonNull(getView()), null);
-//                    String showing = getString(R.string.showing) + searchKeyword;
-//                    tvHelper.setText(showing);
-//                    tvHelper.setVisibility(View.VISIBLE);
-//                    showHelper = false;
                 }
                 return false;
             }
         });
-        //    private EditText editSearch;
-//        searchKeyword = searchView.getQuery().toString();
-//        if (TextUtils.isEmpty(searchKeyword)) {
-//            searchMovie = null;
-//        } else {
-//            searchMovie = searchKeyword;
-//        }
-/*
-        if (TextUtils.isEmpty(searchView.getQuery())) {
-            if (savedInstanceState != null) {
-                searchKeyword = savedInstanceState.getString(EXTRA_SEARCH);
-                showHelper = savedInstanceState.getBoolean(EXTRA_HELPER);
-                if (showHelper) {
-                    String showing = getString(R.string.showing) + searchKeyword;
-                    tvHelper.setText(showing);
-                    tvHelper.setVisibility(View.VISIBLE);
-                } else {
-                    tvHelper.setVisibility(View.GONE);
-                    showHelper = false;
-                }
-            } else {
-                tvHelper.setVisibility(View.GONE);
-                showHelper = false;
-            }
-        }
- */
 
-        handlerThread = new HandlerThread("MovieDataObserver");
+        HandlerThread handlerThread = new HandlerThread("MovieDataObserver");
         handlerThread.start();
         handler = new Handler(handlerThread.getLooper());
-        myObserver = new MovieDataObserver(handler, this, getContext(), searchKeyword);
+        MovieDataObserver myObserver = new MovieDataObserver(handler, this, getContext(), searchKeyword);
         view.getContext().getContentResolver().registerContentObserver(CONTENT_URI_MOVIE, true, myObserver);
 
         adapter = new MovieAdapter();
@@ -209,12 +130,28 @@ public class FavMovieFragment extends Fragment implements LoadFavoriteCallback {
             } else {
                 tvIfEmpty.setVisibility(View.GONE);
             }
-            //    private MovieDataObserver myObserver;
             ArrayList<MovieData> listFavMovie = savedInstanceState.getParcelableArrayList(EXTRA_MOVIE_STATE);
-//            if (listFavMovie != null) {
-            adapter.setMovieDataList(listFavMovie);
-//            }
+            if (listFavMovie != null) {
+                adapter.setMovieDataList(listFavMovie);
+            }
         }
+
+        swipeRefreshLayout = view.findViewById(R.id.rl);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                if (TextUtils.isEmpty(searchView.getQuery().toString())) {
+                    searchKeyword = null;
+                    adapter.clear();
+                    onDestroy();
+                    onViewCreated(Objects.requireNonNull(getView()), null);
+                } else {
+                    onDestroy();
+                    onViewCreated(Objects.requireNonNull(getView()), null);
+                }
+                swipeRefreshLayout.setRefreshing(false);
+            }
+        });
     }
 
     @Override
@@ -233,16 +170,13 @@ public class FavMovieFragment extends Fragment implements LoadFavoriteCallback {
     public void postExecute(Cursor items) {
         ArrayList<MovieData> listMovie = mapMovieCursorToArrayList(items);
         if (listMovie.size() > 0) {
-            Log.d("postExecute", "YESSSS");
             tvIfEmpty.setVisibility(View.GONE);
             adapter.setMovieDataList(listMovie);
             showNoFound = false;
             showEmpty = false;
         } else {
-            Log.d("postExecute", "NOOOOOOO");
             adapter.clear();
             if (getContext() != null) {
-//            adapter.setData(new ArrayList<ContentItem>());
                 if (TextUtils.isEmpty(searchKeyword)) {
                     tvIfEmpty.setText(getString(R.string.no_fav_movie));
                     showEmpty = true;
@@ -254,26 +188,33 @@ public class FavMovieFragment extends Fragment implements LoadFavoriteCallback {
                     showEmpty = false;
                 }
                 tvIfEmpty.setVisibility(View.VISIBLE);
-//            showToast(getString(R.string.empty_fav));
             }
         }
+        items.close();
         progressBar.setVisibility(View.GONE);
     }
 
-//    @Override
-//    public void onDestroy() {
-//        super.onDestroy();
-//        favMovieHelper.closeMovie();
-//    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        swipeRefreshLayout.requestFocus();
+    }
 
-    private void showToast(String message) {
-        Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelableArrayList(EXTRA_MOVIE_STATE, adapter.getMovieDataList());
+        outState.putString(EXTRA_SEARCH, searchKeyword);
+        outState.putBoolean(EXTRA_IS_NOT_FOUND, showNoFound);
+        outState.putString(EXTRA_TEXT_IF_EMPTY, emptyFav);
+        outState.putBoolean(EXTRA_IS_EMPTY, showEmpty);
     }
 
     public static class MovieDataObserver extends ContentObserver {
         final Context context;
         final FavMovieFragment favMovieFragment;
         final String searchMovie;
+
         public MovieDataObserver(Handler handler, FavMovieFragment favMovieFragment, Context context, String searchMovie) {
             super(handler);
             this.favMovieFragment = favMovieFragment;
@@ -289,13 +230,11 @@ public class FavMovieFragment extends Fragment implements LoadFavoriteCallback {
     }
 
     private static class LoadFavoriteAsync extends AsyncTask<Void, Void, Cursor> {
-        //        private final WeakReference<FavMovieHelper> weakContentHelper;
         private final WeakReference<Context> weakContext;
         private final WeakReference<LoadFavoriteCallback> weakCallback;
         private final String title;
 
         private LoadFavoriteAsync(Context context, LoadFavoriteCallback callback, String searchMovie) {
-//            weakContentHelper = new WeakReference<>(favMovieHelper);
             weakContext = new WeakReference<>(context);
             weakCallback = new WeakReference<>(callback);
             title = searchMovie;
@@ -322,22 +261,5 @@ public class FavMovieFragment extends Fragment implements LoadFavoriteCallback {
             super.onPostExecute(items);
             weakCallback.get().postExecute(items);
         }
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        swipeRefreshLayout.requestFocus();
-    }
-
-    @Override
-    public void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putParcelableArrayList(EXTRA_MOVIE_STATE, adapter.getMovieDataList());
-//        outState.putBoolean(EXTRA_HELPER, showHelper);
-        outState.putString(EXTRA_SEARCH, searchKeyword);
-        outState.putBoolean(EXTRA_IS_NOT_FOUND, showNoFound);
-        outState.putString(EXTRA_TEXT_IF_EMPTY, emptyFav);
-        outState.putBoolean(EXTRA_IS_EMPTY, showEmpty);
     }
 }
