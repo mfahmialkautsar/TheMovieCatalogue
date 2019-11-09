@@ -127,7 +127,7 @@ public class TvAdapter extends RecyclerView.Adapter<TvAdapter.TvViewHolder> {
             if (Objects.equals(rating, 0.0)) {
                 theRating = itemView.getContext().getString(R.string.no_rating);
             } else {
-                theRating = numberFormat.format(rating / 2) + "/5";
+                theRating = numberFormat.format(rating);
             }
             tvRating.setText(String.format(" %s", theRating));
         }
