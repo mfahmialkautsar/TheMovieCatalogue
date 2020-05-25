@@ -25,6 +25,19 @@ Google Developers Kejar Indonesia 2019.
 * [x] Infinite scroll
 * [x] Multi-language available for English and Bahasa Indonesia, based on phone language
 
+
+### Licenses
+- [Material Components for Android](https://github.com/material-components/material-components-android)
+- [Java](https://docs.oracle.com/en/java/)
+- [Retrofit](https://square.github.io/retrofit/)
+- [Asynchronous Http Client for Android](https://github.com/android-async-http/android-async-http)
+- [OkHttp](https://square.github.io/okhttp/)
+- [Lifecycle-aware components](https://developer.android.com/topic/libraries/architecture/lifecycle)
+- [Navigation](https://developer.android.com/topic/libraries/architecture/navigation/)
+- [RecyclerView](https://developer.android.com/reference/androidx/recyclerview/widget/RecyclerView)
+- [Picasso](https://square.github.io/picasso/)
+- [Material Favorite Button](https://github.com/IvBaranov/MaterialFavoriteButton)
+
 ### Before Running The App
 Go to `gradle.properties` and fill `API_KEY` with your TMDB API key
 
