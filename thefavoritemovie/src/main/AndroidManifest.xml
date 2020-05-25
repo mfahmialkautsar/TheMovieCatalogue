@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="ga.softogi.thefavoritemovie">
+    package="mfahmialkautsar.thefavoritemovie">
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="ga.softogi.themoviecatalogue.READ_DATABASE" />
-    <uses-permission android:name="ga.softogi.themoviecatalogue.WRITE_DATABASE" />
+    <uses-permission android:name="mfahmialkautsar.themoviecatalogue.READ_DATABASE" />
+    <uses-permission android:name="mfahmialkautsar.themoviecatalogue.WRITE_DATABASE" />
 
     <application
         android:allowBackup="true"
@@ -17,11 +17,11 @@
         android:theme="@style/AppTheme"
         tools:ignore="AllowBackup,GoogleAppIndexingWarning">
         <activity
-            android:name=".activity.DetailContentActivity"
-            android:parentActivityName=".activity.MainActivity"
+            android:name="mfahmialkautsar.thefavoritemovie.activity.DetailContentActivity"
+            android:parentActivityName="mfahmialkautsar.thefavoritemovie.activity.MainActivity"
             android:theme="@style/Theme.MaterialComponents.Light.NoActionBar.Bridge" />
         <activity
-            android:name=".activity.MainActivity"
+            android:name="mfahmialkautsar.thefavoritemovie.activity.MainActivity"
             android:label="@string/app_name"
             android:launchMode="singleTop">
             <intent-filter>

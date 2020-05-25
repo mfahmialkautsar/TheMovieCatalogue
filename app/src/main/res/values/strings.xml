@@ -47,7 +47,7 @@
     <string name="release_reminder">Release reminder</string>
     <string name="release_reminder_summary">Get daily released movies</string>
     <string name="daily_reminder">Daily Reminder</string>
-    <string name="daily_reminder_summary">Remind you to go return every 7 in a morning</string>
+    <string name="daily_reminder_summary">Remind you to get back here every 7 in a morning</string>
     <string name="locale">Locale</string>
     <string name="locale_summary">Change your phone language</string>
     <string name="no_fav_movie">You haven\'t added any Movie to Favorite</string>

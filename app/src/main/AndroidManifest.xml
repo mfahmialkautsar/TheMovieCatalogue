@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="ga.softogi.themoviecatalogue">
+    package="mfahmialkautsar.themoviecatalogue">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <permission
-        android:name="ga.softogi.themoviecatalogue.READ_DATABASE"
+        android:name="mfahmialkautsar.themoviecatalogue.READ_DATABASE"
         android:protectionLevel="normal" />
     <permission
-        android:name="ga.softogi.themoviecatalogue.WRITE_DATABASE"
+        android:name="mfahmialkautsar.themoviecatalogue.WRITE_DATABASE"
         android:protectionLevel="normal" />
 
     <application
@@ -22,12 +22,12 @@
         android:theme="@style/AppTheme"
         tools:ignore="AllowBackup,GoogleAppIndexingWarning">
         <receiver
-            android:name=".reminder.AlarmReceiver"
+            android:name="mfahmialkautsar.themoviecatalogue.reminder.AlarmReceiver"
             android:enabled="true"
             android:exported="true"
             tools:ignore="ExportedReceiver" />
         <receiver
-            android:name=".widget.FavoriteWidget"
+            android:name="mfahmialkautsar.themoviecatalogue.widget.FavoriteWidget"
             android:label="@string/favorite_films">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
@@ -39,7 +39,7 @@
         </receiver>
 
         <activity
-            android:name=".activity.MainActivity"
+            android:name="mfahmialkautsar.themoviecatalogue.activity.MainActivity"
             android:label="@string/app_name"
             android:launchMode="singleTop"
             android:theme="@style/AppTheme.NoActionBar">
@@ -50,32 +50,32 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".preference.SettingsActivity"
+            android:name="mfahmialkautsar.themoviecatalogue.preference.SettingsActivity"
             android:label="@string/settings"
-            android:parentActivityName=".activity.MainActivity" />
+            android:parentActivityName="mfahmialkautsar.themoviecatalogue.activity.MainActivity" />
         <activity
-            android:name=".activity.DetailActivity"
-            android:parentActivityName=".activity.MainActivity"
+            android:name="mfahmialkautsar.themoviecatalogue.activity.DetailActivity"
+            android:parentActivityName="mfahmialkautsar.themoviecatalogue.activity.MainActivity"
             android:theme="@style/Theme.MaterialComponents.Light.NoActionBar.Bridge" />
 
         <provider
-            android:name=".provider.FavTvProvider"
-            android:authorities="ga.softogi.themoviecatalogue.provider.FavTvProvider"
+            android:name="mfahmialkautsar.themoviecatalogue.provider.FavTvProvider"
+            android:authorities="mfahmialkautsar.themoviecatalogue.provider.FavTvProvider"
             android:exported="true"
-            android:readPermission="ga.softogi.themoviecatalogue.READ_DATABASE"
-            android:writePermission="ga.softogi.themoviecatalogue.WRITE_DATABASE" />
+            android:readPermission="mfahmialkautsar.themoviecatalogue.READ_DATABASE"
+            android:writePermission="mfahmialkautsar.themoviecatalogue.WRITE_DATABASE" />
         <provider
-            android:name=".provider.FavMovieProvider"
-            android:authorities="ga.softogi.themoviecatalogue.provider.FavMovieProvider"
+            android:name="mfahmialkautsar.themoviecatalogue.provider.FavMovieProvider"
+            android:authorities="mfahmialkautsar.themoviecatalogue.provider.FavMovieProvider"
             android:exported="true"
-            android:readPermission="ga.softogi.themoviecatalogue.READ_DATABASE"
-            android:writePermission="ga.softogi.themoviecatalogue.WRITE_DATABASE" />
+            android:readPermission="mfahmialkautsar.themoviecatalogue.READ_DATABASE"
+            android:writePermission="mfahmialkautsar.themoviecatalogue.WRITE_DATABASE" />
 
         <service
-            android:name=".widget.StackWidgetService"
+            android:name="mfahmialkautsar.themoviecatalogue.widget.StackWidgetService"
             android:permission="android.permission.BIND_REMOTEVIEWS" />
         <service
-            android:name=".reminder.ReleasedFilmsService"
+            android:name="mfahmialkautsar.themoviecatalogue.reminder.ReleasedFilmsService"
             android:permission="android.permission.BIND_JOB_SERVICE" />
     </application>
 
